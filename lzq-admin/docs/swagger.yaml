@@ -1,0 +1,1645 @@
+basePath: /api
+definitions:
+  application.ResponseDto:
+    properties:
+      code:
+        description: 1：请求成功， 0：请求业务错误
+        type: integer
+      data:
+        description: 接口返回的业务数据
+      msg:
+        description: 错误提示信息
+        type: string
+    type: object
+  dto.BaseDto:
+    properties:
+      id:
+        type: string
+    type: object
+  dto.KeyAndValueDto:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    type: object
+  dto.LoginDto:
+    properties:
+      loginName:
+        description: 登录名
+        type: string
+      password:
+        description: 密码
+        type: string
+      tenantCode:
+        description: 租户编码
+        type: string
+    required:
+    - loginName
+    - password
+    - tenantCode
+    type: object
+  dto.LoginTokenResponseDto:
+    properties:
+      accessToken:
+        type: string
+      errorDescription:
+        type: string
+      exception: {}
+      expiresIn:
+        type: integer
+      id:
+        type: string
+      identityToken:
+        type: string
+      isError:
+        type: boolean
+      isTenantAdmin:
+        type: boolean
+      name:
+        type: string
+      refreshToken:
+        type: string
+      tokenType:
+        type: string
+    type: object
+  model.AuthMenuDto:
+    properties:
+      code:
+        description: 菜单编码
+        type: string
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: 主键
+        type: string
+      isBranch:
+        description: 是否是容器
+        type: boolean
+      isHidden:
+        description: 是否隐藏
+        type: boolean
+      moduleId:
+        description: 模块ID
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      parentId:
+        description: 父菜单ID
+        type: string
+      path:
+        description: 内部路径
+        type: string
+      policy:
+        description: 菜单策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      url:
+        description: 外部路径
+        type: string
+    required:
+    - moduleId
+    - name
+    type: object
+  model.AuthMenuListDto:
+    properties:
+      children:
+        description: 子菜单
+        items:
+          $ref: '#/definitions/model.AuthMenuListDto'
+        type: array
+      code:
+        description: 菜单编码
+        type: string
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: 主键
+        type: string
+      isBranch:
+        description: 是否是容器
+        type: boolean
+      isHidden:
+        description: 是否隐藏
+        type: boolean
+      moduleCode:
+        description: 模块编码
+        type: string
+      moduleId:
+        description: 模块ID
+        type: string
+      moduleName:
+        description: 模块名称
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      operation:
+        description: 操作
+        type: string
+      parentId:
+        description: 父菜单ID
+        type: string
+      path:
+        description: 内部路径
+        type: string
+      policy:
+        description: 菜单策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      url:
+        description: 外部路径
+        type: string
+    required:
+    - moduleId
+    - name
+    type: object
+  model.AuthModuleDto:
+    properties:
+      code:
+        description: 模块编码
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 模块名称
+        type: string
+      rank:
+        description: 排序
+        type: integer
+    required:
+    - code
+    - name
+    type: object
+  model.AuthPermissionDto:
+    properties:
+      code:
+        description: 权限编码
+        type: string
+      id:
+        description: 主键
+        type: string
+      menuId:
+        description: 菜单ID
+        type: string
+      name:
+        description: 权限名称
+        type: string
+      permissionGroup:
+        description: 权限组
+        type: string
+      policy:
+        description: 权限策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+    required:
+    - menuId
+    - name
+    - permissionGroup
+    - policy
+    type: object
+  model.AuthPermissionListDto:
+    properties:
+      actualPolicy:
+        description: 权限策略
+        type: string
+      children:
+        description: 子菜单
+        items:
+          $ref: '#/definitions/model.AuthPermissionListDto'
+        type: array
+      code:
+        description: 权限编码
+        type: string
+      id:
+        description: 主键
+        type: string
+      menuId:
+        description: 菜单ID
+        type: string
+      menuName:
+        description: MenuPolicy     string                  `json:"-"`                                  //模块名称
+        type: string
+      name:
+        description: 权限名称
+        type: string
+      operation:
+        description: 操作
+        type: string
+      parentId:
+        description: 父ID
+        type: string
+      permissionGroup:
+        description: 权限组
+        type: string
+      policy:
+        description: 权限策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      typeCode:
+        description: 类型
+        type: string
+    required:
+    - menuId
+    - name
+    - permissionGroup
+    - policy
+    type: object
+  model.AuthRoleDto:
+    properties:
+      id:
+        description: 主键
+        type: string
+      isDisable:
+        description: 是否停用
+        type: boolean
+      name:
+        description: 角色名称
+        type: string
+      remark:
+        description: 菜单策略
+        type: string
+    required:
+    - name
+    type: object
+  model.AuthRoleListDto:
+    properties:
+      id:
+        description: 主键
+        type: string
+      isDisable:
+        description: 是否停用
+        type: boolean
+      name:
+        description: 角色名称
+        type: string
+      operation:
+        description: 操作
+        type: string
+      remark:
+        description: 菜单策略
+        type: string
+    required:
+    - name
+    type: object
+  model.CreateAuthMenuDto:
+    properties:
+      code:
+        description: 菜单编码
+        type: string
+      icon:
+        description: 图标
+        type: string
+      isBranch:
+        description: 是否是容器
+        type: boolean
+      isHidden:
+        description: 是否隐藏
+        type: boolean
+      moduleId:
+        description: 模块ID
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      parentId:
+        description: 父菜单ID
+        type: string
+      path:
+        description: 内部路径
+        type: string
+      policy:
+        description: 菜单策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      url:
+        description: 外部路径
+        type: string
+    required:
+    - moduleId
+    - name
+    type: object
+  model.CreateAuthModuleDto:
+    properties:
+      code:
+        description: 模块编码
+        type: string
+      name:
+        description: 模块名称
+        type: string
+      rank:
+        description: 排序
+        type: integer
+    required:
+    - code
+    - name
+    type: object
+  model.CreateAuthPermissionDto:
+    properties:
+      code:
+        description: 权限编码
+        type: string
+      menuId:
+        description: 菜单ID
+        type: string
+      name:
+        description: 权限名称
+        type: string
+      permissionGroup:
+        description: 权限组
+        type: string
+      policy:
+        description: 权限策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+    required:
+    - menuId
+    - name
+    - permissionGroup
+    - policy
+    type: object
+  model.CreateAuthRoleDto:
+    properties:
+      isDisable:
+        description: 是否停用
+        type: boolean
+      name:
+        description: 角色名称
+        type: string
+      remark:
+        description: 菜单策略
+        type: string
+    required:
+    - name
+    type: object
+  model.CreateSystemUserDto:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      headImgUrl:
+        description: 头像
+        type: string
+      loginName:
+        description: 登录名
+        type: string
+      password:
+        description: 密码
+        type: string
+      userName:
+        description: 用户名
+        type: string
+    required:
+    - loginName
+    - password
+    - userName
+    type: object
+  model.CreateTenantDto:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - code
+    - name
+    - password
+    type: object
+  model.SystemUserDto:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      headImgUrl:
+        description: 头像
+        type: string
+      id:
+        description: 主键
+        type: string
+      loginName:
+        description: 登录名
+        type: string
+      password:
+        description: 密码
+        type: string
+      status:
+        description: 状态
+        type: string
+      userName:
+        description: 用户名
+        type: string
+    required:
+    - loginName
+    - password
+    - userName
+    type: object
+  model.SystemUserInfoDto:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      headImgLink:
+        description: 头像连接
+        type: string
+      headImgUrl:
+        description: 头像URL
+        type: string
+      id:
+        type: string
+      isTenantAdmin:
+        description: 是否是超级管理员
+        type: boolean
+      loginName:
+        description: 登录名
+        type: string
+      mobile:
+        description: 手机号码
+        type: string
+      roleId:
+        description: 角色ID
+        type: string
+      roleName:
+        description: 角色名称
+        type: string
+      sex:
+        description: 性别
+        type: string
+      status:
+        description: 状态
+        type: string
+      userName:
+        description: 用户名称
+        type: string
+    type: object
+  model.SystemUserListDto:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      headImgUrl:
+        description: 头像
+        type: string
+      id:
+        description: 主键
+        type: string
+      loginName:
+        description: 登录名
+        type: string
+      operation:
+        description: 操作
+        type: string
+      password:
+        description: 密码
+        type: string
+      status:
+        description: 状态
+        type: string
+      statusName:
+        description: 状态
+        type: string
+      userName:
+        description: 用户名
+        type: string
+    required:
+    - loginName
+    - password
+    - userName
+    type: object
+  model.UpdateAuthMenuDto:
+    properties:
+      code:
+        description: 菜单编码
+        type: string
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: id
+        type: string
+      isBranch:
+        description: 是否是容器
+        type: boolean
+      isHidden:
+        description: 是否隐藏
+        type: boolean
+      moduleId:
+        description: 模块ID
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      parentId:
+        description: 父菜单ID
+        type: string
+      path:
+        description: 内部路径
+        type: string
+      policy:
+        description: 菜单策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      url:
+        description: 外部路径
+        type: string
+    required:
+    - id
+    - moduleId
+    - name
+    type: object
+  model.UpdateAuthModuleDto:
+    properties:
+      code:
+        description: 模块编码
+        type: string
+      id:
+        description: id
+        type: string
+      name:
+        description: 模块名称
+        type: string
+      rank:
+        description: 排序
+        type: integer
+    required:
+    - code
+    - id
+    - name
+    type: object
+  model.UpdateAuthPermissionDto:
+    properties:
+      code:
+        description: 权限编码
+        type: string
+      id:
+        description: id
+        type: string
+      menuId:
+        description: 菜单ID
+        type: string
+      name:
+        description: 权限名称
+        type: string
+      permissionGroup:
+        description: 权限组
+        type: string
+      policy:
+        description: 权限策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+    required:
+    - id
+    - menuId
+    - name
+    - permissionGroup
+    - policy
+    type: object
+  model.UpdateAuthRoleDto:
+    properties:
+      id:
+        description: id
+        type: string
+      isDisable:
+        description: 是否停用
+        type: boolean
+      name:
+        description: 角色名称
+        type: string
+      remark:
+        description: 菜单策略
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  model.UpdateSystemUserDto:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      headImgUrl:
+        description: 头像
+        type: string
+      id:
+        description: 用户id
+        type: string
+      loginName:
+        description: 登录名
+        type: string
+      password:
+        description: 密码
+        type: string
+      surePassword:
+        description: 确认密码
+        type: string
+      userName:
+        description: 用户名
+        type: string
+    required:
+    - id
+    - loginName
+    - password
+    - surePassword
+    - userName
+    type: object
+  model.UpdateSystemUserPasswordDto:
+    properties:
+      id:
+        type: string
+      newPassword:
+        description: 新密码
+        type: string
+      password:
+        description: 原始密码
+        type: string
+      surePassword:
+        description: 确认密码
+        type: string
+    required:
+    - surePassword
+    type: object
+  model.UserGrantedMenuDto:
+    properties:
+      children:
+        description: 子菜单
+        items:
+          $ref: '#/definitions/model.UserGrantedMenuDto'
+        type: array
+      code:
+        description: 菜单编码
+        type: string
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: id
+        type: string
+      isBranch:
+        description: 是否是容器
+        type: boolean
+      isHidden:
+        description: 是否隐藏
+        type: boolean
+      moduleId:
+        description: 模块ID
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      parentId:
+        description: 父菜单ID
+        type: string
+      path:
+        description: 内部路径
+        type: string
+      policy:
+        description: 菜单策略
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      url:
+        description: 外部路径
+        type: string
+    required:
+    - moduleId
+    - name
+    type: object
+host: 127.0.0.1:30001
+info:
+  contact:
+    email: ×××@qq.com
+    name: API Support
+    url: http://www.pddkf.cn
+  description: Golang api of demo
+  termsOfService: http://github.com
+  title: HSF Project API
+  version: "1.0"
+paths:
+  /api/app/auth/logOut:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 退出登录
+      tags:
+      - Auth
+  /api/app/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 登录服务
+      parameters:
+      - description: 登录参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginTokenResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 登录
+      tags:
+      - Auth
+  /api/app/authModule/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAuthModuleDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthModuleDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建服务模块
+      tags:
+      - AuthModule
+  /api/app/authModule/delete:
+    delete:
+      parameters:
+      - description: 模块ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除服务模块
+      tags:
+      - AuthModule
+  /api/app/authModule/get:
+    get:
+      consumes:
+      - multipart/form-data
+      description: id和code必须传一个
+      parameters:
+      - description: 模块ID
+        in: query
+        name: id
+        type: string
+      - description: 模块编码
+        in: query
+        name: code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthModuleDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 根据模块ID或者模块编码查询模块
+      tags:
+      - AuthModule
+  /api/app/authModule/list:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: formData
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: formData
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: formData
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: formData
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: formData
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SystemUserListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询模块列表
+      tags:
+      - AuthModule
+  /api/app/authModule/update:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAuthModuleDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改服务模块
+      tags:
+      - AuthModule
+  /api/app/authRole/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAuthRoleDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthRoleDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建角色
+      tags:
+      - AuthRole
+  /api/app/authRole/delete:
+    delete:
+      parameters:
+      - description: 模块ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除角色
+      tags:
+      - AuthRole
+  /api/app/authRole/get:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthRoleDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 根据ID查询角色
+      tags:
+      - AuthRole
+  /api/app/authRole/list:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: formData
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: formData
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: formData
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: formData
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: formData
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AuthRoleListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询角色列表
+      tags:
+      - AuthRole
+  /api/app/authRole/update:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAuthRoleDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改角色
+      tags:
+      - AuthRole
+  /api/app/authenticateChecker/grantedMenus:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserGrantedMenuDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询当前用户已授权的菜单
+      tags:
+      - AuthChecker
+  /api/app/menu/get:
+    get:
+      consumes:
+      - multipart/form-data
+      description: id
+      parameters:
+      - description: 菜单ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthMenuDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 根据ID查询菜单
+      tags:
+      - AuthMenu
+  /api/app/menu/menu:
+    delete:
+      description: 删除菜单，同时删除菜单下的操作权限
+      parameters:
+      - description: 菜单ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除菜单
+      tags:
+      - AuthMenu
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAuthMenuDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthMenuDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建菜单
+      tags:
+      - AuthMenu
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAuthMenuDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改菜单
+      tags:
+      - AuthMenu
+  /api/app/menu/menuList:
+    get:
+      consumes:
+      - multipart/form-data
+      description: id
+      parameters:
+      - description: 菜单类型
+        in: query
+        name: menuType
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AuthMenuDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 根据菜单类型查询菜单
+      tags:
+      - AuthMenu
+  /api/app/menu/menusList:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: formData
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: formData
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: formData
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: formData
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: formData
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AuthMenuListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 菜单列表
+      tags:
+      - AuthMenu
+  /api/app/permission/data:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: formData
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: formData
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: formData
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: formData
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: formData
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AuthPermissionListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 操作权限列表
+      tags:
+      - AuthPermission
+  /api/app/permission/get:
+    get:
+      consumes:
+      - multipart/form-data
+      description: id
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthPermissionDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 根据ID查询
+      tags:
+      - AuthPermission
+  /api/app/permission/permission:
+    delete:
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除操作权限
+      tags:
+      - AuthPermission
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAuthPermissionDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthPermissionDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建操作权限
+      tags:
+      - AuthPermission
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAuthPermissionDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改操作权限
+      tags:
+      - AuthPermission
+  /api/app/permission/permissionGroup:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.KeyAndValueDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 获取所有的操作权限组
+      tags:
+      - AuthPermission
+  /api/app/sysUser/defaultAvatar:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 获取默认头像
+      tags:
+      - SystemUser
+  /api/app/sysUser/editSysUser:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateSystemUserDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改用户
+      tags:
+      - SystemUser
+  /api/app/sysUser/editUserPassword:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateSystemUserPasswordDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改用户密码
+      tags:
+      - SystemUser
+  /api/app/sysUser/get:
+    get:
+      consumes:
+      - multipart/form-data
+      description: id和loginName必须传一个值
+      parameters:
+      - description: 用户ID
+        in: query
+        name: id
+        type: string
+      - description: 用户登录名
+        in: query
+        name: loginName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemUserDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 根据用户ID或者登陆名查询用户信息
+      tags:
+      - SystemUser
+  /api/app/sysUser/sysUser:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSystemUserDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemUserDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建系统用户接口
+      tags:
+      - SystemUser
+  /api/app/sysUser/sysUserList:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: formData
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: formData
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: formData
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: formData
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: formData
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SystemUserListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询用户列表
+      tags:
+      - SystemUser
+  /api/app/sysUser/sysUserStatus:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BaseDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 启用/停用用户
+      tags:
+      - SystemUser
+  /api/app/sysUser/user:
+    delete:
+      parameters:
+      - description: 用户ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除用户
+      tags:
+      - SystemUser
+  /api/app/sysUser/userInfo:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemUserInfoDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询当前用户信息
+      tags:
+      - SystemUser
+  /api/app/tenant/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTenantDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.CreateTenantDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建租户
+      tags:
+      - Tenant
+swagger: "2.0"

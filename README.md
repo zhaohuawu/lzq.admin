@@ -8,10 +8,10 @@ Golang语言实现的SaaS系统，项目基于gin、xorm、jwt、vue实现的前
 
 
 #### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+##### ui界面
+1. npm install
+2.如果报node-sass错误，则执行npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass
+2. npm run dev 
 
 #### 使用说明
 
