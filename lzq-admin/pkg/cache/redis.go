@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	jsoniter "github.com/json-iterator/go"
 	"lzq-admin/config"
 	"lzq-admin/middleware"
 	"lzq-admin/pkg/hsflogger"
@@ -19,10 +20,10 @@ import (
 )
 
 // RedisClient Redis缓存客户端单例
-var RedisClient *redis.Client
+var redisClient *redis.Client
 var ctx = context.Background()
 
-func Redis() {
+func init() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     config.Config.RedisConfig.RedisHost,
 		Password: config.Config.RedisConfig.RedisPwd,
@@ -32,7 +33,7 @@ func Redis() {
 		hsflogger.LogError("", err)
 		panic(err)
 	}
-	RedisClient = client
+	redisClient = client
 }
 
 type redisUtil struct{}
@@ -46,7 +47,7 @@ func normalizeKey(key string) string {
 	}
 	nKey := key
 	// 租户ID
-	if len(middleware.TokenClaims.TenantId) > 0 {
+	if config.Config.ServerConfig.UseMultiTenancy && len(middleware.TokenClaims.TenantId) > 0 {
 		nKey = fmt.Sprintf("%v:%v", middleware.TokenClaims.TenantId, nKey)
 	}
 	// 缓存池
@@ -60,65 +61,76 @@ func GetDefaultExpiresAt(expiration time.Duration) time.Duration {
 	if expiration <= 0 {
 		return time.Duration(24*60*60+rand.Intn(60)) * time.Second
 	} else {
-		return expiration * time.Second
+		return expiration
 	}
 }
 
-func (*redisUtil) Get(key string) string {
-	val, err := RedisClient.Get(ctx, normalizeKey(key)).Result()
+func (r *redisUtil) Get(key string) string {
+	val, err := redisClient.Get(ctx, normalizeKey(key)).Result()
 	if err != nil {
 		return ""
 	}
 	return val
 }
 
-func (*redisUtil) SetEx(key string, value string, expiration time.Duration) {
-	err := RedisClient.SetEX(ctx, normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err()
+func (r *redisUtil) SetEx(key string, value string, expiration time.Duration) {
+	err := redisClient.SetEX(ctx, normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (*redisUtil) Delete(key string) {
-	RedisClient.Del(ctx, normalizeKey(key))
+func (r *redisUtil) Delete(key string) {
+	redisClient.Del(ctx, normalizeKey(key))
 }
 
-func (*redisUtil) Keys(pattern string) []string {
-	val, err := RedisClient.Keys(ctx, pattern).Result()
+func (r *redisUtil) Keys(pattern string) []string {
+	val, err := redisClient.Keys(ctx, pattern).Result()
 	if err != nil {
 		return []string{}
 	}
 	return val
 }
 
-func (*redisUtil) MultiGet(keys []string) []interface{} {
+func (r *redisUtil) MultiGet(keys []string) []interface{} {
 	keyNs := make([]string, 0)
 	for _, v := range keys {
 		keyNs = append(keyNs, normalizeKey(v))
 	}
-	val, err := RedisClient.MGet(ctx, keyNs...).Result()
+	val, err := redisClient.MGet(ctx, keyNs...).Result()
 	if err != nil {
 		return []interface{}{}
 	}
 	return val
 }
 
-func (*redisUtil) MultiDelete(keys []string) {
+func (r *redisUtil) MultiDelete(keys []string) {
 	keyNs := make([]string, 0)
 	for _, v := range keys {
 		keyNs = append(keyNs, normalizeKey(v))
 	}
-	RedisClient.Del(ctx, keyNs...)
+	redisClient.Del(ctx, keyNs...)
 }
 
-func (*redisUtil) Set(key string, value string, expiration time.Duration) {
-	if err := RedisClient.Set(ctx, normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err(); err != nil {
+func (r *redisUtil) SetString(key string, value string, expiration time.Duration) {
+	if err := redisClient.Set(ctx, normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err(); err != nil {
 		panic(err)
 	}
 }
+func (r *redisUtil) SetInterface(key string, value interface{}, expiration time.Duration) {
+	defaultExpiresAt := GetDefaultExpiresAt(expiration)
+	fmt.Println("defaultExpiresAt：" + defaultExpiresAt.String())
+	if err := redisClient.Set(ctx, normalizeKey(key), value, defaultExpiresAt).Err(); err != nil {
+		panic(err)
+	}
+}
+func (r *redisUtil) SetInterfaceArray(key string, value interface{}, expiration time.Duration) {
+	jsonString, _ := jsoniter.MarshalToString(value)
+	r.SetString(key, jsonString, expiration)
+}
 
-func (*redisUtil) IncrBy(key string, increment int64) int64 {
-	val, err := RedisClient.IncrBy(ctx, normalizeKey(key), increment).Result()
+func (r *redisUtil) IncrBy(key string, increment int64) int64 {
+	val, err := redisClient.IncrBy(ctx, normalizeKey(key), increment).Result()
 	if err != nil {
 		panic(err)
 	}

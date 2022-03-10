@@ -5,13 +5,13 @@
       <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
+      <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
         新增
       </el-button>
     </div>
     <OperateTable
       size="medium"
-      :is-selection="false"
+      :is-selection="true"
       :is-index="false"
       :is-border="false"
       :is-handle="true"
@@ -80,7 +80,7 @@
         </el-tree>
         <div class="n-drawer-footer">
           <el-button @click="dialogRolePermissionVisible=false">取 消</el-button>
-          <el-button type="primary" :loading="loading" @click="confirmRole">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+          <el-button type="primary" :loading="listLoading" @click="confirmRole">{{ listLoading ? '提交中 ...' : '确 定' }}</el-button>
         </div>
       </div>
     </el-drawer>
@@ -124,17 +124,20 @@ import { fetchList,
 import { deleteuserDatePrivilege } from '@/api/authorize'
 import OperateTable from '@/components/OperateTable'
 import Pagination from '@/components/Pagination'
+import store from '@/store'
 
+var isCloseTag = (store.getters.superAdmin || store.getters.permissions.indexOf('Authorization.RoleList:Operation.DataPrivilege') > -1)
 export default {
   name: 'RoleList',
   components: { OperateTable, Pagination },
   data() {
     return {
-      list: null,
+      list: [],
+      isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Authorization.RoleList:Operation.Create') > -1),
       tableCols: [
         { label: '状态', prop: 'roleStatusText', align: 'center', width: '60', key: 'id' },
         { label: '角色名称', prop: 'name', align: 'center', width: '100' },
-        { label: '已授权用户', prop: 'haveAuthorizeUser', type: 'Tag', showProp: 'loginName', align: 'center' },
+        { label: '已授权用户', prop: 'haveAuthorizeUser', type: isCloseTag === true ? 'TagWithClosable' : 'Tag', showProp: 'loginName', align: 'center' },
         { label: '描述', prop: 'description', align: 'center', width: '200' },
         { label: '操作', type: 'Button', prop: 'operation', width: '200' }
       ],
@@ -179,6 +182,7 @@ export default {
         label: 'name'
       },
       permissionList: []
+    
     }
   },
   created() {

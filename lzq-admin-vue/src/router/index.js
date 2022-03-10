@@ -149,8 +149,8 @@ export const componentsMap = {
   Authorization_PermissionList: () => import('@/views/authorization/permission-list'),
   Authorization_RoleList: () => import('@/views/authorization/role-list'),
   Infrastructure_Icon: () => import('@/views/icons/index'),
-  Infrastructure_SysUserList: () => import('@/views/sysuser/sysuser-list'),
-  Workflow_ProcessSettings: () => import('@/views/workflow/approvaltype-list')
+  Infrastructure_SysUserList: () => import('@/views/sysuser/sysuser-list')
+  // Workflow_ProcessSettings: () => import('@/views/workflow/approvaltype-list')
 }
 
 const createRouter = () => new Router({

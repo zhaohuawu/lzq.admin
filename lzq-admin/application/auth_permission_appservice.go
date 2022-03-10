@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/gin-gonic/gin"
-	"github.com/json-iterator/go"
 	"lzq-admin/domain/domainconsts"
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/dto"
@@ -220,7 +219,7 @@ func (app *authPermissionAppService) GetList(c *gin.Context) {
 					if v.ID == pv.MenuId {
 						pv.ActualPolicy = v.Policy + ":" + pv.Policy
 						pv.PermissionGroupText = domainconsts.GetConstFlag(pv.PermissionGroup, domainconsts.PermissionGroupConstFlags)
-						pv.Operation, _ = jsoniter.MarshalToString(operations)
+						pv.Operation = operations
 						ipChildres = append(ipChildres, pv)
 					} else {
 						npChildres = append(npChildres, pv)

@@ -3,7 +3,6 @@ package application
 import (
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/gin-gonic/gin"
-	"github.com/json-iterator/go"
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/dto"
 	"lzq-admin/domain/model"
@@ -161,7 +160,7 @@ func (app *authMenuAppService) GetList(c *gin.Context) {
 	var pMenus = make([]model.AuthMenuListDto, 0)
 	var cMenus = make([]model.AuthMenuListDto, 0)
 	for _, v := range result {
-		v.Operation, _ = jsoniter.MarshalToString(operation)
+		v.Operation = operation
 		if len(v.ParentId) == 0 {
 			pMenus = append(pMenus, v)
 		} else {

@@ -302,3 +302,12 @@ func GetOptionFields(obj interface{}, omitFields ...string) ([]string, error) {
 	}
 	return fieldNames, nil
 }
+
+func ConditionWithDeletedOrTenantId(useMultiTenancy bool, condition, tAlias string) string {
+	condition = fmt.Sprintf("%v and %v.IsDeleted=%v", condition, tAlias, 0)
+	useMultiTenancy = getUseMultiTenancy(useMultiTenancy)
+	if useMultiTenancy {
+		condition = fmt.Sprintf("%v and %v.TenantId=%v", condition, tAlias, middleware.TokenClaims.TenantId)
+	}
+	return condition
+}

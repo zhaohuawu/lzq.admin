@@ -9,13 +9,6 @@ export function login(data) {
   })
 }
 
-export function getMenuRouterList() {
-  return request({
-    url: '/api/app/authenticateChecker/grantedMenus',
-    method: 'get'
-  })
-}
-
 export function getInfo() {
   return request({
     url: '/api/app/sysUser/userInfo',

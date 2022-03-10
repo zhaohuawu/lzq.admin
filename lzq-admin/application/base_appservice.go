@@ -12,6 +12,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/goinggo/mapstructure"
+	jsoniter "github.com/json-iterator/go"
+	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/dto"
 	"lzq-admin/pkg/hsflogger"
 	"lzq-admin/pkg/utility"
@@ -279,7 +281,17 @@ func ResponseError(c *gin.Context, err error) {
 	return
 }
 
-func GetCurrentUserGrantedOperation(operations []dto.OperationDto) []dto.OperationDto {
-	//userId:=middleware.TokenClaims.Id
-	return operations
+func GetCurrentUserGrantedOperation(operations []dto.OperationDto, isPermissionChecking ...bool) string {
+	result := make([]dto.OperationDto, 0)
+	if len(isPermissionChecking) > 0 && !isPermissionChecking[0] {
+		result = append(result, operations...)
+	} else {
+		for _, v := range operations {
+			if isGranted := domainservice.CurrentUserPermissionChecker.IsGranted(v.Policy); isGranted {
+				result = append(result, v)
+			}
+		}
+	}
+	json, _ := jsoniter.MarshalToString(result)
+	return json
 }

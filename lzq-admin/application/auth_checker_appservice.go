@@ -1,9 +1,14 @@
 package application
 
 import (
+	"encoding/json"
+	"errors"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/gin-gonic/gin"
+	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/model"
+	"lzq-admin/middleware"
+	"lzq-admin/pkg/cache"
 	"lzq-admin/pkg/orm"
 	"sort"
 )
@@ -29,7 +34,16 @@ var IAuthCheckerAppService = authCheckerAppService{}
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/authenticateChecker/grantedMenus [GET]
 func (app *authCheckerAppService) GetGrantedMenus(c *gin.Context) {
-	//userId := middleware.TokenClaims.Id
+	userId := middleware.TokenClaims.Id
+	result := make([]model.UserGrantedMenuDto, 0)
+
+	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedMenusCacheKey(userId)
+	cacheJson := cache.RedisUtil.Get(cacheKey)
+	if cacheJson != "" {
+		_ = json.Unmarshal([]byte(cacheJson), &result)
+		app.ResponseSuccess(c, result)
+		return
+	}
 	var menus = make([]model.UserGrantedMenuDto, 0)
 	dbSession := orm.QSession(false, "menu").
 		Table(model.TableAuthMenu).Alias("menu").
@@ -39,14 +53,30 @@ func (app *authCheckerAppService) GetGrantedMenus(c *gin.Context) {
 		app.ResponseError(c, err)
 		return
 	}
-
 	pMenus := make([]model.UserGrantedMenuDto, 0)
 	linq.From(menus).WhereT(func(s model.UserGrantedMenuDto) bool {
 		return s.IsBranch && len(s.ParentId) == 0
 	}).ToSlice(&pMenus)
 
-	result := grantedMenuTree(pMenus, menus)
-
+	if isSuperAdmin, err := domainservice.SystemUserDomainService.IsSuperAdmin(userId); err != nil {
+		app.ResponseError(c, err)
+		return
+	} else if isSuperAdmin {
+		result = grantedMenuTree(pMenus, menus)
+	} else {
+		rightMenus := make([]model.UserGrantedMenuDto, 0)
+		for _, m := range menus {
+			if len(m.Policy) > 0 {
+				if isGranted := domainservice.CurrentUserPermissionChecker.IsGranted(m.Policy); isGranted {
+					rightMenus = append(rightMenus, m)
+				}
+			} else {
+				rightMenus = append(rightMenus, m)
+			}
+		}
+		result = grantedMenuTree(pMenus, rightMenus)
+	}
+	cache.RedisUtil.SetInterfaceArray(cacheKey, result, 0)
 	app.ResponseSuccess(c, result)
 }
 func grantedMenuTree(parentMenus []model.UserGrantedMenuDto, menus []model.UserGrantedMenuDto) []model.UserGrantedMenuDto {
@@ -54,6 +84,7 @@ func grantedMenuTree(parentMenus []model.UserGrantedMenuDto, menus []model.UserG
 	sort.SliceStable(parentMenus, func(i int, j int) bool {
 		return parentMenus[i].Rank < parentMenus[j].Rank
 	})
+	pMenus := make([]model.UserGrantedMenuDto, 0)
 	for i := 0; i < len(parentMenus); i++ {
 		cMenus := make([]model.UserGrantedMenuDto, 0)
 		linq.From(menus).WhereT(func(s model.UserGrantedMenuDto) bool {
@@ -62,6 +93,70 @@ func grantedMenuTree(parentMenus []model.UserGrantedMenuDto, menus []model.UserG
 		if len(cMenus) > 0 {
 			parentMenus[i].Children = grantedMenuTree(cMenus, menus)
 		}
+
+		if parentMenus[i].IsBranch && len(parentMenus[i].Children) > 0 {
+			pMenus = append(pMenus, parentMenus[i])
+		}
+		if !parentMenus[i].IsBranch {
+			pMenus = append(pMenus, parentMenus[i])
+		}
 	}
-	return parentMenus
+	return pMenus
+}
+
+// GetCurrentUserGrantedPermissions doc
+// @Summary 查询当前用户所授权的操作权限
+// @Tags AuthChecker
+// @Description
+// @Produce  json
+// @Success 200 {array} string " "
+// @Failure 500 {object} ResponseDto
+// @Router /api/app/permissionChecker/grantedPermissions [GET]
+func (app *authCheckerAppService) GetCurrentUserGrantedPermissions(c *gin.Context) {
+	if permissions, err := domainservice.AuthCheckerDomainService.GetUserGrantedPermissions(middleware.TokenClaims.Id); err != nil {
+		app.ResponseError(c, err)
+		return
+	} else {
+		app.ResponseSuccess(c, permissions)
+	}
+}
+// DeleteUserRole doc
+// @Summary 删除用户数据授权
+// @Tags AuthChecker
+// @Description
+// @Accept mpfd
+// @Produce  json
+// @Param userDataPrivilegeId query string true “用户数据授权ID”
+// @Success 200 {object} bool “ ”
+// @Failure 500 {object} ResponseDto
+// @Router /api/app/authorize/userRole [DELETE]
+func (app *authCheckerAppService) DeleteUserRole(c *gin.Context) {
+	userDataPrivilegeId := c.Query("userDataPrivilegeId")
+	var dataPrivilege model.AuthUserDataPrivilege
+	if has, err := orm.QSession(true).ID(userDataPrivilegeId).Get(&dataPrivilege); err != nil {
+		app.ResponseError(c, err)
+		return
+	} else if !has {
+		app.ResponseError(c, errors.New("该角色没有授权给该用户"))
+		return
+	}
+	if isSuperAdmin, err := domainservice.SystemUserDomainService.IsSuperAdmin(dataPrivilege.UserId); err != nil {
+		app.ResponseError(c, err)
+		return
+	} else if isSuperAdmin {
+		app.ResponseError(c, errors.New("管理员账号不能进行更换角色"))
+		return
+	}
+	num, err := orm.DSession(true).ID(userDataPrivilegeId).Update(&model.AuthUserDataPrivilege{})
+	if err != nil {
+		app.ResponseError(c, err)
+		return
+	}
+	if num <= 0 {
+		app.ResponseError(c, errors.New("删除失败"))
+		return
+	}
+	domainservice.AuthPrivilegeCacheService.DeleteFunctionPrivilegeCache()
+	domainservice.AuthPrivilegeCacheService.DeleteDataPrivilegeCache()
+	app.ResponseSuccess(c, true)
 }

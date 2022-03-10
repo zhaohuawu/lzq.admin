@@ -61,3 +61,4 @@ func (s *authPermissionDomainService) Get(id string) (model.AuthPermissionDto, e
 		return dto, errors.New("操作权限不存在或已删除")
 	}
 }
+

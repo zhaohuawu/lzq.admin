@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/gin-gonic/gin"
-	jsoniter "github.com/json-iterator/go"
 	"lzq-admin/domain/domainconsts"
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/dto"
@@ -13,6 +12,7 @@ import (
 	"lzq-admin/pkg/orm"
 	"sort"
 	"strings"
+	"sync"
 )
 
 /**
@@ -23,6 +23,7 @@ import (
 
 type authRoleAppService struct {
 	BaseAppService
+	wg sync.WaitGroup
 }
 
 var IAuthRoleAppService = authRoleAppService{}
@@ -207,7 +208,7 @@ func (app *authRoleAppService) GetList(c *gin.Context) {
 			}
 			operations = append(operations, dto.GetOperationButton("Delete", "删除", "Infrastructure.Role:Operation.Delete"))
 		}
-		result[i].Operation, _ = jsoniter.MarshalToString(operations)
+		result[i].Operation = GetCurrentUserGrantedOperation(operations)
 	}
 
 	resultDto.Data = result
@@ -279,7 +280,7 @@ func (app *authRoleAppService) GetEnanleRoles(c *gin.Context) {
 	app.ResponseSuccess(c, result)
 }
 
-// GetRolePermissionDatasAsync doc
+// GetRolePermissionDatas doc
 // @Summary 获取角色授权的操作权限
 // @Tags AuthRole
 // @Description
@@ -289,7 +290,7 @@ func (app *authRoleAppService) GetEnanleRoles(c *gin.Context) {
 // @Success 200 {array} dto.RolePermissionTree “ ”
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/authorize/rolePermissionDatas/{roleId} [GET]
-func (app *authRoleAppService) GetRolePermissionDatasAsync(c *gin.Context) {
+func (app *authRoleAppService) GetRolePermissionDatas(c *gin.Context) {
 	roleId := c.Param("roleId")
 	var permissions = make([]dto.RolePermissionTree, 0)
 	dbSession := orm.QSession(false, "p").Table(model.TableAuthPermission).Alias("p").
@@ -343,7 +344,7 @@ func rolePermissionTree(parentId string, menus []dto.RolePermissionTree, permiss
 	return childrens
 }
 
-func (app *authRoleAppService) GrantPermissionsAsync(c *gin.Context) {
+func (app *authRoleAppService) GrantPermissions(c *gin.Context) {
 	var inputDto []model.CreateAuthRolePermissionDto
 	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		app.ResponseError(c, err)
@@ -353,5 +354,19 @@ func (app *authRoleAppService) GrantPermissionsAsync(c *gin.Context) {
 		app.ResponseError(c, err)
 		return
 	}
+	app.wg.Add(2)
+	go func() {
+		domainservice.AuthPrivilegeCacheService.DeleteFunctionPrivilegeCache()
+		app.wg.Done()
+	}()
+	go func() {
+		roleIds := make([]string, 0)
+		linq.From(inputDto).SelectT(func(w model.CreateAuthRolePermissionDto) string {
+			return w.RoleId
+		}).Distinct().ToSlice(&roleIds)
+		domainservice.AuthPrivilegeCacheService.DeleteRoleGrantedPermissionsCache(roleIds)
+		app.wg.Done()
+	}()
+	app.wg.Wait()
 	app.ResponseSuccess(c, true)
 }

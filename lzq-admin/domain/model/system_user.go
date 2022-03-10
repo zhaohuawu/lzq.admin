@@ -30,7 +30,7 @@ type SystemUserBase struct {
 	HeadImgURL    string    `json:"headImgUrl" xorm:"varchar(200) comment('头像')"`                                  //头像
 	Sex           string    `json:"sex" xorm:"varchar(200) comment('性别')"`                                         //性别
 	Mobile        string    `json:"mobile" xorm:"varchar(200) comment('手机号码')"`                                    //手机号码
-	IsTenantAdmin bool      `json:"isTenantAdmin" xorm:"bool default(0) comment('是否是超级管理员')"`                      //是否是超级管理员
+	IsTenantAdmin bool      `json:"isTenantAdmin" xorm:"bool default(0) comment('是否是租户管理员')"`                      //是否是超级管理员
 }
 
 type CreateSystemUserDto struct {
@@ -64,8 +64,9 @@ type SystemUserInfoDto struct {
 	Sex           string `json:"sex"`           //性别
 	Mobile        string `json:"mobile"`        //手机号码
 	Email         string `json:"email"`         //邮箱
-	IsTenantAdmin bool   `json:"isTenantAdmin"` //是否是超级管理员
+	IsTenantAdmin bool   `json:"isTenantAdmin"` //是否是租户管理员
 	ID            string `json:"id"`
+	SuperAdmin    bool   `json:"superAdmin"` //是否是超级管理员
 }
 
 type SystemUserListDto struct {

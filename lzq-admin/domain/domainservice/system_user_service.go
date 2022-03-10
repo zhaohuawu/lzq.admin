@@ -7,10 +7,13 @@ package domainservice
  */
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"lzq-admin/domain/domainconsts"
 	"lzq-admin/domain/model"
+	"lzq-admin/pkg/cache"
 	"lzq-admin/pkg/orm"
 	"lzq-admin/pkg/utility"
 )
@@ -117,7 +120,8 @@ func (u *systemUserDomainService) Update(inputDto model.UpdateSystemUserDto) (mo
 	} else if updateNum < 1 {
 		return model.SystemUser{}, errors.New("修改失败")
 	}
-
+	// 清除用户详情缓存
+	u.RemoveUserInfoById(inputDto.ID)
 	return uEntity, nil
 }
 
@@ -140,4 +144,60 @@ func (u *systemUserDomainService) Get(m *model.SystemUser, id, loginName string)
 	} else {
 		return errors.New("账号不存在")
 	}
+}
+
+func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserInfoDto, error) {
+	key := fmt.Sprintf("%v:%v", cache.LzqCacheHelper.GetCacheVersion(cache.LzqCacheTypeSysUser), userId)
+	userJson := cache.RedisUtil.Get(key)
+	var userInfo model.SystemUserInfoDto
+	if userJson != "" {
+		_ = json.Unmarshal([]byte(userJson), &userInfo)
+		return userInfo, nil
+	}
+	var user model.SystemUser
+	if err := u.Get(&user, userId, ""); err != nil {
+		return userInfo, err
+	}
+	userInfo = model.SystemUserInfoDto{
+		RoleID:        "",
+		RoleName:      "",
+		Status:        user.Status,
+		LoginName:     user.LoginName,
+		UserName:      user.UserName,
+		HeadImgURL:    user.HeadImgURL,
+		HeadImgLink:   user.HeadImgURL,
+		Sex:           user.Sex,
+		Mobile:        user.Mobile,
+		Email:         user.Email,
+		IsTenantAdmin: user.IsTenantAdmin,
+		ID:            user.ID,
+	}
+
+	v, isHave := user.ExtraProperties["SuperAdmin"]
+	userInfo.SuperAdmin = isHave && v.(bool)
+
+	userInfoJson, _ := json.Marshal(userInfo)
+	cache.RedisUtil.SetInterface(key, userInfoJson, 0)
+	return userInfo, nil
+}
+
+func (u *systemUserDomainService) IsTenantAdmin(userId string) (bool, error) {
+	if userInfo, err := SystemUserDomainService.GetUserInfo(userId); err != nil {
+		return false, err
+	} else {
+		return userInfo.IsTenantAdmin, nil
+	}
+}
+
+func (u *systemUserDomainService) IsSuperAdmin(userId string) (bool, error) {
+	if userInfo, err := SystemUserDomainService.GetUserInfo(userId); err != nil {
+		return false, err
+	} else {
+		return userInfo.SuperAdmin, nil
+	}
+}
+
+func (u *systemUserDomainService) RemoveUserInfoById(userId string) {
+	key := fmt.Sprintf("%v:%v", cache.LzqCacheHelper.GetCacheVersion(cache.LzqCacheTypeSysUser), userId)
+	cache.RedisUtil.Delete(key)
 }

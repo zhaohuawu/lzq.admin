@@ -62,8 +62,8 @@ func (s *authRolePermissionDomainService) Insert(modelDtoes []model.CreateAuthRo
 		dbSession.Rollback()
 		return nil, err
 	}
+	s.wg.Add(1)
 	go func() {
-		s.wg.Add(1)
 		if len(iEntities) > 0 {
 			if _, err := dbSession.Insert(&iEntities); err != nil {
 				dbSession.Rollback()

@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
+      <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
         新增
       </el-button>
     </div>
@@ -50,7 +50,7 @@
           <el-col :span="2" />
           <el-col :span="11">
             <el-form-item label="排序" prop="rank">
-              <el-input-number v-model="temp.rank" :min="0" />
+              <el-input-number v-model="temp.rank" :min="0" :step="0.5" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -101,13 +101,15 @@ import { fetchList, getPermissionGroupList, createPermission, updatePermission, 
 import { getMenuList } from '@/api/menu'
 import TreeTable from '@/components/TreeTable'
 // import Pagination from '@/components/Pagination'
+import store from '@/store'
 
 export default {
   name: 'PermissionList',
   components: { TreeTable },
   data() {
     return {
-      list: null,
+      isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Authorization.PermissionList:Operation.Create') > -1),
+      list: [],
       tableCols: [
         { label: '菜单名称', prop: 'menuName', align: 'left', width: '180' },
         { label: '权限名称', prop: 'name', align: 'center', width: '200' },

@@ -1,37 +1,50 @@
 # lzq.admin
 
 #### 介绍
-Golang语言实现的SaaS系统，项目基于gin、xorm、jwt、vue实现的前后端分离多租户后台管理系统，主要功能有多租户、用户管理、权限管理
+Golang语言实现的多租户SaaS系统，项目基于gin、xorm、jwt、swagger、vue实现的前后端分离多租户后台管理系统，主要功能有多租户、用户管理、RBAC权限管理、按钮级别的权限校验及redis缓存，日志支持Elasticsearch
+
+#### 功能
+1. 多租户：同套代码，同套部署，根据租户进行数据隔离
+2. 系统用户管理
+3. 菜单管理
+4. 操作权限管理：支持菜单、按钮级别的权限校验
+5. 角色管理：支持账号多角色授权
+6. 日志系统：支持本地日志文件和Elasticsearch
 
 #### 软件架构
 软件架构说明
 
 
 #### 安装教程
-##### ui界面
-1. npm install
-2.如果报node-sass错误，则执行npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass
-2. npm run dev 
+##### 开发环境搭建
+1. 安装MySql数据库>=5.7（必须）
+2. 安装Redis数据库（必须）
+3. 安装ELK
+4. 安装Node（必须）
 
-#### 使用说明
+##### 后端
+1. 安装golang及搭建golang开发环境
+2. 安装Goland或VisualStudio Code开发工具
+3. 复制tools目录下的hsf_basic_dev.sql脚本到自己的mysql数据库中执行
+4. 使用golang开发工具运行代码或者进入项目的lzq-admin目录中，使用操作系统命令方式运行golang项目(go run main.go)
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+##### 前端
+```
+1. cd lzq-admin-vue
+2. npm install --registry=https://registry.npm.taobao.org
+3. npm run dev
+```
 
-#### 参与贡献
+#### 可能出现的问题及解决办法
+##### 1. 报node-sass错误
+解决办法：
+``` 
+npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass 
+```
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+#### 界面展示
+![](/tools/md-images/1646896434.png)
+![](/tools/md-images/1646896535.jpg)
+![](/tools/md-images/1646896551.jpg)
+![](/tools/md-images/1646896572.jpg)
 
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)

@@ -54,7 +54,7 @@ func (s *authMenuDomainService) Insert(modelDto model.CreateAuthMenuDto) (model.
 				Name:            "页面访问",
 				Code:            "Access",
 				Rank:            1,
-				Policy:          "View.Access",
+				Policy:          model.DefaultViewPolicy(),
 				PermissionGroup: domainconsts.PermissionGroupView,
 			},
 		})
@@ -67,6 +67,7 @@ func (s *authMenuDomainService) Insert(modelDto model.CreateAuthMenuDto) (model.
 		return model.AuthMenu{}, err
 	}
 	err = dbSession.Commit()
+	AuthPrivilegeCacheService.DeleteFunctionPrivilegeCache()
 	return entity, err
 }
 
@@ -119,6 +120,7 @@ func (s *authMenuDomainService) Update(inputDto model.UpdateAuthMenuDto) (model.
 		return model.AuthMenu{}, errors.New("修改失败")
 	}
 	// TODO 容器菜单改成非容器菜单，需要往AuthPermission表中插入页面访问操作按钮
+	AuthPrivilegeCacheService.DeleteFunctionPrivilegeCache()
 	return m, nil
 }
 
@@ -153,5 +155,6 @@ func (s *authMenuDomainService) Delete(id string) error {
 	if err != nil {
 		return err
 	}
+	AuthPrivilegeCacheService.DeleteFunctionPrivilegeCache()
 	return nil
 }

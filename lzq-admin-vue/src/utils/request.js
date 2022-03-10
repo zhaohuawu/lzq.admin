@@ -52,6 +52,8 @@ service.interceptors.response.use(
       let msg = 'Error'
       if (res.hasOwnProperty('error')) {
         msg = res.error.message
+      } else if (res.hasOwnProperty('msg')) {
+        msg = res.error.msg
       } else if (res.hasOwnProperty('errorDescription')) {
         msg = res.errorDescription
         // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;

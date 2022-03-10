@@ -1,5 +1,10 @@
 package model
 
+import (
+	"fmt"
+	"strings"
+)
+
 /**
  * @Author  糊涂的老知青
  * @Date    2021/11/30
@@ -48,4 +53,19 @@ type AuthPermissionListDto struct {
 	ActualPolicy string                  `json:"actualPolicy"`                       //权限策略
 	Operation    string                  `json:"operation"`                          //操作
 	Children     []AuthPermissionListDto `json:"children"`                           //子菜单
+}
+
+func GetActualPolicy(policy string) string {
+	if len(policy) == 0 {
+		return ""
+	}
+	actualPolicy := policy
+	if !strings.Contains(policy, ":") {
+		actualPolicy = fmt.Sprintf("%v:%v", policy, DefaultViewPolicy())
+	}
+	return actualPolicy
+}
+
+func DefaultViewPolicy() string {
+	return "View.Access"
 }

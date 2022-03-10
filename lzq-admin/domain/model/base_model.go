@@ -42,7 +42,7 @@ type TenantBaseModel struct {
 
 // HasExtraPropertiesBaseModel 扩展字段基类
 type HasExtraPropertiesBaseModel struct {
-	ExtraProperties string `json:"-" xorm:"json longtext comment('扩展字段')"`
+	ExtraProperties map[string]interface{} `json:"-" xorm:"json longtext comment('扩展字段')"`
 }
 
 func BeforeInsert(useMultiTenancy bool, obj interface{}) interface{} {

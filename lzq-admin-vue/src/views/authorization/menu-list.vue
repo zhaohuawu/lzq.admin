@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
+      <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
         新增
       </el-button>
     </div>
@@ -127,6 +127,7 @@
 import { fetchList, getMenuList, createMenu, updateMenu, deleteMenu } from '@/api/menu'
 import TreeTable from '@/components/TreeTable'
 // import Pagination from '@/components/Pagination'
+import store from '@/store'
 
 export default {
   name: 'MenuList',
@@ -142,7 +143,8 @@ export default {
   },
   data() {
     return {
-      list: null,
+      isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Authorization.MenuList:Operation.Create') > -1),
+      list: [],
       tableCols: [
         { label: '菜单名称', prop: 'name', align: 'left', width: '180' },
         { label: '菜单编码', prop: 'code', align: 'center', width: '180' },

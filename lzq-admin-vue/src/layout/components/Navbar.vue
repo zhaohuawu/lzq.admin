@@ -20,9 +20,13 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <span> {{ name }} </span>
-          <i class="el-icon-arrow-down" />
+          <img v-if="isDefualtAvatar" src="@/assets/images/default-avatar.jpg" class="user-avatar">
+          <div v-else>
+            <img :src="avatar" class="user-avatar">
+          </div>
+       
+          {{ name }}-{{ isDefualtAvatar }}
+          <i class="el-icon-arrow-down" style="margin-left:5px" />
         </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="logout">
@@ -42,6 +46,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 // import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import store from '@/store'
 
 export default {
   components: {
@@ -51,6 +56,12 @@ export default {
     Screenfull,
     // SizeSelect,
     Search
+  },
+  data() {
+    // var avatarImg = (length(store.getters.avatar) > 0 ? store.getters.avatar : '@/assets/images/default-avatar.jpg')
+    return {
+      isDefualtAvatar: store.getters.avatar === '' || store.getters.avatar === null
+    }
   },
   computed: {
     ...mapGetters([
@@ -133,23 +144,25 @@ export default {
       margin-right: 15px;
 
       .avatar-wrapper {
-        margin-top: 5px;
         position: relative;
-
+        display: flex;
+        align-items: center;
+        font-size: 12px;
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
+          width: 30px;
+          height: 30px;
           border-radius: 10px;
+          margin-right: 5px;
         }
 
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
+        // .el-icon-caret-bottom {
+        //   cursor: pointer;
+        //   position: absolute;
+        //   right: -20px;
+        //   top: 25px;
+        //   font-size: 12px;
+        // }
       }
     }
     

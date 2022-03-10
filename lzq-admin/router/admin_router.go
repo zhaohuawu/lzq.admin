@@ -92,8 +92,13 @@ func AdminRouter(router *gin.RouterGroup) {
 
 		authorizeRouter := router.Group("/authorize").Use(middleware.CheckJwtToken())
 		{
-			authorizeRouter.GET("/rolePermissionDatas/:roleId", application.IAuthRoleAppService.GetRolePermissionDatasAsync)
-			authorizeRouter.POST("/grantPermissions", application.IAuthRoleAppService.GrantPermissionsAsync)
+			authorizeRouter.GET("/rolePermissionDatas/:roleId", application.IAuthRoleAppService.GetRolePermissionDatas)
+			authorizeRouter.POST("/grantPermissions", application.IAuthRoleAppService.GrantPermissions)
+			authorizeRouter.DELETE("/userRole", application.IAuthCheckerAppService.DeleteUserRole)
+		}
+		permissionCheckerRouter := router.Group("/permissionChecker").Use(middleware.CheckJwtToken())
+		{
+			permissionCheckerRouter.GET("/grantedPermissions", application.IAuthCheckerAppService.GetCurrentUserGrantedPermissions)
 		}
 	}
 }

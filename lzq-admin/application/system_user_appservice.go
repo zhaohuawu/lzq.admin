@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	jsoniter "github.com/json-iterator/go"
 	"golang.org/x/crypto/bcrypt"
 	"lzq-admin/config"
 	"lzq-admin/domain/domainconsts"
@@ -45,14 +44,12 @@ func (app *SystemUserAppService) Create(c *gin.Context) {
 		app.ResponseError(c, err)
 		return
 	}
-
 	result, rerr := domainservice.SystemUserDomainService.Insert(inputDto)
 	if rerr != nil {
 		// gin.H封装了生成json数据的工具
 		app.ResponseError(c, rerr)
 		return
 	}
-
 	app.ResponseSuccess(c, result)
 }
 
@@ -96,6 +93,8 @@ func (app *SystemUserAppService) Delete(c *gin.Context) {
 		app.ResponseError(c, err)
 		return
 	}
+	// 清除用户详情缓存
+	domainservice.SystemUserDomainService.RemoveUserInfoById(id)
 	app.ResponseSuccess(c, true)
 }
 
@@ -147,7 +146,7 @@ func (app *SystemUserAppService) GetList(c *gin.Context) {
 		}
 		operations = append(operations, dto.GetOperationButton("Delete", "删除", "Infrastructure.SysUser:Operation.Delete"))
 		operations = append(operations, dto.GetOperationButton("UpdatePassword", "修改密码", "Infrastructure.SysUser:Operation.UpdatePassword"))
-		result[i].Operation, _ = jsoniter.MarshalToString(operations)
+		result[i].Operation= GetCurrentUserGrantedOperation(operations)
 	}
 	resultDto.Data = result
 	app.ResponseSuccess(c, resultDto)
@@ -186,26 +185,12 @@ func (app *SystemUserAppService) Update(c *gin.Context) {
 // @Router /api/app/sysUser/userInfo [GET]
 func (app *SystemUserAppService) GetUserInfo(c *gin.Context) {
 	userId := middleware.TokenClaims.Id
-	var user model.SystemUser
-	if err := domainservice.SystemUserDomainService.Get(&user, userId, ""); err != nil {
+	if userInfo, err := domainservice.SystemUserDomainService.GetUserInfo(userId); err != nil {
 		app.ResponseError(c, err)
 		return
+	} else {
+		app.ResponseSuccess(c, userInfo)
 	}
-
-	app.ResponseSuccess(c, &model.SystemUserInfoDto{
-		RoleID:        "",
-		RoleName:      "",
-		Status:        user.Status,
-		LoginName:     user.LoginName,
-		UserName:      user.UserName,
-		HeadImgURL:    user.HeadImgURL,
-		HeadImgLink:   user.HeadImgURL,
-		Sex:           "",
-		Mobile:        "",
-		Email:         user.Email,
-		IsTenantAdmin: false,
-		ID:            user.ID,
-	})
 }
 
 // UpdateSystemStatus doc
@@ -244,6 +229,8 @@ func (app *SystemUserAppService) UpdateSystemStatus(c *gin.Context) {
 		app.ResponseError(c, errors.New("修改失败"))
 		return
 	} else {
+		// 清除用户详情缓存
+		domainservice.SystemUserDomainService.RemoveUserInfoById(inputDto.ID)
 		app.ResponseSuccess(c, true)
 	}
 }

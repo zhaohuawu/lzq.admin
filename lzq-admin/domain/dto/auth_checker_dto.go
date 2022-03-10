@@ -21,3 +21,16 @@ type RolePermissionTree struct {
 	ID        string               `json:"id"`
 	IsBranch  bool                 `json:"-"`
 }
+
+type RoleGrantPermissionDto struct {
+	RoleID    string `json:"roleId"`
+	Policy    string `json:"policy"`
+	IsGranted bool   `json:"isGranted"`
+	ID        string `json:"id"`
+}
+
+type UserDataPrivilegeDto struct {
+	UserID string `json:"userId"`
+	RoleID string `json:"roleId"`
+	ID     string `json:"id"`
+}

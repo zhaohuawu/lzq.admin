@@ -14,8 +14,8 @@
     <el-table-column v-if="isIndex" type="index" :label="indexLabel" align="center" width="50" />
     <!-- 数据栏 -->
     <el-table-column
-      v-for="item in tableCols" 
-      :key="item.key"
+      v-for="(item,index) in tableCols" 
+      :key="index"
       :prop="item.prop" 
       :label="item.label" 
       :width="item.width"
@@ -104,8 +104,17 @@
         </span>
         <span v-if="item.type==='Tag'">
           <el-tag
-            v-for="tag in scope.row[item.prop]"
-            :key="tag"
+            v-for="(tag, i) in scope.row[item.prop]"
+            :key="i"
+            :disable-transitions="false"
+          >
+            {{ tag[item.showProp] }}
+          </el-tag>
+        </span>
+        <span v-if="item.type==='TagWithClosable'">
+          <el-tag
+            v-for="(tag,i) in scope.row[item.prop]"
+            :key="i"
             closable
             :disable-transitions="false"
             @close="handleTagClose(item.prop,tag,scope.row)"

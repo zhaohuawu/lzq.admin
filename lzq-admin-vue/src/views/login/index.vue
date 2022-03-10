@@ -88,7 +88,7 @@ export default {
       loginForm: {
         loginName: 'admin',
         password: '123456',
-        tenantCode: 'BRYAN',
+        tenantCode: 'hsf',
         loginType: 1
       },
       loginRules: {

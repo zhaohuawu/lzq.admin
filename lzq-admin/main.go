@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lzq-admin/config"
 	"lzq-admin/config/appsettings"
-	"lzq-admin/pkg/cache"
+	_ "lzq-admin/pkg/cache"
 	"lzq-admin/pkg/hsflogger"
 	_ "lzq-admin/pkg/hsflogger"
 	"lzq-admin/pkg/orm"
@@ -39,8 +39,6 @@ func main() {
 	orm.DatabaseInit()
 	// 业务配置初始化
 	appsettings.Init()
-	// Redis初始化
-	cache.Redis()
 	// 装载路由
 	r := router.Init()
 	server := &http.Server{

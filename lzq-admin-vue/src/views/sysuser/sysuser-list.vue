@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
+      <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
         新增
       </el-button>
     </div>
@@ -24,16 +24,21 @@
     
     <!-- 新增、编辑 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="600px">
-      <el-form ref="dataForm" :rules="menuRules" :model="temp" label-position="left" label-width="80px">
+      <el-form ref="dataForm" :rules="menuRules" :model="temp" label-position="center" label-width="80px">
         <el-form-item label="登录账号" prop="loginName">
           <el-input v-model="temp.loginName" />
         </el-form-item>
         <el-form-item label="账号名称" prop="userName">
           <el-input v-model="temp.userName" />
         </el-form-item>
-        <!-- <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
-        </el-form-item> -->
+        <div v-if="dialogStatus === 'create'">
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="temp.password" type="password" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="确认密码" prop="surePassword">
+            <el-input v-model="temp.surePassword" type="password" autocomplete="off" />
+          </el-form-item>
+        </div>
         <el-form-item label="角色名称" prop="roleId">
           <el-select v-model="temp.roleId" clearable placeholder="请选择">
             <el-option
@@ -105,13 +110,36 @@ import { getEnableRoles } from '@/api/role'
 import OperateTable from '@/components/OperateTable'
 import Pagination from '@/components/Pagination'
 // import ImageCropper from '@/components/ImageCropper'
+import store from '@/store'
 
 export default {
   name: 'SysUserList',
   components: { OperateTable, Pagination },
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.temp.surePassword !== '') {
+          this.$nextTick(() => {
+            this.$refs['dataForm'].validateField('surePassword')
+          })
+        }
+        callback()
+      }
+    }
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.temp.password) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
-      list: null,
+      isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Infrastructure.SysUserList:Operation.Create') > -1),
+      list: [],
       tableCols: [
         { label: '状态', prop: 'statusName', align: 'center', width: '100', sortable: 'custom' },
         { label: '头像', prop: 'headImgLink', type: 'Image', align: 'center', width: '120', style: 'height: 100px' },
@@ -141,7 +169,8 @@ export default {
         id: undefined,
         loginName: '',
         userName: '',
-        // password: '',
+        password: '',
+        surePassword: '',
         roleId: null,
         headImgUrl: null,
         sex: null,
@@ -155,7 +184,10 @@ export default {
         create: '新增用户'
       },
       menuRules: {
-        userName: [{ required: true, message: '用户名称必填', trigger: 'blur' }]
+        loginName: [{ required: true, message: '登录账号必填', trigger: 'blur' }],
+        userName: [{ required: true, message: '用户名称必填', trigger: 'blur' }],
+        password: [{ validator: validatePass, required: true, trigger: 'blur' }],
+        surePassword: [{ validator: validatePass2, required: true, trigger: 'blur' }]
       },
       deleteText: null,
       dialogDeleteVisible: false,
@@ -320,7 +352,7 @@ export default {
   }
 }
 
-.avatar{
+.avatar {
     width: 200px;
     height: 200px;
     border-radius: 50%;

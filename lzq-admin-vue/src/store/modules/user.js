@@ -1,14 +1,18 @@
-import { login, logout, getInfo, getMenuRouterList } from '@/api/user'
+import { login, logout, getInfo } from '@/api/user'
+import { getMenuRouterList, getGrantedPermissions } from '@/api/authorize'
+
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
   name: '',
+  superAdmin: false,
   avatar: '',
   introduction: '',
   roles: [],
-  menus: []
+  menus: [],
+  permissions: []
 }
 
 const mutations = {
@@ -21,6 +25,9 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_SUPERADMIN: (state, superAdmin) => {
+    state.superAdmin = superAdmin
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
@@ -29,6 +36,9 @@ const mutations = {
   },
   SET_MENUS: (state, menus) => {
     state.menus = menus
+  },
+  SET_PERMISSIONS: (state, permissions) => {
+    state.permissions = permissions
   }
 }
 
@@ -58,12 +68,13 @@ const actions = {
           roles: ['admin'],
           introduction: 'I am a super administrator',
           avatar: response.headImgLink,
-          name: response.userName
+          name: response.userName,
+          superAdmin: response.superAdmin
         }
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-        const { roles, name, avatar, introduction } = data
+        const { roles, name, avatar, introduction, superAdmin } = data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -74,6 +85,7 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
+        commit('SET_SUPERADMIN', superAdmin)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -113,6 +125,23 @@ const actions = {
         resolve(data)
       }).catch(error => {
         console.log('menuError', error)
+        reject(error)
+      })
+    })
+  },
+
+  getGrantedPermissions({ commit }) {
+    return new Promise((resolve, reject) => {
+      getGrantedPermissions().then(response => {
+        const data = response
+        if (!data) {
+          reject('获取用户已授权菜单失败')
+        }
+
+        commit('SET_PERMISSIONS', data)
+        resolve(data)
+      }).catch(error => {
+        console.log('permissionError', error)
         reject(error)
       })
     })
