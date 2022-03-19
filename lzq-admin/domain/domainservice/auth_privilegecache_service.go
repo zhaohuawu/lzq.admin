@@ -17,7 +17,7 @@ func (s *authPrivilegeCacheService) DeleteFunctionPrivilegeCache() {
 	cache.RedisUtil.Delete(cache.LzqCacheHelper.GetCacheTypeVersionKey(cache.LzqCacheTypeFunctionPrivilege))
 }
 
-func (s *authPrivilegeCacheService) DeleteRoleGrantedPermissionsCache(roleIds []string) {
+func (s *authPrivilegeCacheService) DeleteRoleGrantedPermissionsCache(roleIds ...string) {
 	for _, v := range roleIds {
 		cache.RedisUtil.Delete(cache.LzqCacheKeyHelper.GetRoleGrantedPermissionsCacheKey(v))
 	}
@@ -25,4 +25,10 @@ func (s *authPrivilegeCacheService) DeleteRoleGrantedPermissionsCache(roleIds []
 
 func (s *authPrivilegeCacheService) DeleteDataPrivilegeCache() {
 	cache.RedisUtil.Delete(cache.LzqCacheHelper.GetCacheTypeVersionKey(cache.LzqCacheTypeDataPrivilege))
+}
+
+func (s *authPrivilegeCacheService) DeleteUserAuthCache(userId string) {
+	cache.RedisUtil.Delete(cache.LzqCacheKeyHelper.GetUserGrantedMenusCacheKey(userId))
+	cache.RedisUtil.Delete(cache.LzqCacheKeyHelper.GetGrantedDataPrivilegeByUserCacheKey(userId))
+	cache.RedisUtil.Delete(cache.LzqCacheKeyHelper.GetUserGrantedPermissionsCacheKey(userId))
 }

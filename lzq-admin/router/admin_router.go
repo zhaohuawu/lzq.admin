@@ -14,7 +14,7 @@ import (
 
 // AdminRouter 系统路由
 func AdminRouter(router *gin.RouterGroup) {
-	router.Use()
+	router.Use(middleware.CheckJwtToken())
 	{
 		testRouter := router.Group("/test").Use()
 		{
@@ -24,15 +24,15 @@ func AdminRouter(router *gin.RouterGroup) {
 		authRouter := router.Group("/auth").Use()
 		{
 			authRouter.POST("/login", application.IAuthAppService.Login)
-			authRouter.Use(middleware.CheckJwtToken()).POST("/logOut", application.IAuthAppService.Logout)
+			authRouter.Use(middleware.CheckAuth()).POST("/logOut", application.IAuthAppService.Logout)
 		}
 
-		tenantRouter := router.Group("/tenant").Use(middleware.CheckJwtToken())
+		tenantRouter := router.Group("/tenant").Use(middleware.CheckAuth())
 		{
 			tenantRouter.POST("/create", application.ITenantAppService.Create)
 		}
 
-		systemUserRouter := router.Group("/sysUser").Use(middleware.CheckJwtToken())
+		systemUserRouter := router.Group("/sysUser").Use(middleware.CheckAuth())
 		{
 			systemUserRouter.POST("/sysUser", application.ISystemUserAppService.Create)
 			systemUserRouter.GET("/get", application.ISystemUserAppService.Get)
@@ -45,7 +45,7 @@ func AdminRouter(router *gin.RouterGroup) {
 			systemUserRouter.GET("/defaultAvatar", application.ISystemUserAppService.GetDefaultAvatar)
 		}
 
-		authModuleRouter := router.Group("/authModule").Use(middleware.CheckJwtToken())
+		authModuleRouter := router.Group("/authModule").Use(middleware.CheckAuth())
 		{
 			authModuleRouter.POST("/create", application.IAuthModuleAppService.Create)
 			authModuleRouter.GET("/get", application.IAuthModuleAppService.Get)
@@ -54,7 +54,7 @@ func AdminRouter(router *gin.RouterGroup) {
 			authModuleRouter.PUT("/update", application.IAuthModuleAppService.Update)
 		}
 
-		authMenuRouter := router.Group("/menu").Use(middleware.CheckJwtToken())
+		authMenuRouter := router.Group("/menu").Use(middleware.CheckAuth())
 		{
 			authMenuRouter.POST("/menu", application.IAuthMenuAppService.Create)
 			authMenuRouter.GET("/get", application.IAuthMenuAppService.Get)
@@ -64,7 +64,7 @@ func AdminRouter(router *gin.RouterGroup) {
 			authMenuRouter.GET("/menuList", application.IAuthMenuAppService.GetMenuList)
 		}
 
-		authPermissionRouter := router.Group("/permission").Use(middleware.CheckJwtToken())
+		authPermissionRouter := router.Group("/permission").Use(middleware.CheckAuth())
 		{
 			authPermissionRouter.POST("/permission", application.IAuthPermissionAppService.Create)
 			authPermissionRouter.GET("/get", application.IAuthPermissionAppService.Get)
@@ -74,7 +74,7 @@ func AdminRouter(router *gin.RouterGroup) {
 			authPermissionRouter.GET("/permissionGroup", application.IAuthPermissionAppService.GetPermissionGroup)
 		}
 
-		authRoleRouter := router.Group("/role").Use(middleware.CheckJwtToken())
+		authRoleRouter := router.Group("/role").Use(middleware.CheckAuth())
 		{
 			authRoleRouter.POST("/role", application.IAuthRoleAppService.Create)
 			authRoleRouter.GET("/get", application.IAuthRoleAppService.Get)
@@ -85,18 +85,18 @@ func AdminRouter(router *gin.RouterGroup) {
 			authRoleRouter.GET("/roles", application.IAuthRoleAppService.GetEnanleRoles)
 		}
 
-		authCheckerRouter := router.Group("/authenticateChecker").Use(middleware.CheckJwtToken())
+		authCheckerRouter := router.Group("/authenticateChecker").Use(middleware.CheckAuth())
 		{
 			authCheckerRouter.GET("/grantedMenus", application.IAuthCheckerAppService.GetGrantedMenus)
 		}
 
-		authorizeRouter := router.Group("/authorize").Use(middleware.CheckJwtToken())
+		authorizeRouter := router.Group("/authorize").Use(middleware.CheckAuth())
 		{
 			authorizeRouter.GET("/rolePermissionDatas/:roleId", application.IAuthRoleAppService.GetRolePermissionDatas)
 			authorizeRouter.POST("/grantPermissions", application.IAuthRoleAppService.GrantPermissions)
 			authorizeRouter.DELETE("/userRole", application.IAuthCheckerAppService.DeleteUserRole)
 		}
-		permissionCheckerRouter := router.Group("/permissionChecker").Use(middleware.CheckJwtToken())
+		permissionCheckerRouter := router.Group("/permissionChecker").Use(middleware.CheckAuth())
 		{
 			permissionCheckerRouter.GET("/grantedPermissions", application.IAuthCheckerAppService.GetCurrentUserGrantedPermissions)
 		}

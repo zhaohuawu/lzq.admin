@@ -36,18 +36,18 @@ func init() {
 	redisClient = client
 }
 
-type redisUtil struct{}
+type redisUtil struct {
+	useMultiTenancy bool
+}
 
-var RedisUtil = &redisUtil{}
-
-func normalizeKey(key string) string {
+func (r *redisUtil) normalizeKey(key string) string {
 	if len(key) == 0 {
 		hsflogger.LogError("key不能为空", nil)
 		panic(errors.New("key不能为空"))
 	}
 	nKey := key
 	// 租户ID
-	if config.Config.ServerConfig.UseMultiTenancy && len(middleware.TokenClaims.TenantId) > 0 {
+	if r != nil && r.useMultiTenancy && config.Config.ServerConfig.UseMultiTenancy && len(middleware.TokenClaims.TenantId) > 0 {
 		nKey = fmt.Sprintf("%v:%v", middleware.TokenClaims.TenantId, nKey)
 	}
 	// 缓存池
@@ -66,7 +66,7 @@ func GetDefaultExpiresAt(expiration time.Duration) time.Duration {
 }
 
 func (r *redisUtil) Get(key string) string {
-	val, err := redisClient.Get(ctx, normalizeKey(key)).Result()
+	val, err := redisClient.Get(ctx, r.normalizeKey(key)).Result()
 	if err != nil {
 		return ""
 	}
@@ -74,14 +74,14 @@ func (r *redisUtil) Get(key string) string {
 }
 
 func (r *redisUtil) SetEx(key string, value string, expiration time.Duration) {
-	err := redisClient.SetEX(ctx, normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err()
+	err := redisClient.SetEX(ctx, r.normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (r *redisUtil) Delete(key string) {
-	redisClient.Del(ctx, normalizeKey(key))
+	redisClient.Del(ctx, r.normalizeKey(key))
 }
 
 func (r *redisUtil) Keys(pattern string) []string {
@@ -95,7 +95,7 @@ func (r *redisUtil) Keys(pattern string) []string {
 func (r *redisUtil) MultiGet(keys []string) []interface{} {
 	keyNs := make([]string, 0)
 	for _, v := range keys {
-		keyNs = append(keyNs, normalizeKey(v))
+		keyNs = append(keyNs, r.normalizeKey(v))
 	}
 	val, err := redisClient.MGet(ctx, keyNs...).Result()
 	if err != nil {
@@ -107,20 +107,20 @@ func (r *redisUtil) MultiGet(keys []string) []interface{} {
 func (r *redisUtil) MultiDelete(keys []string) {
 	keyNs := make([]string, 0)
 	for _, v := range keys {
-		keyNs = append(keyNs, normalizeKey(v))
+		keyNs = append(keyNs, r.normalizeKey(v))
 	}
 	redisClient.Del(ctx, keyNs...)
 }
 
 func (r *redisUtil) SetString(key string, value string, expiration time.Duration) {
-	if err := redisClient.Set(ctx, normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err(); err != nil {
+	if err := redisClient.Set(ctx, r.normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err(); err != nil {
 		panic(err)
 	}
 }
 func (r *redisUtil) SetInterface(key string, value interface{}, expiration time.Duration) {
 	defaultExpiresAt := GetDefaultExpiresAt(expiration)
 	fmt.Println("defaultExpiresAt：" + defaultExpiresAt.String())
-	if err := redisClient.Set(ctx, normalizeKey(key), value, defaultExpiresAt).Err(); err != nil {
+	if err := redisClient.Set(ctx, r.normalizeKey(key), value, defaultExpiresAt).Err(); err != nil {
 		panic(err)
 	}
 }
@@ -129,8 +129,28 @@ func (r *redisUtil) SetInterfaceArray(key string, value interface{}, expiration 
 	r.SetString(key, jsonString, expiration)
 }
 
+func (r *redisUtil) HSet(key, field string, value interface{}) {
+	if err := redisClient.HSet(ctx, r.normalizeKey(key), field, value).Err(); err != nil {
+		panic(err)
+	}
+}
+func (r *redisUtil) HGet(key, field string) interface{} {
+	val, err := redisClient.HGet(ctx, r.normalizeKey(key), field).Result()
+	if err != nil {
+		return ""
+	}
+	return val
+}
+func (r *redisUtil) HGetAll(key string) interface{} {
+	val, err := redisClient.HGetAll(ctx, r.normalizeKey(key)).Result()
+	if err != nil {
+		return ""
+	}
+	return val
+}
+
 func (r *redisUtil) IncrBy(key string, increment int64) int64 {
-	val, err := redisClient.IncrBy(ctx, normalizeKey(key), increment).Result()
+	val, err := redisClient.IncrBy(ctx, r.normalizeKey(key), increment).Result()
 	if err != nil {
 		panic(err)
 	}

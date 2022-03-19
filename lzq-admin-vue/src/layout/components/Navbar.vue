@@ -25,7 +25,7 @@
             <img :src="avatar" class="user-avatar">
           </div>
        
-          {{ name }}-{{ isDefualtAvatar }}
+          {{ name }}
           <i class="el-icon-arrow-down" style="margin-left:5px" />
         </div>
         <el-dropdown-menu slot="dropdown">

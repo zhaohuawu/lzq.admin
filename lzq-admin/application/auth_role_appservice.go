@@ -145,6 +145,7 @@ func (app *authRoleAppService) Delete(c *gin.Context) {
 		app.ResponseError(c, err)
 		return
 	}
+	domainservice.AuthPrivilegeCacheService.DeleteRoleGrantedPermissionsCache(id)
 	app.ResponseSuccess(c, true)
 }
 
@@ -364,7 +365,7 @@ func (app *authRoleAppService) GrantPermissions(c *gin.Context) {
 		linq.From(inputDto).SelectT(func(w model.CreateAuthRolePermissionDto) string {
 			return w.RoleId
 		}).Distinct().ToSlice(&roleIds)
-		domainservice.AuthPrivilegeCacheService.DeleteRoleGrantedPermissionsCache(roleIds)
+		domainservice.AuthPrivilegeCacheService.DeleteRoleGrantedPermissionsCache(roleIds...)
 		app.wg.Done()
 	}()
 	app.wg.Wait()

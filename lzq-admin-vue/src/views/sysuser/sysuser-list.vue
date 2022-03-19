@@ -40,7 +40,7 @@
           </el-form-item>
         </div>
         <el-form-item label="角色名称" prop="roleId">
-          <el-select v-model="temp.roleId" clearable placeholder="请选择">
+          <el-select v-model="temp.roleIds" multiple placeholder="请选择">
             <el-option
               v-for="item in roleList"
               :key="item.id"
@@ -105,7 +105,8 @@ import { getSysUserList,
   updateSysUser, 
   deleteSysUser, 
   updateSysUserStatus,
-  getDefaultAvatar } from '@/api/user'
+  getDefaultAvatar,
+  get } from '@/api/user'
 import { getEnableRoles } from '@/api/role'
 import OperateTable from '@/components/OperateTable'
 import Pagination from '@/components/Pagination'
@@ -171,7 +172,7 @@ export default {
         userName: '',
         password: '',
         surePassword: '',
-        roleId: null,
+        roleIds: [],
         headImgUrl: null,
         sex: null,
         mobile: null,
@@ -272,7 +273,11 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
+      // this.temp = Object.assign({}, row) // copy obj
+      const q = { id: row.id }
+      get(q).then(response => {
+        this.temp = Object.assign({}, response)
+      })
       this.image = this.temp.headImgLink
       this.dialogStatus = 'update'
       this.getEnableRoles()

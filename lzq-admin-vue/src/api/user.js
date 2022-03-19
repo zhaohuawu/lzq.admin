@@ -16,6 +16,14 @@ export function getInfo() {
   })
 }
 
+export function get(query) {
+  return request({
+    url: '/api/app/sysUser/get',
+    method: 'get',
+    params: query
+  })
+}
+
 export function logout() {
   return request({
     url: '/api/app/auth/logOut',

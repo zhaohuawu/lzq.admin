@@ -8,7 +8,6 @@ package application
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"lzq-admin/config"
@@ -72,9 +71,23 @@ func (app *SystemUserAppService) Get(c *gin.Context) {
 	if err := domainservice.SystemUserDomainService.Get(&user, id, loginName); err != nil {
 		app.ResponseError(c, err)
 		return
+	} else {
+		result := &model.SystemUserInfoDto{ID: user.ID,
+			UserName:   user.UserName,
+			Sex:        user.Sex,
+			Status:     user.Status,
+			LoginName:  user.LoginName,
+			HeadImgURL: user.HeadImgURL,
+			Mobile:     user.Mobile,
+			Email:      user.Email,
+		}
+		result.RoleIds, err = domainservice.AuthCheckerDomainService.GetUserGrantedRoleIds(user.ID)
+		if err != nil {
+			app.ResponseError(c, err)
+			return
+		}
+		app.ResponseSuccess(c, result)
 	}
-
-	app.ResponseSuccess(c, user)
 }
 
 // Delete
@@ -115,9 +128,9 @@ func (app *SystemUserAppService) GetList(c *gin.Context) {
 		return
 	}
 	dbSession := orm.QSession(true, "u").Table(model.TableSystemUser).Alias("u").
-		Join("Left", model.TableAuthUserdataprivilege+" as urp", fmt.Sprintf("u.Id = urp.UserId and urp.IsDeleted=0 and urp.TenantId='%v'", middleware.TokenClaims.TenantId)).
-		Select("u.*,urp.RoleId").
-		Omit("Operation", "StatusName", "HeadImgLink", "Password")
+		// Join("Left", model.TableAuthUserdataprivilege+" as urp", fmt.Sprintf("u.Id = urp.UserId and urp.IsDeleted=0 and urp.TenantId='%v'", middleware.TokenClaims.TenantId)).
+		//Select("u.*,urp.RoleId").
+		Omit("Operation", "StatusName", "HeadImgLink", "Password", "RoleIds")
 	if err := DBCondition(inputDto, dbSession, "u", model.SystemUserListDto{}); err != nil {
 		app.ResponseError(c, err)
 		return
@@ -146,7 +159,7 @@ func (app *SystemUserAppService) GetList(c *gin.Context) {
 		}
 		operations = append(operations, dto.GetOperationButton("Delete", "删除", "Infrastructure.SysUser:Operation.Delete"))
 		operations = append(operations, dto.GetOperationButton("UpdatePassword", "修改密码", "Infrastructure.SysUser:Operation.UpdatePassword"))
-		result[i].Operation= GetCurrentUserGrantedOperation(operations)
+		result[i].Operation = GetCurrentUserGrantedOperation(operations)
 	}
 	resultDto.Data = result
 	app.ResponseSuccess(c, resultDto)

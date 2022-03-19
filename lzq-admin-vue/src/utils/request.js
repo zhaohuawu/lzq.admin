@@ -83,12 +83,15 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.response.data.error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    const err = error.response.data
+    if (err.hasOwnProperty('error') || (err.hasOwnProperty('errorDescription') && err.errorDescription !== null && err.errorDescription !== '')) {
+      console.log('err' + error) // for debug
+      Message({
+        message: error.response.data.error.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     return Promise.reject(error)
   }
 )

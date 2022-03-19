@@ -35,18 +35,18 @@ type SystemUserBase struct {
 
 type CreateSystemUserDto struct {
 	SystemUserBase
-	SurePassword string `json:"surePassword" binding:"required"` //确认密码
-	RoleID       string `json:"roleId"`                          //角色ID
+	SurePassword string   `json:"surePassword" binding:"required"` //确认密码
+	RoleIds      []string `json:"roleIds"`                         //角色ID
 }
 
 type UpdateSystemUserDto struct {
-	ID         string `json:"id" binding:"required"`       //用户id
-	UserName   string `json:"userName" binding:"required"` //用户名
-	Email      string `json:"email"`                       //邮箱
-	HeadImgURL string `json:"headImgUrl"`                  //头像
-	Sex        string `json:"sex"`                         //性别
-	Mobile     string `json:"mobile"`                      //手机号码
-	RoleID     string `json:"roleId"`                      //角色ID
+	ID         string   `json:"id" binding:"required"`       //用户id
+	UserName   string   `json:"userName" binding:"required"` //用户名
+	Email      string   `json:"email"`                       //邮箱
+	HeadImgURL string   `json:"headImgUrl"`                  //头像
+	Sex        string   `json:"sex"`                         //性别
+	Mobile     string   `json:"mobile"`                      //手机号码
+	RoleIds    []string `json:"roleIds"`                     //角色ID
 }
 
 type SystemUserDto struct {
@@ -54,27 +54,27 @@ type SystemUserDto struct {
 }
 
 type SystemUserInfoDto struct {
-	RoleID        string `json:"roleId"`        //角色ID
-	RoleName      string `json:"roleName"`      //角色名称
-	Status        string `json:"status"`        //状态
-	LoginName     string `json:"loginName"`     //登录名
-	UserName      string `json:"userName"`      //用户名称
-	HeadImgURL    string `json:"headImgUrl"`    //头像URL
-	HeadImgLink   string `json:"headImgLink"`   //头像连接
-	Sex           string `json:"sex"`           //性别
-	Mobile        string `json:"mobile"`        //手机号码
-	Email         string `json:"email"`         //邮箱
-	IsTenantAdmin bool   `json:"isTenantAdmin"` //是否是租户管理员
-	ID            string `json:"id"`
-	SuperAdmin    bool   `json:"superAdmin"` //是否是超级管理员
+	RoleIds       []string `json:"roleIds"`       //角色ID
+	RoleName      string   `json:"roleName"`      //角色名称
+	Status        string   `json:"status"`        //状态
+	LoginName     string   `json:"loginName"`     //登录名
+	UserName      string   `json:"userName"`      //用户名称
+	HeadImgURL    string   `json:"headImgUrl"`    //头像URL
+	HeadImgLink   string   `json:"headImgLink"`   //头像连接
+	Sex           string   `json:"sex"`           //性别
+	Mobile        string   `json:"mobile"`        //手机号码
+	Email         string   `json:"email"`         //邮箱
+	IsTenantAdmin bool     `json:"isTenantAdmin"` //是否是租户管理员
+	ID            string   `json:"id"`
+	SuperAdmin    bool     `json:"superAdmin"` //是否是超级管理员
 }
 
 type SystemUserListDto struct {
 	SystemUser  `xorm:"extends"`
-	StatusName  string `json:"statusName"`                          //状态
-	HeadImgLink string `json:"headImgLink"`                         //头像连接
-	RoleId      string `json:"roleId" tAlias:"urp" tField:"RoleId"` //角色ID
-	Operation   string `json:"operation"`                           //操作
+	StatusName  string   `json:"statusName"`                           //状态
+	HeadImgLink string   `json:"headImgLink"`                          //头像连接
+	RoleIds     []string `json:"roleIds" tAlias:"urp" tField:"RoleId"` //角色ID
+	Operation   string   `json:"operation"`                            //操作
 }
 
 type UpdateSystemUserPasswordDto struct {

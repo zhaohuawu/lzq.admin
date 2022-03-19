@@ -60,10 +60,7 @@ func (u *systemUserDomainService) Insert(modelDto model.CreateSystemUserDto) (re
 		return model.SystemUser{}, err
 	}
 
-	if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, model.CreateAuthUserDataPrivilegeDto{AuthUserDataPrivilegeBase: model.AuthUserDataPrivilegeBase{
-		UserId: entity.ID,
-		RoleId: modelDto.RoleID,
-	}}); err != nil {
+	if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, entity.ID, modelDto.RoleIds); err != nil {
 		dbSession.Rollback()
 		return model.SystemUser{}, err
 	}
@@ -100,16 +97,13 @@ func (u *systemUserDomainService) Update(inputDto model.UpdateSystemUserDto) (mo
 	if errT != nil {
 		return model.SystemUser{}, err
 	}
-	if len(inputDto.RoleID) == 0 {
+	if len(inputDto.RoleIds) == 0 {
 		if err := AuthUserdataPrivilegeDomainService.Delete(dbSession, inputDto.ID, ""); err != nil {
 			dbSession.Rollback()
 			return model.SystemUser{}, err
 		}
 	} else {
-		if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, model.CreateAuthUserDataPrivilegeDto{AuthUserDataPrivilegeBase: model.AuthUserDataPrivilegeBase{
-			UserId: inputDto.ID,
-			RoleId: inputDto.RoleID,
-		}}); err != nil {
+		if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, inputDto.ID, inputDto.RoleIds); err != nil {
 			dbSession.Rollback()
 			return model.SystemUser{}, err
 		}
@@ -159,7 +153,7 @@ func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserIn
 		return userInfo, err
 	}
 	userInfo = model.SystemUserInfoDto{
-		RoleID:        "",
+		RoleIds:       nil,
 		RoleName:      "",
 		Status:        user.Status,
 		LoginName:     user.LoginName,

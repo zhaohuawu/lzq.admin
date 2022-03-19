@@ -10,7 +10,6 @@ import (
 	"lzq-admin/pkg/orm"
 	"strings"
 	"sync"
-	"time"
 )
 
 /**
@@ -94,10 +93,10 @@ func (d *authCheckerDomainService) IsUserGranted(userId, policy string) bool {
 	}
 	actualPolicy := model.GetActualPolicy(policy)
 
-	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedPolicyCacheKey(userId, actualPolicy)
-	cacheJson := cache.RedisUtil.Get(cacheKey)
+	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedPolicyCacheKey(userId)
+	cacheJson := cache.RedisUtil.HGet(cacheKey, actualPolicy)
 	if cacheJson != "" {
-		return strings.ToLower(cacheJson) == "true"
+		return cacheJson == "1"
 	}
 	if roleIds, err := d.GetUserGrantedRoleIds(userId); err != nil {
 		return false
@@ -108,12 +107,12 @@ func (d *authCheckerDomainService) IsUserGranted(userId, policy string) bool {
 				return strings.ToLower(w.Policy) == strings.ToLower(actualPolicy)
 			})
 			if isGranted {
-				cache.RedisUtil.SetInterface(cacheKey, true, time.Duration(30*60)*time.Second)
+				cache.RedisUtil.HSet(cacheKey, actualPolicy, true)
 				return true
 			}
 		}
 	}
-	cache.RedisUtil.SetInterface(cacheKey, false, time.Duration(30*60)*time.Second)
+	cache.RedisUtil.HSet(cacheKey, actualPolicy, false)
 	return false
 }
 
