@@ -142,7 +142,7 @@ func (u *systemUserDomainService) Get(m *model.SystemUser, id, loginName string)
 
 func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserInfoDto, error) {
 	key := fmt.Sprintf("%v:%v", cache.LzqCacheHelper.GetCacheVersion(cache.LzqCacheTypeSysUser), userId)
-	userJson := cache.RedisUtil.Get(key)
+	userJson := cache.RedisUtil.NewRedis(true).Get(key)
 	var userInfo model.SystemUserInfoDto
 	if userJson != "" {
 		_ = json.Unmarshal([]byte(userJson), &userInfo)
@@ -171,7 +171,7 @@ func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserIn
 	userInfo.SuperAdmin = isHave && v.(bool)
 
 	userInfoJson, _ := json.Marshal(userInfo)
-	cache.RedisUtil.SetInterface(key, userInfoJson, 0)
+	cache.RedisUtil.NewRedis(true).SetInterface(key, userInfoJson, 0)
 	return userInfo, nil
 }
 
@@ -193,5 +193,5 @@ func (u *systemUserDomainService) IsSuperAdmin(userId string) (bool, error) {
 
 func (u *systemUserDomainService) RemoveUserInfoById(userId string) {
 	key := fmt.Sprintf("%v:%v", cache.LzqCacheHelper.GetCacheVersion(cache.LzqCacheTypeSysUser), userId)
-	cache.RedisUtil.Delete(key)
+	cache.RedisUtil.NewRedis(true).Delete(key)
 }

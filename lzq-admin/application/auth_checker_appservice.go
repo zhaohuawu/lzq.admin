@@ -38,7 +38,7 @@ func (app *authCheckerAppService) GetGrantedMenus(c *gin.Context) {
 	result := make([]model.UserGrantedMenuDto, 0)
 
 	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedMenusCacheKey(userId)
-	cacheJson := cache.RedisUtil.Get(cacheKey)
+	cacheJson := cache.RedisUtil.NewRedis(true).Get(cacheKey)
 	if cacheJson != "" {
 		_ = json.Unmarshal([]byte(cacheJson), &result)
 		app.ResponseSuccess(c, result)
@@ -76,7 +76,7 @@ func (app *authCheckerAppService) GetGrantedMenus(c *gin.Context) {
 		}
 		result = grantedMenuTree(pMenus, rightMenus)
 	}
-	cache.RedisUtil.SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
 	app.ResponseSuccess(c, result)
 }
 func grantedMenuTree(parentMenus []model.UserGrantedMenuDto, menus []model.UserGrantedMenuDto) []model.UserGrantedMenuDto {
@@ -124,10 +124,9 @@ func (app *authCheckerAppService) GetCurrentUserGrantedPermissions(c *gin.Contex
 // @Summary 删除用户数据授权
 // @Tags AuthChecker
 // @Description
-// @Accept mpfd
 // @Produce  json
-// @Param userDataPrivilegeId query string true “用户数据授权ID”
-// @Success 200 {object} bool “ ”
+// @Param userDataPrivilegeId query string true "用户数据授权ID"
+// @Success 200 {object} ResponseDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/authorize/userRole [DELETE]
 func (app *authCheckerAppService) DeleteUserRole(c *gin.Context) {

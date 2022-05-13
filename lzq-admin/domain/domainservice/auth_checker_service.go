@@ -28,7 +28,7 @@ var AuthCheckerDomainService = authCheckerDomainService{}
 func (d *authCheckerDomainService) GetRoleGrantedPermissions(roleId string) ([]dto.RoleGrantPermissionDto, error) {
 	result := make([]dto.RoleGrantPermissionDto, 0)
 	cacheKey := cache.LzqCacheKeyHelper.GetRoleGrantedPermissionsCacheKey(roleId)
-	cacheJson := cache.RedisUtil.Get(cacheKey)
+	cacheJson := cache.RedisUtil.NewRedis(true).Get(cacheKey)
 	if cacheJson != "" {
 		_ = json.Unmarshal([]byte(cacheJson), &result)
 		return result, nil
@@ -43,14 +43,14 @@ func (d *authCheckerDomainService) GetRoleGrantedPermissions(roleId string) ([]d
 		return result, err
 	}
 
-	cache.RedisUtil.SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
 	return result, nil
 }
 
 func (d *authCheckerDomainService) GetGrantedDataPrivilegesByUser(userId string) ([]dto.UserDataPrivilegeDto, error) {
 	result := make([]dto.UserDataPrivilegeDto, 0)
 	cacheKey := cache.LzqCacheKeyHelper.GetGrantedDataPrivilegeByUserCacheKey(userId)
-	cacheJson := cache.RedisUtil.Get(cacheKey)
+	cacheJson := cache.RedisUtil.NewRedis(true).Get(cacheKey)
 	if cacheJson != "" {
 		_ = json.Unmarshal([]byte(cacheJson), &result)
 		return result, nil
@@ -65,7 +65,7 @@ func (d *authCheckerDomainService) GetGrantedDataPrivilegesByUser(userId string)
 		return result, err
 	}
 
-	cache.RedisUtil.SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
 	return result, nil
 }
 
@@ -94,7 +94,7 @@ func (d *authCheckerDomainService) IsUserGranted(userId, policy string) bool {
 	actualPolicy := model.GetActualPolicy(policy)
 
 	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedPolicyCacheKey(userId)
-	cacheJson := cache.RedisUtil.HGet(cacheKey, actualPolicy)
+	cacheJson := cache.RedisUtil.NewRedis(true).HGet(cacheKey, actualPolicy)
 	if cacheJson != "" {
 		return cacheJson == "1"
 	}
@@ -107,19 +107,19 @@ func (d *authCheckerDomainService) IsUserGranted(userId, policy string) bool {
 				return strings.ToLower(w.Policy) == strings.ToLower(actualPolicy)
 			})
 			if isGranted {
-				cache.RedisUtil.HSet(cacheKey, actualPolicy, true)
+				cache.RedisUtil.NewRedis(true).HSet(cacheKey, actualPolicy, true)
 				return true
 			}
 		}
 	}
-	cache.RedisUtil.HSet(cacheKey, actualPolicy, false)
+	cache.RedisUtil.NewRedis(true).HSet(cacheKey, actualPolicy, false)
 	return false
 }
 
 func (d *authCheckerDomainService) GetUserGrantedPermissions(userId string) ([]string, error) {
 	result := make([]string, 0)
 	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedPermissionsCacheKey(userId)
-	cacheJson := cache.RedisUtil.Get(cacheKey)
+	cacheJson := cache.RedisUtil.NewRedis(true).Get(cacheKey)
 	if cacheJson != "" {
 		_ = json.Unmarshal([]byte(cacheJson), &result)
 		return result, nil
@@ -143,6 +143,6 @@ func (d *authCheckerDomainService) GetUserGrantedPermissions(userId string) ([]s
 			}
 		}
 	}
-	cache.RedisUtil.SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
 	return result, nil
 }

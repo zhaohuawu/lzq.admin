@@ -28,6 +28,31 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/app/auth/captcha": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "获取验证码",
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CaptchaDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app/auth/logOut": {
             "post": {
                 "produces": [
@@ -311,217 +336,6 @@ var doc = `{
                 }
             }
         },
-        "/api/app/authRole/create": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthRole"
-                ],
-                "summary": "创建角色",
-                "parameters": [
-                    {
-                        "description": " ",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.CreateAuthRoleDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.AuthRoleDto"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/application.ResponseDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/app/authRole/delete": {
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthRole"
-                ],
-                "summary": "删除角色",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "模块ID",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/application.ResponseDto"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/application.ResponseDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/app/authRole/get": {
-            "get": {
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthRole"
-                ],
-                "summary": "根据ID查询角色",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.AuthRoleDto"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/application.ResponseDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/app/authRole/list": {
-            "get": {
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthRole"
-                ],
-                "summary": "查询角色列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "查询条件",
-                        "name": "filter",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "是否返回总条数",
-                        "name": "requireTotalCount",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "第几页，\u003e=1开始",
-                        "name": "skip",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序字段",
-                        "name": "sort",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页多少条数据",
-                        "name": "take",
-                        "in": "formData"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.AuthRoleListDto"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/application.ResponseDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/app/authRole/update": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthRole"
-                ],
-                "summary": "修改角色",
-                "parameters": [
-                    {
-                        "description": " ",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.UpdateAuthRoleDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/application.ResponseDto"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/application.ResponseDto"
-                        }
-                    }
-                }
-            }
-        },
         "/api/app/authenticateChecker/grantedMenus": {
             "get": {
                 "produces": [
@@ -539,6 +353,80 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/model.UserGrantedMenuDto"
                             }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/authorize/rolePermissionDatas/{roleId}": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "获取角色授权的操作权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.RolePermissionTree"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/authorize/userRole": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthChecker"
+                ],
+                "summary": "删除用户数据授权",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户数据授权ID",
+                        "name": "userDataPrivilegeId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
                         }
                     },
                     "500": {
@@ -1038,6 +926,308 @@ var doc = `{
                 }
             }
         },
+        "/api/app/permissionChecker/grantedPermissions": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthChecker"
+                ],
+                "summary": "查询当前用户所授权的操作权限",
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/role/get": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "根据ID查询角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.AuthRoleDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/role/role": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "修改角色",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateAuthRoleDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "创建角色",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateAuthRoleDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.AuthRoleDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "删除角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "模块ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/role/roleList": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "查询角色列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "查询条件",
+                        "name": "filter",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否返回总条数",
+                        "name": "requireTotalCount",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "第几页，\u003e=1开始",
+                        "name": "skip",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "sort",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页多少条数据",
+                        "name": "take",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.AuthRoleListDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/role/roleStatus": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "启用/停用角色",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/role/roles": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuthRole"
+                ],
+                "summary": "查询启用中的角色",
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.AuthRoleSimpleDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app/sysUser/defaultAvatar": {
             "get": {
                 "produces": [
@@ -1384,6 +1574,155 @@ var doc = `{
                 }
             }
         },
+        "/api/app/sysconfig/create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SysConfig"
+                ],
+                "summary": "系统配置创建",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateSystemConfigDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemConfig"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/sysconfig/getQnInfo": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SysConfig"
+                ],
+                "summary": "七牛云配置详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "配置ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/extrastruct.QiNiuConfigDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/extrastruct.QiNiuConfigDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/sysconfig/getSysConfigCache": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SysConfig"
+                ],
+                "summary": "设置系统配置Json及注解缓存",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "配置类型",
+                        "name": "configType",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/sysconfig/qnupdate": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SysConfig"
+                ],
+                "summary": "配置七牛云",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/extrastruct.QiNiuConfigDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemConfig"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app/tenant/create": {
             "post": {
                 "consumes": [
@@ -1449,6 +1788,19 @@ var doc = `{
                 }
             }
         },
+        "dto.CaptchaDto": {
+            "type": "object",
+            "properties": {
+                "captchaUrl": {
+                    "description": "验证码图片Base64 Url",
+                    "type": "string"
+                },
+                "key": {
+                    "description": "验证码Key",
+                    "type": "string"
+                }
+            }
+        },
         "dto.KeyAndValueDto": {
             "type": "object",
             "properties": {
@@ -1463,11 +1815,21 @@ var doc = `{
         "dto.LoginDto": {
             "type": "object",
             "required": [
+                "captchaKey",
+                "captchaValue",
                 "loginName",
                 "password",
                 "tenantCode"
             ],
             "properties": {
+                "captchaKey": {
+                    "description": "验证码Key",
+                    "type": "string"
+                },
+                "captchaValue": {
+                    "description": "验证码",
+                    "type": "string"
+                },
                 "loginName": {
                     "description": "登录名",
                     "type": "string"
@@ -1514,6 +1876,81 @@ var doc = `{
                     "type": "string"
                 },
                 "tokenType": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RolePermissionTree": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.RolePermissionTree"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isGranted": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "string"
+                },
+                "rank": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "extrastruct.QiNiuConfigDto": {
+            "type": "object",
+            "required": [
+                "code",
+                "configType",
+                "name"
+            ],
+            "properties": {
+                "accessKey": {
+                    "description": "公钥",
+                    "type": "string"
+                },
+                "area": {
+                    "description": "存储区域",
+                    "type": "string"
+                },
+                "baseUrl": {
+                    "description": "域名",
+                    "type": "string"
+                },
+                "bucket": {
+                    "description": "空间名称",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "配置编码",
+                    "type": "string"
+                },
+                "configType": {
+                    "description": "配置类型",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "配置名称",
+                    "type": "string"
+                },
+                "secretKey": {
+                    "description": "私钥",
                     "type": "string"
                 }
             }
@@ -1767,6 +2204,10 @@ var doc = `{
                     "description": "权限组",
                     "type": "string"
                 },
+                "permissionGroupText": {
+                    "description": "权限组",
+                    "type": "string"
+                },
                 "policy": {
                     "description": "权限策略",
                     "type": "string"
@@ -1787,20 +2228,24 @@ var doc = `{
                 "name"
             ],
             "properties": {
+                "code": {
+                    "description": "角色编码",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "备注",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键",
                     "type": "string"
-                },
-                "isDisable": {
-                    "description": "是否停用",
-                    "type": "boolean"
                 },
                 "name": {
                     "description": "角色名称",
                     "type": "string"
                 },
-                "remark": {
-                    "description": "菜单策略",
+                "roleStatus": {
+                    "description": "角色状态",
                     "type": "string"
                 }
             }
@@ -1811,13 +2256,24 @@ var doc = `{
                 "name"
             ],
             "properties": {
+                "code": {
+                    "description": "角色编码",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "haveAuthorizeUser": {
+                    "description": "角色授权的用户",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AuthorizeUser"
+                    }
+                },
                 "id": {
                     "description": "主键",
                     "type": "string"
-                },
-                "isDisable": {
-                    "description": "是否停用",
-                    "type": "boolean"
                 },
                 "name": {
                     "description": "角色名称",
@@ -1827,8 +2283,66 @@ var doc = `{
                     "description": "操作",
                     "type": "string"
                 },
-                "remark": {
-                    "description": "菜单策略",
+                "roleStatus": {
+                    "description": "角色状态",
+                    "type": "string"
+                },
+                "roleStatusText": {
+                    "description": "角色状态",
+                    "type": "string"
+                }
+            }
+        },
+        "model.AuthRoleSimpleDto": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "角色编码",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "id",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "角色名称",
+                    "type": "string"
+                }
+            }
+        },
+        "model.AuthorizeUser": {
+            "type": "object",
+            "properties": {
+                "isCanDelete": {
+                    "description": "是否可以删除",
+                    "type": "boolean"
+                },
+                "isTenantAdmin": {
+                    "description": "是否是租户管理员",
+                    "type": "boolean"
+                },
+                "loginName": {
+                    "description": "登录名",
+                    "type": "string"
+                },
+                "roleId": {
+                    "description": "角色ID",
+                    "type": "string"
+                },
+                "userDataPrivilegeId": {
+                    "description": "用户授权ID",
+                    "type": "string"
+                },
+                "userId": {
+                    "description": "用户ID",
+                    "type": "string"
+                },
+                "userName": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }
@@ -1948,16 +2462,46 @@ var doc = `{
                 "name"
             ],
             "properties": {
-                "isDisable": {
-                    "description": "是否停用",
-                    "type": "boolean"
+                "code": {
+                    "description": "角色编码",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "备注",
+                    "type": "string"
                 },
                 "name": {
                     "description": "角色名称",
                     "type": "string"
                 },
-                "remark": {
-                    "description": "菜单策略",
+                "roleStatus": {
+                    "description": "角色状态",
+                    "type": "string"
+                }
+            }
+        },
+        "model.CreateSystemConfigDto": {
+            "type": "object",
+            "required": [
+                "code",
+                "configType",
+                "extraValue",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "description": "配置编码",
+                    "type": "string"
+                },
+                "configType": {
+                    "description": "配置类型",
+                    "type": "string"
+                },
+                "extraValue": {
+                    "description": "扩展字段"
+                },
+                "name": {
+                    "description": "配置名称",
                     "type": "string"
                 }
             }
@@ -1967,6 +2511,7 @@ var doc = `{
             "required": [
                 "loginName",
                 "password",
+                "surePassword",
                 "userName"
             ],
             "properties": {
@@ -1978,12 +2523,43 @@ var doc = `{
                     "description": "头像",
                     "type": "string"
                 },
+                "isTenantAdmin": {
+                    "description": "是否是超级管理员",
+                    "type": "boolean"
+                },
+                "lastIp": {
+                    "description": "最后登录ip",
+                    "type": "string"
+                },
+                "lastLogDate": {
+                    "description": "最后登录时间",
+                    "type": "string"
+                },
                 "loginName": {
                     "description": "登录名",
                     "type": "string"
                 },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
                 "password": {
                     "description": "密码",
+                    "type": "string"
+                },
+                "roleIds": {
+                    "description": "角色ID",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sex": {
+                    "description": "性别",
+                    "type": "string"
+                },
+                "surePassword": {
+                    "description": "确认密码",
                     "type": "string"
                 },
                 "userName": {
@@ -2014,6 +2590,36 @@ var doc = `{
                 }
             }
         },
+        "model.SystemConfig": {
+            "type": "object",
+            "required": [
+                "code",
+                "configType",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "description": "配置编码",
+                    "type": "string"
+                },
+                "configType": {
+                    "description": "配置类型",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "配置名称",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                }
+            }
+        },
         "model.SystemUserDto": {
             "type": "object",
             "required": [
@@ -2034,12 +2640,32 @@ var doc = `{
                     "description": "主键",
                     "type": "string"
                 },
+                "isTenantAdmin": {
+                    "description": "是否是超级管理员",
+                    "type": "boolean"
+                },
+                "lastIp": {
+                    "description": "最后登录ip",
+                    "type": "string"
+                },
+                "lastLogDate": {
+                    "description": "最后登录时间",
+                    "type": "string"
+                },
                 "loginName": {
                     "description": "登录名",
                     "type": "string"
                 },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
                 "password": {
                     "description": "密码",
+                    "type": "string"
+                },
+                "sex": {
+                    "description": "性别",
                     "type": "string"
                 },
                 "status": {
@@ -2071,7 +2697,7 @@ var doc = `{
                     "type": "string"
                 },
                 "isTenantAdmin": {
-                    "description": "是否是超级管理员",
+                    "description": "是否是租户管理员",
                     "type": "boolean"
                 },
                 "loginName": {
@@ -2082,9 +2708,12 @@ var doc = `{
                     "description": "手机号码",
                     "type": "string"
                 },
-                "roleId": {
+                "roleIds": {
                     "description": "角色ID",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "roleName": {
                     "description": "角色名称",
@@ -2097,6 +2726,10 @@ var doc = `{
                 "status": {
                     "description": "状态",
                     "type": "string"
+                },
+                "superAdmin": {
+                    "description": "是否是超级管理员",
+                    "type": "boolean"
                 },
                 "userName": {
                     "description": "用户名称",
@@ -2116,6 +2749,10 @@ var doc = `{
                     "description": "邮箱",
                     "type": "string"
                 },
+                "headImgLink": {
+                    "description": "头像连接",
+                    "type": "string"
+                },
                 "headImgUrl": {
                     "description": "头像",
                     "type": "string"
@@ -2124,8 +2761,24 @@ var doc = `{
                     "description": "主键",
                     "type": "string"
                 },
+                "isTenantAdmin": {
+                    "description": "是否是超级管理员",
+                    "type": "boolean"
+                },
+                "lastIp": {
+                    "description": "最后登录ip",
+                    "type": "string"
+                },
+                "lastLogDate": {
+                    "description": "最后登录时间",
+                    "type": "string"
+                },
                 "loginName": {
                     "description": "登录名",
+                    "type": "string"
+                },
+                "mobile": {
+                    "description": "手机号码",
                     "type": "string"
                 },
                 "operation": {
@@ -2134,6 +2787,17 @@ var doc = `{
                 },
                 "password": {
                     "description": "密码",
+                    "type": "string"
+                },
+                "roleIds": {
+                    "description": "角色ID",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sex": {
+                    "description": "性别",
                     "type": "string"
                 },
                 "status": {
@@ -2281,20 +2945,24 @@ var doc = `{
                 "name"
             ],
             "properties": {
+                "code": {
+                    "description": "角色编码",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "备注",
+                    "type": "string"
+                },
                 "id": {
                     "description": "id",
                     "type": "string"
-                },
-                "isDisable": {
-                    "description": "是否停用",
-                    "type": "boolean"
                 },
                 "name": {
                     "description": "角色名称",
                     "type": "string"
                 },
-                "remark": {
-                    "description": "菜单策略",
+                "roleStatus": {
+                    "description": "角色状态",
                     "type": "string"
                 }
             }
@@ -2303,9 +2971,6 @@ var doc = `{
             "type": "object",
             "required": [
                 "id",
-                "loginName",
-                "password",
-                "surePassword",
                 "userName"
             ],
             "properties": {
@@ -2321,16 +2986,19 @@ var doc = `{
                     "description": "用户id",
                     "type": "string"
                 },
-                "loginName": {
-                    "description": "登录名",
+                "mobile": {
+                    "description": "手机号码",
                     "type": "string"
                 },
-                "password": {
-                    "description": "密码",
-                    "type": "string"
+                "roleIds": {
+                    "description": "角色ID",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
-                "surePassword": {
-                    "description": "确认密码",
+                "sex": {
+                    "description": "性别",
                     "type": "string"
                 },
                 "userName": {
@@ -2342,6 +3010,9 @@ var doc = `{
         "model.UpdateSystemUserPasswordDto": {
             "type": "object",
             "required": [
+                "id",
+                "newPassword",
+                "password",
                 "surePassword"
             ],
             "properties": {

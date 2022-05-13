@@ -7,9 +7,16 @@ package dto
  */
 
 type LoginDto struct {
-	TenantCode string `json:"tenantCode" form:"tenantCode" binding:"required"` //租户编码
-	LoginName  string `json:"loginName" form:"loginName" binding:"required"`   //登录名
-	Password   string `json:"password" form:"password" binding:"required"`     //密码
+	TenantCode   string `json:"tenantCode" form:"tenantCode" binding:"required"`     //租户编码
+	LoginName    string `json:"loginName" form:"loginName" binding:"required"`       //登录名
+	Password     string `json:"password" form:"password" binding:"required"`         //密码
+	CaptchaKey   string `json:"captchaKey" form:"captchaKey" binding:"required"`     //验证码Key
+	CaptchaValue string `json:"captchaValue" form:"captchaValue" binding:"required"` //验证码
+}
+
+type CaptchaDto struct {
+	Key        string `json:"key"`        //验证码Key
+	CaptchaUrl string `json:"captchaUrl"` //验证码图片Base64 Url
 }
 
 type LoginTokenResponseDto struct {

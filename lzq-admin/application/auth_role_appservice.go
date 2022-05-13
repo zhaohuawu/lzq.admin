@@ -287,8 +287,8 @@ func (app *authRoleAppService) GetEnanleRoles(c *gin.Context) {
 // @Description
 // @Accept mpfd
 // @Produce  json
-// @Param roleId path string true 角色ID “ ”
-// @Success 200 {array} dto.RolePermissionTree “ ”
+// @Param roleId path string true "角色ID"
+// @Success 200 {array} dto.RolePermissionTree
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/authorize/rolePermissionDatas/{roleId} [GET]
 func (app *authRoleAppService) GetRolePermissionDatas(c *gin.Context) {

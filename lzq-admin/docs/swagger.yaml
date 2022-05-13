@@ -16,6 +16,15 @@ definitions:
       id:
         type: string
     type: object
+  dto.CaptchaDto:
+    properties:
+      captchaUrl:
+        description: 验证码图片Base64 Url
+        type: string
+      key:
+        description: 验证码Key
+        type: string
+    type: object
   dto.KeyAndValueDto:
     properties:
       key:
@@ -25,6 +34,12 @@ definitions:
     type: object
   dto.LoginDto:
     properties:
+      captchaKey:
+        description: 验证码Key
+        type: string
+      captchaValue:
+        description: 验证码
+        type: string
       loginName:
         description: 登录名
         type: string
@@ -35,6 +50,8 @@ definitions:
         description: 租户编码
         type: string
     required:
+    - captchaKey
+    - captchaValue
     - loginName
     - password
     - tenantCode
@@ -62,6 +79,59 @@ definitions:
         type: string
       tokenType:
         type: string
+    type: object
+  dto.RolePermissionTree:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/dto.RolePermissionTree'
+        type: array
+      id:
+        type: string
+      isGranted:
+        type: boolean
+      name:
+        type: string
+      parentId:
+        type: string
+      rank:
+        type: integer
+      type:
+        type: string
+    type: object
+  extrastruct.QiNiuConfigDto:
+    properties:
+      accessKey:
+        description: 公钥
+        type: string
+      area:
+        description: 存储区域
+        type: string
+      baseUrl:
+        description: 域名
+        type: string
+      bucket:
+        description: 空间名称
+        type: string
+      code:
+        description: 配置编码
+        type: string
+      configType:
+        description: 配置类型
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      secretKey:
+        description: 私钥
+        type: string
+    required:
+    - code
+    - configType
+    - name
     type: object
   model.AuthMenuDto:
     properties:
@@ -242,6 +312,9 @@ definitions:
       permissionGroup:
         description: 权限组
         type: string
+      permissionGroupText:
+        description: 权限组
+        type: string
       policy:
         description: 权限策略
         type: string
@@ -259,40 +332,93 @@ definitions:
     type: object
   model.AuthRoleDto:
     properties:
+      code:
+        description: 角色编码
+        type: string
+      description:
+        description: 备注
+        type: string
       id:
         description: 主键
         type: string
-      isDisable:
-        description: 是否停用
-        type: boolean
       name:
         description: 角色名称
         type: string
-      remark:
-        description: 菜单策略
+      roleStatus:
+        description: 角色状态
         type: string
     required:
     - name
     type: object
   model.AuthRoleListDto:
     properties:
+      code:
+        description: 角色编码
+        type: string
+      description:
+        description: 备注
+        type: string
+      haveAuthorizeUser:
+        description: 角色授权的用户
+        items:
+          $ref: '#/definitions/model.AuthorizeUser'
+        type: array
       id:
         description: 主键
         type: string
-      isDisable:
-        description: 是否停用
-        type: boolean
       name:
         description: 角色名称
         type: string
       operation:
         description: 操作
         type: string
-      remark:
-        description: 菜单策略
+      roleStatus:
+        description: 角色状态
+        type: string
+      roleStatusText:
+        description: 角色状态
         type: string
     required:
     - name
+    type: object
+  model.AuthRoleSimpleDto:
+    properties:
+      code:
+        description: 角色编码
+        type: string
+      description:
+        description: 备注
+        type: string
+      id:
+        description: id
+        type: string
+      name:
+        description: 角色名称
+        type: string
+    type: object
+  model.AuthorizeUser:
+    properties:
+      isCanDelete:
+        description: 是否可以删除
+        type: boolean
+      isTenantAdmin:
+        description: 是否是租户管理员
+        type: boolean
+      loginName:
+        description: 登录名
+        type: string
+      roleId:
+        description: 角色ID
+        type: string
+      userDataPrivilegeId:
+        description: 用户授权ID
+        type: string
+      userId:
+        description: 用户ID
+        type: string
+      userName:
+        description: 用户名
+        type: string
     type: object
   model.CreateAuthMenuDto:
     properties:
@@ -376,16 +502,38 @@ definitions:
     type: object
   model.CreateAuthRoleDto:
     properties:
-      isDisable:
-        description: 是否停用
-        type: boolean
+      code:
+        description: 角色编码
+        type: string
+      description:
+        description: 备注
+        type: string
       name:
         description: 角色名称
         type: string
-      remark:
-        description: 菜单策略
+      roleStatus:
+        description: 角色状态
         type: string
     required:
+    - name
+    type: object
+  model.CreateSystemConfigDto:
+    properties:
+      code:
+        description: 配置编码
+        type: string
+      configType:
+        description: 配置类型
+        type: string
+      extraValue:
+        description: 扩展字段
+      name:
+        description: 配置名称
+        type: string
+    required:
+    - code
+    - configType
+    - extraValue
     - name
     type: object
   model.CreateSystemUserDto:
@@ -396,11 +544,34 @@ definitions:
       headImgUrl:
         description: 头像
         type: string
+      isTenantAdmin:
+        description: 是否是超级管理员
+        type: boolean
+      lastIp:
+        description: 最后登录ip
+        type: string
+      lastLogDate:
+        description: 最后登录时间
+        type: string
       loginName:
         description: 登录名
         type: string
+      mobile:
+        description: 手机号码
+        type: string
       password:
         description: 密码
+        type: string
+      roleIds:
+        description: 角色ID
+        items:
+          type: string
+        type: array
+      sex:
+        description: 性别
+        type: string
+      surePassword:
+        description: 确认密码
         type: string
       userName:
         description: 用户名
@@ -408,6 +579,7 @@ definitions:
     required:
     - loginName
     - password
+    - surePassword
     - userName
     type: object
   model.CreateTenantDto:
@@ -425,6 +597,28 @@ definitions:
     - name
     - password
     type: object
+  model.SystemConfig:
+    properties:
+      code:
+        description: 配置编码
+        type: string
+      configType:
+        description: 配置类型
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      status:
+        description: 状态
+        type: string
+    required:
+    - code
+    - configType
+    - name
+    type: object
   model.SystemUserDto:
     properties:
       email:
@@ -436,11 +630,26 @@ definitions:
       id:
         description: 主键
         type: string
+      isTenantAdmin:
+        description: 是否是超级管理员
+        type: boolean
+      lastIp:
+        description: 最后登录ip
+        type: string
+      lastLogDate:
+        description: 最后登录时间
+        type: string
       loginName:
         description: 登录名
         type: string
+      mobile:
+        description: 手机号码
+        type: string
       password:
         description: 密码
+        type: string
+      sex:
+        description: 性别
         type: string
       status:
         description: 状态
@@ -467,7 +676,7 @@ definitions:
       id:
         type: string
       isTenantAdmin:
-        description: 是否是超级管理员
+        description: 是否是租户管理员
         type: boolean
       loginName:
         description: 登录名
@@ -475,9 +684,11 @@ definitions:
       mobile:
         description: 手机号码
         type: string
-      roleId:
+      roleIds:
         description: 角色ID
-        type: string
+        items:
+          type: string
+        type: array
       roleName:
         description: 角色名称
         type: string
@@ -487,6 +698,9 @@ definitions:
       status:
         description: 状态
         type: string
+      superAdmin:
+        description: 是否是超级管理员
+        type: boolean
       userName:
         description: 用户名称
         type: string
@@ -496,20 +710,43 @@ definitions:
       email:
         description: 邮箱
         type: string
+      headImgLink:
+        description: 头像连接
+        type: string
       headImgUrl:
         description: 头像
         type: string
       id:
         description: 主键
         type: string
+      isTenantAdmin:
+        description: 是否是超级管理员
+        type: boolean
+      lastIp:
+        description: 最后登录ip
+        type: string
+      lastLogDate:
+        description: 最后登录时间
+        type: string
       loginName:
         description: 登录名
+        type: string
+      mobile:
+        description: 手机号码
         type: string
       operation:
         description: 操作
         type: string
       password:
         description: 密码
+        type: string
+      roleIds:
+        description: 角色ID
+        items:
+          type: string
+        type: array
+      sex:
+        description: 性别
         type: string
       status:
         description: 状态
@@ -619,17 +856,20 @@ definitions:
     type: object
   model.UpdateAuthRoleDto:
     properties:
+      code:
+        description: 角色编码
+        type: string
+      description:
+        description: 备注
+        type: string
       id:
         description: id
         type: string
-      isDisable:
-        description: 是否停用
-        type: boolean
       name:
         description: 角色名称
         type: string
-      remark:
-        description: 菜单策略
+      roleStatus:
+        description: 角色状态
         type: string
     required:
     - id
@@ -646,23 +886,22 @@ definitions:
       id:
         description: 用户id
         type: string
-      loginName:
-        description: 登录名
+      mobile:
+        description: 手机号码
         type: string
-      password:
-        description: 密码
-        type: string
-      surePassword:
-        description: 确认密码
+      roleIds:
+        description: 角色ID
+        items:
+          type: string
+        type: array
+      sex:
+        description: 性别
         type: string
       userName:
         description: 用户名
         type: string
     required:
     - id
-    - loginName
-    - password
-    - surePassword
     - userName
     type: object
   model.UpdateSystemUserPasswordDto:
@@ -679,6 +918,9 @@ definitions:
         description: 确认密码
         type: string
     required:
+    - id
+    - newPassword
+    - password
     - surePassword
     type: object
   model.UserGrantedMenuDto:
@@ -739,6 +981,22 @@ info:
   title: HSF Project API
   version: "1.0"
 paths:
+  /api/app/auth/captcha:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/dto.CaptchaDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 获取验证码
+      tags:
+      - Auth
   /api/app/auth/logOut:
     post:
       produces:
@@ -922,142 +1180,6 @@ paths:
       summary: 修改服务模块
       tags:
       - AuthModule
-  /api/app/authRole/create:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: ' '
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/model.CreateAuthRoleDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.AuthRoleDto'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/application.ResponseDto'
-      summary: 创建角色
-      tags:
-      - AuthRole
-  /api/app/authRole/delete:
-    delete:
-      parameters:
-      - description: 模块ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/application.ResponseDto'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/application.ResponseDto'
-      summary: 删除角色
-      tags:
-      - AuthRole
-  /api/app/authRole/get:
-    get:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: ID
-        in: query
-        name: id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.AuthRoleDto'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/application.ResponseDto'
-      summary: 根据ID查询角色
-      tags:
-      - AuthRole
-  /api/app/authRole/list:
-    get:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: 查询条件
-        in: formData
-        name: filter
-        type: string
-      - description: 是否返回总条数
-        in: formData
-        name: requireTotalCount
-        type: boolean
-      - description: 第几页，>=1开始
-        in: formData
-        name: skip
-        type: integer
-      - description: 排序字段
-        in: formData
-        name: sort
-        type: string
-      - description: 每页多少条数据
-        in: formData
-        name: take
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.AuthRoleListDto'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/application.ResponseDto'
-      summary: 查询角色列表
-      tags:
-      - AuthRole
-  /api/app/authRole/update:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ' '
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/model.UpdateAuthRoleDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/application.ResponseDto'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/application.ResponseDto'
-      summary: 修改角色
-      tags:
-      - AuthRole
   /api/app/authenticateChecker/grantedMenus:
     get:
       produces:
@@ -1074,6 +1196,54 @@ paths:
           schema:
             $ref: '#/definitions/application.ResponseDto'
       summary: 查询当前用户已授权的菜单
+      tags:
+      - AuthChecker
+  /api/app/authorize/rolePermissionDatas/{roleId}:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 角色ID
+        in: path
+        name: roleId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.RolePermissionTree'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 获取角色授权的操作权限
+      tags:
+      - AuthRole
+  /api/app/authorize/userRole:
+    delete:
+      parameters:
+      - description: 用户数据授权ID
+        in: query
+        name: userDataPrivilegeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除用户数据授权
       tags:
       - AuthChecker
   /api/app/menu/get:
@@ -1394,6 +1564,201 @@ paths:
       summary: 获取所有的操作权限组
       tags:
       - AuthPermission
+  /api/app/permissionChecker/grantedPermissions:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询当前用户所授权的操作权限
+      tags:
+      - AuthChecker
+  /api/app/role/get:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthRoleDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 根据ID查询角色
+      tags:
+      - AuthRole
+  /api/app/role/role:
+    delete:
+      parameters:
+      - description: 模块ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除角色
+      tags:
+      - AuthRole
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAuthRoleDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthRoleDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建角色
+      tags:
+      - AuthRole
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAuthRoleDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改角色
+      tags:
+      - AuthRole
+  /api/app/role/roleList:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: formData
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: formData
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: formData
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: formData
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: formData
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AuthRoleListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询角色列表
+      tags:
+      - AuthRole
+  /api/app/role/roleStatus:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BaseDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 启用/停用角色
+      tags:
+      - AuthRole
+  /api/app/role/roles:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.AuthRoleSimpleDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询启用中的角色
+      tags:
+      - AuthRole
   /api/app/sysUser/defaultAvatar:
     get:
       produces:
@@ -1617,6 +1982,102 @@ paths:
       summary: 查询当前用户信息
       tags:
       - SystemUser
+  /api/app/sysconfig/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSystemConfigDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.SystemConfig'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 系统配置创建
+      tags:
+      - SysConfig
+  /api/app/sysconfig/getQnInfo:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 配置ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/extrastruct.QiNiuConfigDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/extrastruct.QiNiuConfigDto'
+      summary: 七牛云配置详情
+      tags:
+      - SysConfig
+  /api/app/sysconfig/getSysConfigCache:
+    get:
+      parameters:
+      - description: 配置类型
+        in: query
+        name: configType
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 设置系统配置Json及注解缓存
+      tags:
+      - SysConfig
+  /api/app/sysconfig/qnupdate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/extrastruct.QiNiuConfigDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.SystemConfig'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 配置七牛云
+      tags:
+      - SysConfig
   /api/app/tenant/create:
     post:
       consumes:

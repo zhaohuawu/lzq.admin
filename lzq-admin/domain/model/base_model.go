@@ -13,8 +13,9 @@ import (
 )
 
 const (
+	TableSystemConfig          = "sys_config"
 	TableSystemUser            = "sys_user"
-	TableTenant                = "tm_tenant"
+	TableTenant                = "sys_tenant"
 	TableAuthModule            = "au_module"
 	TableAuthMenu              = "au_menu"
 	TableAuthPermission        = "au_permission"

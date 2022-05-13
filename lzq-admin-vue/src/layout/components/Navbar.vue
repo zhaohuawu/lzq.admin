@@ -29,6 +29,9 @@
           <i class="el-icon-arrow-down" style="margin-left:5px" />
         </div>
         <el-dropdown-menu slot="dropdown">
+          <router-link to="/profile/index">
+            <el-dropdown-item>个人中心</el-dropdown-item>
+          </router-link>
           <el-dropdown-item @click.native="logout">
             <span style="display:block;">注销</span>
           </el-dropdown-item>

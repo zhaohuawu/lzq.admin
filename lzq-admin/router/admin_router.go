@@ -24,12 +24,22 @@ func AdminRouter(router *gin.RouterGroup) {
 		authRouter := router.Group("/auth").Use()
 		{
 			authRouter.POST("/login", application.IAuthAppService.Login)
+			authRouter.GET("/captcha", application.IAuthAppService.GetCaptcha)
+
 			authRouter.Use(middleware.CheckAuth()).POST("/logOut", application.IAuthAppService.Logout)
 		}
 
 		tenantRouter := router.Group("/tenant").Use(middleware.CheckAuth())
 		{
 			tenantRouter.POST("/create", application.ITenantAppService.Create)
+		}
+
+		sysConfigRouter := router.Group("/sysconfig").Use(middleware.CheckAuth())
+		{
+			sysConfigRouter.GET("/getSysConfigCache", application.ISystemConfigAppService.GetSysconfigJsonMapCache)
+			sysConfigRouter.POST("/qnupdate", application.ISystemConfigAppService.QiuNiuUpdate)
+			sysConfigRouter.GET("/getQNInfo", application.ISystemConfigAppService.GetQiuNiuInfo)
+			sysConfigRouter.POST("/create",application.ISystemConfigAppService.Create)
 		}
 
 		systemUserRouter := router.Group("/sysUser").Use(middleware.CheckAuth())

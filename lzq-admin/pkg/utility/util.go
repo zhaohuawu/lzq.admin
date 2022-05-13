@@ -8,7 +8,9 @@ package utility
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 )
 
 // GetRootPath 获取项目根目录
@@ -23,4 +25,14 @@ func GetRootPath() (path string, err error) {
 	//}
 
 	return
+}
+
+func RandomNum(mix, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	resultNum := rand.Intn(max)
+	if resultNum >= mix {
+		return resultNum
+	} else {
+		return resultNum + mix
+	}
 }

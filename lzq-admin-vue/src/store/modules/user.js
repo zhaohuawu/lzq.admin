@@ -3,6 +3,7 @@ import { getMenuRouterList, getGrantedPermissions } from '@/api/authorize'
 
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+// import { Message } from 'element-ui'
 
 const state = {
   token: getToken(),
@@ -45,17 +46,25 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { loginName, password, tenantCode, loginType } = userInfo
+    const { loginName, password, tenantCode, loginType, captchaKey, captchaValue } = userInfo
     return new Promise((resolve, reject) => {
-      login({ loginName: loginName.trim(), password: password, tenantCode: tenantCode, loginType: loginType }).then(response => {
-        const aToken = response.tokenType + ' ' + response.accessToken
-        console.log('SET_TOKEN', aToken)
-        commit('SET_TOKEN', aToken)
-        setToken(aToken)
-        resolve()
+      login({ loginName: loginName.trim(), password: password, tenantCode: tenantCode, loginType: loginType, captchaKey: captchaKey, captchaValue: captchaValue }).then(response => {
+        if (response.isError) {
+          // Message({
+          //   message: response.errorDescription,
+          //   type: 'error',
+          //   duration: 5 * 1000
+          // })
+          // return 
+        } else {
+          const aToken = response.tokenType + ' ' + response.accessToken
+          commit('SET_TOKEN', aToken)
+          setToken(aToken)
+          resolve()
+        }
       }).catch(error => {
         console.log('loginError', error)
-        reject(error)
+        // reject(error)
       })
     })
   },

@@ -52,6 +52,15 @@ func (Base *BaseAppService) ResponseSuccess(c *gin.Context, obj interface{}) {
 func (Base *BaseAppService) ResponseError(c *gin.Context, err error) {
 	ResponseError(c, err)
 }
+
+func (Base *BaseAppService) ResponseBusinessError(c *gin.Context, err error) {
+	var res ResponseDto
+	res.Code = 0
+	res.Msg = err.Error()
+	c.JSON(http.StatusOK, res)
+	return
+}
+
 func (Base *BaseAppService) ResponseSingleDto(c *gin.Context, obj1 interface{}, obj2 interface{}) {
 	resultMap := utility.StructToMap(obj1, true)
 	if err := mapstructure.Decode(resultMap, obj2); err != nil {
@@ -59,6 +68,14 @@ func (Base *BaseAppService) ResponseSingleDto(c *gin.Context, obj1 interface{}, 
 		return
 	}
 	Base.ResponseSuccess(c, obj2)
+	return
+}
+
+func ResponseError(c *gin.Context, err error) {
+	var res ResponseDto
+	res.Code = 0
+	res.Msg = err.Error()
+	c.JSON(http.StatusInternalServerError, res)
 	return
 }
 
@@ -271,14 +288,6 @@ func sqlField(tagMap map[string]reflect.StructTag, tAlias string, field string) 
 	} else {
 		return field
 	}
-}
-
-func ResponseError(c *gin.Context, err error) {
-	var res ResponseDto
-	res.Code = 0
-	res.Msg = err.Error()
-	c.JSON(http.StatusInternalServerError, res)
-	return
 }
 
 func GetCurrentUserGrantedOperation(operations []dto.OperationDto, isPermissionChecking ...bool) string {

@@ -73,6 +73,8 @@ func getModels() []interface{} {
 		new(model.AuthPermission),
 		new(model.AuthRole),
 		new(model.AuthRolePermission),
+		new(model.AuthUserDataPrivilege),
+		new(model.SystemConfig),
 	}
 }
 

@@ -278,7 +278,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          // this.temp.moduleId = '0cbba6df-9078-4f4a-9b9c-8d6312d1b184'
+          this.temp.moduleId = '0cbba6df-9078-4f4a-9b9c-8d6312d1b184'
           createMenu(this.temp).then(() => {
             this.dialogFormVisible = false
             this.$notify({

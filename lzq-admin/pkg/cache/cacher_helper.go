@@ -19,14 +19,13 @@ var LzqCacheHelper = &cacheHelper{}
 // GetCacheVersion 获取缓存类型版本号
 func (c *cacheHelper) GetCacheVersion(cacheType string) string {
 	key := c.GetCacheTypeVersionKey(cacheType)
-	value := RedisUtil.Get(key)
+	value := RedisUtil.NewRedis(false).Get(key)
 	if len(value) == 0 {
 		value = uuid.NewV4().String()
-		RedisUtil.SetString(key, value, time.Hour*24)
+		RedisUtil.NewRedis(false).SetString(key, value, time.Hour*24)
 	}
 	return value
 }
 func (c *cacheHelper) GetCacheTypeVersionKey(cacheType string) string {
 	return fmt.Sprintf("CacheVersion:%v", cacheType)
 }
-

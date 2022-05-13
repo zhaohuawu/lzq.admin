@@ -47,3 +47,13 @@ var RoleStatusConstFlags = map[string]string{
 	RoleStatusDisable: "停用",
 	RoleStatusEnable:  "启用",
 }
+
+const (
+	CommonStatusDisable = "Disable"
+	CommonStatusEnable  = "Enable"
+)
+
+var CommonStatusConstFlags = map[string]string{
+	CommonStatusDisable: "停用",
+	CommonStatusEnable:  "启用",
+}

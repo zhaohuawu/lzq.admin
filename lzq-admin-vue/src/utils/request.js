@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {
-  MessageBox,
+  // MessageBox,
   Message
 } from 'element-ui'
 import store from '@/store'
@@ -48,7 +48,8 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    if (res.hasOwnProperty('error') || (res.hasOwnProperty('errorDescription') && res.errorDescription !== null && res.errorDescription !== '')) {
+    const isMessage = true
+    if (res.hasOwnProperty('error') || (res.hasOwnProperty('errorDescription') && res.errorDescription !== null && res.errorDescription !== '') || (res.hasOwnProperty('cdoe') && res.cdoe === 0)) {
       let msg = 'Error'
       if (res.hasOwnProperty('error')) {
         msg = res.error.message
@@ -56,27 +57,28 @@ service.interceptors.response.use(
         msg = res.error.msg
       } else if (res.hasOwnProperty('errorDescription')) {
         msg = res.errorDescription
+        // isMessage = false
         // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-        if (res.hasOwnProperty('errorDescription')) {
-          // to re-login
-          MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-            confirmButtonText: 'Re-Login',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-          }).then(() => {
-            store.dispatch('user/resetToken').then(() => {
-              location.reload()
-            })
-          })
-        }
+        // if (res.hasOwnProperty('errorDescription')) {
+        //   // to re-login
+        //   MessageBox.confirm(msg, 'Confirm logout', {
+        //     confirmButtonText: 'Re-Login',
+        //     cancelButtonText: 'Cancel',
+        //     type: 'warning'
+        //   }).then(() => {
+        //     store.dispatch('user/resetToken').then(() => {
+        //       location.reload()
+        //     })
+        //   })
+        // }
       }
-
-      Message({
-        message: msg,
-        type: 'error',
-        duration: 5 * 1000
-      })
-
+      if (isMessage) {
+        Message({
+          message: msg,
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res

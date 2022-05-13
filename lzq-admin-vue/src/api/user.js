@@ -9,6 +9,13 @@ export function login(data) {
   })
 }
 
+export function getCaptcha() {
+  return request({
+    url: '/api/app/auth/captcha',
+    method: 'get'
+  })
+}
+
 export function getInfo() {
   return request({
     url: '/api/app/sysUser/userInfo',
