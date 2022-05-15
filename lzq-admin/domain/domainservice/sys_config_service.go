@@ -36,89 +36,99 @@ func (s *sysConfigDomainService) Insert(inputDto model.CreateSystemConfigDto) (m
 	systemConfig.ConfigType = inputDto.ConfigType
 	systemConfig.Code = inputDto.Code
 	systemConfig.Name = inputDto.Name
-	systemConfig.ExtraProperties[model.ExtraSysConfigKey] = inputDto.ExtraValue
+	systemConfig.ExtraProperties = make(map[string]interface{})
+	systemConfig.ExtraProperties[model.ExtraSysConfigKey] = model.ConfigTypeConstStruct[inputDto.ConfigType] //s.GetExtraPropertiesJson(inputDto.ConfigType) //new(extrastruct.ExtraQiNiuConfig)
 	systemConfig.Status = domainconsts.CommonStatusEnable
 	if _, err := orm.ISession().Insert(&systemConfig); err != nil {
 		return model.SystemConfig{}, err
 	}
-
 	return systemConfig, nil
 }
 
 func (s *sysConfigDomainService) Update(inputDto model.UpdateSystemConfigDto) (model.SystemConfig, error) {
 	var systemConfig model.SystemConfig
-	isExit, err := orm.QSession(true).Where("ConfigType=? and Code=?", inputDto.ConfigType, inputDto.Code).Get(&systemConfig)
+	isExit, err := orm.QSession(false).Where("ConfigType=? and Code=?", inputDto.ConfigType, inputDto.Code).Get(&systemConfig)
 	if err != nil {
 		return systemConfig, err
 	}
 	if !isExit {
 		return systemConfig, errors.New("该配置类型不已存在：" + inputDto.Code)
 	}
-
-	systemConfig.Name = inputDto.Name
 	systemConfig.ExtraProperties[model.ExtraSysConfigKey] = inputDto.ExtraValue
-	systemConfig.Status = domainconsts.CommonStatusEnable
-	if _, err := orm.USession(true).ID(inputDto.ID).Update(&systemConfig); err != nil {
+	if _, err := orm.USession(true).ID(systemConfig.ID).Update(&systemConfig); err != nil {
 		return model.SystemConfig{}, err
 	}
-
-	return systemConfig, nil
-}
-
-func (s *sysConfigDomainService) GetById(id string) (model.SystemConfig, error) {
-	var systemConfig model.SystemConfig
-	isExit, err := orm.QSession(true).ID(id).Get(&systemConfig)
-	if err != nil {
-		return systemConfig, err
-	}
-	if !isExit {
-		return systemConfig, errors.New("不存在该配置")
-	}
+	r := cache.RedisUtil.NewRedis(false, "SysConfig")
+	r.Delete(fmt.Sprintf("%v:%v", systemConfig.ConfigType, systemConfig.Code))
 	return systemConfig, nil
 }
 
 func (s *sysConfigDomainService) GetByCode(configType, code string) (model.SystemConfig, error) {
 	var systemConfig model.SystemConfig
-	isExit, err := orm.QSession(true).Where("ConfigType=? and Code=?", configType, code).Get(&systemConfig)
+	isExit, err := orm.QSession(false).Where("ConfigType=? and Code=?", configType, code).Get(&systemConfig)
 	if err != nil {
 		return systemConfig, err
 	}
 	if !isExit {
 		return systemConfig, errors.New("不存在该配置")
 	}
+
 	return systemConfig, nil
+}
+
+func (s *sysConfigDomainService) GetSysConfigCacheByCode(configType, code string) (string, error) {
+	r := cache.RedisUtil.NewRedis(false, "SysConfig")
+	key := fmt.Sprintf("%v:%v", configType, code)
+	obj := r.Get(key)
+	if obj != "" {
+		return obj, nil
+	}
+	var systemConfig model.SystemConfig
+	isExit, err := orm.QSession(true).Where("ConfigType=? and Code=?", configType, code).Get(&systemConfig)
+	if err != nil {
+		return "", err
+	}
+	if !isExit {
+		return "", errors.New("不存在该配置")
+	}
+	v := systemConfig.ExtraProperties[model.ExtraSysConfigKey]
+	r.SSet(key, v, 0)
+	json, _ := jsoniter.MarshalToString(v)
+	return json, nil
 }
 
 func (s *sysConfigDomainService) GetExtraPropertiesJson(configType string) interface{} {
 	var json interface{}
 	switch configType {
 	case model.ExtraString:
+		json = ""
 		break
 	case model.ExtraInt:
 		json = 0
 		break
 	case model.ExtraStringArray:
-		var t []string
-		json, _ = jsoniter.MarshalToString(t)
+		json = make([]string, 0)
 		break
 	case model.ExtraIntArray:
-		var t []int
-		json, _ = jsoniter.MarshalToString(t)
+		json = make([]int, 0)
+		break
+	case model.ExtraQiNiuConfig:
+		json = new(extrastruct.ExtraQiNiuConfig)
 		break
 	default:
-		json = s.SetSysconfigJsonMapCache(configType)
+		json = s.SetSysConfigJsonMapCache(configType)
 		break
 	}
 	return json
 }
 
-func (s *sysConfigDomainService) SetSysconfigJsonMapCache(configType string) interface{} {
+func (s *sysConfigDomainService) SetSysConfigJsonMapCache(configType string) interface{} {
 	c := cache.RedisUtil.NewRedis(false)
 	var objJson interface{}
 	isAllConfigType := configType == "AllConfigType"
 	if !isAllConfigType {
-		objJson = c.HGet("Extrastruct:KeyJson", configType)
-		if objJson != nil {
+		objJson = c.HGet("ExtraStruct:KeyJson", configType)
+		if objJson != "" {
 			return objJson
 		}
 	}
@@ -127,8 +137,8 @@ func (s *sysConfigDomainService) SetSysconfigJsonMapCache(configType string) int
 	if isAllConfigType {
 		for k, v := range jsonMap {
 			vm := v.(map[string]interface{})
-			for km, vm := range vm {
-				c.HSet(fmt.Sprintf("Extrastruct:%v", km), k, vm)
+			for kk, vv := range vm {
+				c.HSet(fmt.Sprintf("ExtraStruct:%v", kk), k, vv)
 			}
 		}
 		objJson = jsonMap

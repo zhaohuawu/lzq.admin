@@ -42,7 +42,7 @@ func (s *AuthAppService) GetCaptcha(c *gin.Context) {
 	uuid := utility.UuidCreate()
 	captchaKey := fmt.Sprintf("Captcha:%v", uuid)
 	exp := time.Duration(60+utility.RandomNum(0, 10)) * time.Second
-	cache.RedisUtil.NewRedis(false).SetString(captchaKey, strconv.Itoa(resultNum), exp)
+	cache.RedisUtil.NewRedis(false).Set(captchaKey, strconv.Itoa(resultNum), exp)
 	s.ResponseSuccess(c, &dto.CaptchaDto{Key: uuid, CaptchaUrl: captchaUrl})
 }
 

@@ -1613,7 +1613,7 @@ var doc = `{
                 }
             }
         },
-        "/api/app/sysconfig/getQnInfo": {
+        "/api/app/sysconfig/getInfo": {
             "get": {
                 "consumes": [
                     "multipart/form-data"
@@ -1628,8 +1628,15 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "配置ID",
-                        "name": "id",
+                        "description": "配置类型",
+                        "name": "configType",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "配置编码",
+                        "name": "code",
                         "in": "query",
                         "required": true
                     }
@@ -1638,13 +1645,13 @@ var doc = `{
                     "200": {
                         "description": " ",
                         "schema": {
-                            "$ref": "#/definitions/extrastruct.QiNiuConfigDto"
+                            "$ref": "#/definitions/model.QiNiuConfigDto"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/extrastruct.QiNiuConfigDto"
+                            "$ref": "#/definitions/application.ResponseDto"
                         }
                     }
                 }
@@ -1672,7 +1679,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "boolean"
+                            "type": "object"
                         }
                     },
                     "500": {
@@ -1703,7 +1710,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/extrastruct.QiNiuConfigDto"
+                            "$ref": "#/definitions/model.QiNiuConfigDto"
                         }
                     }
                 ],
@@ -1712,6 +1719,83 @@ var doc = `{
                         "description": " ",
                         "schema": {
                             "$ref": "#/definitions/model.SystemConfig"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/sysfile/batchUpload": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SysFile"
+                ],
+                "summary": "批量上传文件",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "文件",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SystemFile"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/sysfile/upload": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SysFile"
+                ],
+                "summary": "单个上传文件",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemFile"
                         }
                     },
                     "500": {
@@ -1909,13 +1993,8 @@ var doc = `{
                 }
             }
         },
-        "extrastruct.QiNiuConfigDto": {
+        "extrastruct.ExtraQiNiuConfig": {
             "type": "object",
-            "required": [
-                "code",
-                "configType",
-                "name"
-            ],
             "properties": {
                 "accessKey": {
                     "description": "公钥",
@@ -1933,20 +2012,8 @@ var doc = `{
                     "description": "空间名称",
                     "type": "string"
                 },
-                "code": {
-                    "description": "配置编码",
-                    "type": "string"
-                },
-                "configType": {
-                    "description": "配置类型",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "配置名称",
+                "directory": {
+                    "description": "主目录",
                     "type": "string"
                 },
                 "secretKey": {
@@ -2590,6 +2657,26 @@ var doc = `{
                 }
             }
         },
+        "model.QiNiuConfigDto": {
+            "type": "object",
+            "required": [
+                "code",
+                "configType"
+            ],
+            "properties": {
+                "code": {
+                    "description": "配置编码",
+                    "type": "string"
+                },
+                "configType": {
+                    "description": "配置类型",
+                    "type": "string"
+                },
+                "extraValue": {
+                    "$ref": "#/definitions/extrastruct.ExtraQiNiuConfig"
+                }
+            }
+        },
         "model.SystemConfig": {
             "type": "object",
             "required": [
@@ -2616,6 +2703,51 @@ var doc = `{
                 },
                 "status": {
                     "description": "状态",
+                    "type": "string"
+                }
+            }
+        },
+        "model.SystemFile": {
+            "type": "object",
+            "required": [
+                "contentType",
+                "url"
+            ],
+            "properties": {
+                "contentType": {
+                    "description": "文件类型",
+                    "type": "string"
+                },
+                "extension": {
+                    "description": "文件扩展名",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "newName": {
+                    "description": "文件新名称",
+                    "type": "string"
+                },
+                "originalName": {
+                    "description": "文件原名称",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "文件大小（单位：B）",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                },
+                "thirdPartyId": {
+                    "description": "第三方文件存储ID",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "文件路径",
                     "type": "string"
                 }
             }

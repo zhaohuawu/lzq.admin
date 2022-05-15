@@ -99,7 +99,7 @@ definitions:
       type:
         type: string
     type: object
-  extrastruct.QiNiuConfigDto:
+  extrastruct.ExtraQiNiuConfig:
     properties:
       accessKey:
         description: 公钥
@@ -113,25 +113,12 @@ definitions:
       bucket:
         description: 空间名称
         type: string
-      code:
-        description: 配置编码
-        type: string
-      configType:
-        description: 配置类型
-        type: string
-      id:
-        description: ID
-        type: string
-      name:
-        description: 配置名称
+      directory:
+        description: 主目录
         type: string
       secretKey:
         description: 私钥
         type: string
-    required:
-    - code
-    - configType
-    - name
     type: object
   model.AuthMenuDto:
     properties:
@@ -597,6 +584,20 @@ definitions:
     - name
     - password
     type: object
+  model.QiNiuConfigDto:
+    properties:
+      code:
+        description: 配置编码
+        type: string
+      configType:
+        description: 配置类型
+        type: string
+      extraValue:
+        $ref: '#/definitions/extrastruct.ExtraQiNiuConfig'
+    required:
+    - code
+    - configType
+    type: object
   model.SystemConfig:
     properties:
       code:
@@ -618,6 +619,39 @@ definitions:
     - code
     - configType
     - name
+    type: object
+  model.SystemFile:
+    properties:
+      contentType:
+        description: 文件类型
+        type: string
+      extension:
+        description: 文件扩展名
+        type: string
+      id:
+        description: 主键
+        type: string
+      newName:
+        description: 文件新名称
+        type: string
+      originalName:
+        description: 文件原名称
+        type: string
+      size:
+        description: 文件大小（单位：B）
+        type: integer
+      status:
+        description: 状态
+        type: string
+      thirdPartyId:
+        description: 第三方文件存储ID
+        type: string
+      url:
+        description: 文件路径
+        type: string
+    required:
+    - contentType
+    - url
     type: object
   model.SystemUserDto:
     properties:
@@ -2007,14 +2041,19 @@ paths:
       summary: 系统配置创建
       tags:
       - SysConfig
-  /api/app/sysconfig/getQnInfo:
+  /api/app/sysconfig/getInfo:
     get:
       consumes:
       - multipart/form-data
       parameters:
-      - description: 配置ID
+      - description: 配置类型
         in: query
-        name: id
+        name: configType
+        required: true
+        type: string
+      - description: 配置编码
+        in: query
+        name: code
         required: true
         type: string
       produces:
@@ -2023,11 +2062,11 @@ paths:
         "200":
           description: ' '
           schema:
-            $ref: '#/definitions/extrastruct.QiNiuConfigDto'
+            $ref: '#/definitions/model.QiNiuConfigDto'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/extrastruct.QiNiuConfigDto'
+            $ref: '#/definitions/application.ResponseDto'
       summary: 七牛云配置详情
       tags:
       - SysConfig
@@ -2045,7 +2084,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: boolean
+            type: object
         "500":
           description: Internal Server Error
           schema:
@@ -2063,7 +2102,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/extrastruct.QiNiuConfigDto'
+          $ref: '#/definitions/model.QiNiuConfigDto'
       produces:
       - application/json
       responses:
@@ -2078,6 +2117,56 @@ paths:
       summary: 配置七牛云
       tags:
       - SysConfig
+  /api/app/sysfile/batchUpload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 文件
+        in: formData
+        name: files
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.SystemFile'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 批量上传文件
+      tags:
+      - SysFile
+  /api/app/sysfile/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.SystemFile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 单个上传文件
+      tags:
+      - SysFile
   /api/app/tenant/create:
     post:
       consumes:

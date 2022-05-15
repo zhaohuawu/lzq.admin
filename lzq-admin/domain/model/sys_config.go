@@ -2,6 +2,7 @@ package model
 
 import (
 	jsoniter "github.com/json-iterator/go"
+	"lzq-admin/domain/model/extrastruct"
 	"lzq-admin/pkg/hsflogger"
 	"reflect"
 )
@@ -18,7 +19,6 @@ func (SystemConfig *SystemConfig) TableName() string {
 
 type SystemConfig struct {
 	BaseModel                   `xorm:"extends"`
-	TenantBaseModel             `xorm:"extends"`
 	HasExtraPropertiesBaseModel `xorm:"extends"`
 	SystemConfigBase            `xorm:"extends"`
 	Status                      string `json:"status" xorm:"varchar(32) notnull comment('状态')"` //状态
@@ -47,6 +47,16 @@ type SystemConfigDto struct {
 	ExtraValue       interface{} `json:"extraValue" binding:"required"` //扩展字段
 }
 
+type ConfigUpdateDtoBase struct {
+	ConfigType string `json:"configType" binding:"required"` //配置类型
+	Code       string `json:"code" binding:"required"`       //配置编码
+}
+
+type QiNiuConfigDto struct {
+	ConfigUpdateDtoBase
+	ExtraValue extrastruct.ExtraQiNiuConfig
+}
+
 const ExtraSysConfigKey = "ExtraProperty"
 
 const (
@@ -63,6 +73,14 @@ var ConfigTypeConstFlags = map[string]string{
 	ExtraStringArray: "字符串数组",
 	ExtraIntArray:    "整形数组",
 	ExtraQiNiuConfig: "七牛云",
+}
+
+var ConfigTypeConstStruct = map[string]interface{}{
+	ExtraString:      "",
+	ExtraInt:         0,
+	ExtraStringArray: make([]string, 0),
+	ExtraIntArray:    make([]int, 0),
+	ExtraQiNiuConfig: new(extrastruct.ExtraQiNiuConfig),
 }
 
 func ReflectSysconfigJsonMap(obj interface{}) map[string]interface{} {

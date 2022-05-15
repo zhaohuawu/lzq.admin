@@ -36,10 +36,10 @@ func AdminRouter(router *gin.RouterGroup) {
 
 		sysConfigRouter := router.Group("/sysconfig").Use(middleware.CheckAuth())
 		{
-			sysConfigRouter.GET("/getSysConfigCache", application.ISystemConfigAppService.GetSysconfigJsonMapCache)
+			sysConfigRouter.GET("/getSysConfigCache", application.ISystemConfigAppService.GetSysConfigJsonMapCache)
 			sysConfigRouter.POST("/qnupdate", application.ISystemConfigAppService.QiuNiuUpdate)
-			sysConfigRouter.GET("/getQNInfo", application.ISystemConfigAppService.GetQiuNiuInfo)
-			sysConfigRouter.POST("/create",application.ISystemConfigAppService.Create)
+			sysConfigRouter.GET("/getInfo", application.ISystemConfigAppService.GetInfo)
+			sysConfigRouter.POST("/create", application.ISystemConfigAppService.Create)
 		}
 
 		systemUserRouter := router.Group("/sysUser").Use(middleware.CheckAuth())
@@ -53,6 +53,12 @@ func AdminRouter(router *gin.RouterGroup) {
 			systemUserRouter.PUT("/sysUserStatus", application.ISystemUserAppService.UpdateSystemStatus)
 			systemUserRouter.POST("/editUserPassword", application.ISystemUserAppService.UpdateSystemUserPassword)
 			systemUserRouter.GET("/defaultAvatar", application.ISystemUserAppService.GetDefaultAvatar)
+		}
+
+		systemFileRouter := router.Group("/sysfile").Use(middleware.CheckAuth())
+		{
+			systemFileRouter.POST("/upload", application.ISysFileAppService.Upload)
+			systemFileRouter.POST("/batchUpload", application.ISysFileAppService.BatchUpload)
 		}
 
 		authModuleRouter := router.Group("/authModule").Use(middleware.CheckAuth())

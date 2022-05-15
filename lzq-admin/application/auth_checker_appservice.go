@@ -76,7 +76,7 @@ func (app *authCheckerAppService) GetGrantedMenus(c *gin.Context) {
 		}
 		result = grantedMenuTree(pMenus, rightMenus)
 	}
-	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SSet(cacheKey, result, 0)
 	app.ResponseSuccess(c, result)
 }
 func grantedMenuTree(parentMenus []model.UserGrantedMenuDto, menus []model.UserGrantedMenuDto) []model.UserGrantedMenuDto {

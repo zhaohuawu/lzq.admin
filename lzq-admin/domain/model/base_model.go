@@ -22,6 +22,7 @@ const (
 	TableAuthRole              = "au_role"
 	TableAuthRolePermission    = "au_rolepermission"
 	TableAuthUserdataprivilege = "au_userdataprivilege"
+	TableSystemFile            = "sys_file"
 )
 
 // BaseModel 基类

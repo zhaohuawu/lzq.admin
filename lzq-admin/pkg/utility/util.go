@@ -36,3 +36,4 @@ func RandomNum(mix, max int) int {
 		return resultNum + mix
 	}
 }
+

@@ -42,24 +42,6 @@ type RedisHelper struct {
 	prefixKey         string
 }
 
-func (r *RedisHelper) UseMultiTenancy(useMultiTenancy bool) *RedisHelper {
-	r.isUseMultiTenancy = useMultiTenancy
-	return r
-}
-
-func (r *RedisHelper) SetCacheName(cacheNames ...string) *RedisHelper {
-	for i, v := range cacheNames {
-		if len(v) > 0 {
-			if i == 0 {
-				r.prefixKey = v
-			} else {
-				r.prefixKey = fmt.Sprintf("%v:%v", r.prefixKey, v)
-			}
-		}
-	}
-	return r
-}
-
 func (r *RedisHelper) normalizeKey(key string) string {
 	if len(key) == 0 {
 		hsflogger.LogError("key不能为空", nil)
@@ -98,18 +80,18 @@ func (r *RedisHelper) Get(key string) string {
 	}
 	return val
 }
-
-func (r *RedisHelper) SetEx(key string, value string, expiration time.Duration) {
-	err := redisClient.SetEX(ctx, r.normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err()
-	if err != nil {
+func (r *RedisHelper) Set(key string, value interface{}, expiration time.Duration) {
+	if err := redisClient.Set(ctx, r.normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err(); err != nil {
 		panic(err)
 	}
 }
-
+func (r *RedisHelper) SSet(key string, value interface{}, expiration time.Duration) {
+	json, _ := jsoniter.MarshalToString(value)
+	r.Set(key, json, expiration)
+}
 func (r *RedisHelper) Delete(key string) {
 	redisClient.Del(ctx, r.normalizeKey(key))
 }
-
 func (r *RedisHelper) Keys(pattern string) []string {
 	val, err := redisClient.Keys(ctx, pattern).Result()
 	if err != nil {
@@ -117,7 +99,6 @@ func (r *RedisHelper) Keys(pattern string) []string {
 	}
 	return val
 }
-
 func (r *RedisHelper) MultiGet(keys []string) []interface{} {
 	keyNs := make([]string, 0)
 	for _, v := range keys {
@@ -129,7 +110,6 @@ func (r *RedisHelper) MultiGet(keys []string) []interface{} {
 	}
 	return val
 }
-
 func (r *RedisHelper) MultiDelete(keys []string) {
 	keyNs := make([]string, 0)
 	for _, v := range keys {
@@ -138,31 +118,20 @@ func (r *RedisHelper) MultiDelete(keys []string) {
 	redisClient.Del(ctx, keyNs...)
 }
 
-func (r *RedisHelper) SetString(key string, value string, expiration time.Duration) {
-	if err := redisClient.Set(ctx, r.normalizeKey(key), value, GetDefaultExpiresAt(expiration)).Err(); err != nil {
-		panic(err)
-	}
-}
-func (r *RedisHelper) SetInterface(key string, value interface{}, expiration time.Duration) {
-	defaultExpiresAt := GetDefaultExpiresAt(expiration)
-	fmt.Println("defaultExpiresAt：" + defaultExpiresAt.String())
-	if err := redisClient.Set(ctx, r.normalizeKey(key), value, defaultExpiresAt).Err(); err != nil {
-		panic(err)
-	}
-}
-func (r *RedisHelper) SetInterfaceArray(key string, value interface{}, expiration time.Duration) {
-	jsonString, _ := jsoniter.MarshalToString(value)
-	r.SetString(key, jsonString, expiration)
-}
-
 func (r *RedisHelper) HSet(key, field string, value interface{}) {
-	redisClient.Expire(ctx, "", 60*60*time.Second)
 	if err := redisClient.HSet(ctx, r.normalizeKey(key), field, value).Err(); err != nil {
 		panic(err)
 	}
 }
 func (r *RedisHelper) HGet(key, field string) interface{} {
 	val, err := redisClient.HGet(ctx, r.normalizeKey(key), field).Result()
+	if err != nil {
+		return ""
+	}
+	return val
+}
+func (r *RedisHelper) HDelete(key string, fields ...string) interface{} {
+	val, err := redisClient.HDel(ctx, r.normalizeKey(key), fields...).Result()
 	if err != nil {
 		return ""
 	}

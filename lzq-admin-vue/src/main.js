@@ -8,6 +8,7 @@ import Element from 'element-ui'
 import './styles/element-variables.scss'
 
 import '@/styles/index.scss' // global css
+import '@/styles/my-icons.scss' // global css
 
 import App from './App'
 import store from './store'

@@ -22,7 +22,7 @@ func (c *cacheHelper) GetCacheVersion(cacheType string) string {
 	value := RedisUtil.NewRedis(false).Get(key)
 	if len(value) == 0 {
 		value = uuid.NewV4().String()
-		RedisUtil.NewRedis(false).SetString(key, value, time.Hour*24)
+		RedisUtil.NewRedis(false).Set(key, value, time.Hour*24)
 	}
 	return value
 }

@@ -57,3 +57,17 @@ var CommonStatusConstFlags = map[string]string{
 	CommonStatusDisable: "停用",
 	CommonStatusEnable:  "启用",
 }
+
+const (
+	SysFileStatusUnused   = "Unused"
+	SysFileStatusInuse    = "Inuse"
+	SysFileStatusErasable = "Erasable"
+	SysFileStatusDeleted  = "Deleted"
+)
+
+var SysFileStatusConstFlags = map[string]string{
+	SysFileStatusUnused:   "未使用",
+	SysFileStatusInuse:    "使用中",
+	SysFileStatusErasable: "可删除",
+	SysFileStatusDeleted:  "已删除",
+}

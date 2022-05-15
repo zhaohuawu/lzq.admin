@@ -43,7 +43,7 @@ func (d *authCheckerDomainService) GetRoleGrantedPermissions(roleId string) ([]d
 		return result, err
 	}
 
-	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SSet(cacheKey, result, 0)
 	return result, nil
 }
 
@@ -65,7 +65,7 @@ func (d *authCheckerDomainService) GetGrantedDataPrivilegesByUser(userId string)
 		return result, err
 	}
 
-	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SSet(cacheKey, result, 0)
 	return result, nil
 }
 
@@ -143,6 +143,6 @@ func (d *authCheckerDomainService) GetUserGrantedPermissions(userId string) ([]s
 			}
 		}
 	}
-	cache.RedisUtil.NewRedis(true).SetInterfaceArray(cacheKey, result, 0)
+	cache.RedisUtil.NewRedis(true).SSet(cacheKey, result, 0)
 	return result, nil
 }

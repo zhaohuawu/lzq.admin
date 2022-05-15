@@ -7,8 +7,8 @@ package domainservice
  */
 
 import (
-	"encoding/json"
 	"fmt"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"lzq-admin/domain/domainconsts"
@@ -142,10 +142,13 @@ func (u *systemUserDomainService) Get(m *model.SystemUser, id, loginName string)
 
 func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserInfoDto, error) {
 	key := fmt.Sprintf("%v:%v", cache.LzqCacheHelper.GetCacheVersion(cache.LzqCacheTypeSysUser), userId)
-	userJson := cache.RedisUtil.NewRedis(true).Get(key)
+	r := cache.RedisUtil.NewRedis(true, "UserInfo")
+	userJson := r.Get(key)
 	var userInfo model.SystemUserInfoDto
 	if userJson != "" {
-		_ = json.Unmarshal([]byte(userJson), &userInfo)
+		if err := jsoniter.UnmarshalFromString(userJson, &userInfo);err!=nil{
+			return userInfo,nil
+		}
 		return userInfo, nil
 	}
 	var user model.SystemUser
@@ -170,8 +173,7 @@ func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserIn
 	v, isHave := user.ExtraProperties["SuperAdmin"]
 	userInfo.SuperAdmin = isHave && v.(bool)
 
-	userInfoJson, _ := json.Marshal(userInfo)
-	cache.RedisUtil.NewRedis(true).SetInterface(key, userInfoJson, 0)
+	r.SSet(key, userInfo, 0)
 	return userInfo, nil
 }
 

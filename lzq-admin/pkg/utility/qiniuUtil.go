@@ -20,7 +20,7 @@ type QiniuConfig struct {
 	QiNiuSecretKey string
 	QiNiuBucket    string
 	QiNiuArea      string
-	BaseUrl        string
+	QiNiuBaseUrl   string
 }
 
 type qiniuUtil struct{}
@@ -50,7 +50,7 @@ func (qiniuUtil) UploadQiNiu(fileName string, localFilePath string, qiNiuConfig 
 	}
 	return ret.Key
 }
-func (qiniuUtil) UploadQiNiuByStream(fileName string, data []byte, qiNiuConfig QiniuConfig) string {
+func (qiniuUtil) UploadQiNiuByStream(fileName string, data []byte, qiNiuConfig QiniuConfig) (string, string, error) {
 	accessKey := qiNiuConfig.QiNiuAccessKey
 	secretKey := qiNiuConfig.QiNiuSecretKey
 	bucket := qiNiuConfig.QiNiuBucket
@@ -78,9 +78,10 @@ func (qiniuUtil) UploadQiNiuByStream(fileName string, data []byte, qiNiuConfig Q
 	err := formUploader.Put(context.Background(), &ret, upToken, fileName, bytes.NewReader(data), dataLen, nil)
 	if err != nil {
 		fmt.Println(err)
-		return ""
+		return "", "", err
 	}
-	return ret.Key
+	// fmt.Println(fmt.Sprintf("QiNiu上传：Key:%v，Hash：%v，PersistentID：%v", ret.Key, ret.Hash, ret.PersistentID))
+	return ret.Key, ret.Hash, nil
 
 }
 func setQiNiuArea(area string) *storage.Region {
