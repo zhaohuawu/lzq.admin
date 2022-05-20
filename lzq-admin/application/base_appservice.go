@@ -61,6 +61,12 @@ func (Base *BaseAppService) ResponseBusinessError(c *gin.Context, err error) {
 	return
 }
 
+func (Base *BaseAppService) ResponseSuccessWithError(c *gin.Context, obj interface{}) {
+	c.JSON(http.StatusOK, obj)
+	panic(obj)
+	return
+}
+
 func (Base *BaseAppService) ResponseSingleDto(c *gin.Context, obj1 interface{}, obj2 interface{}) {
 	resultMap := utility.StructToMap(obj1, true)
 	if err := mapstructure.Decode(resultMap, obj2); err != nil {
@@ -76,6 +82,7 @@ func ResponseError(c *gin.Context, err error) {
 	res.Code = 0
 	res.Msg = err.Error()
 	c.JSON(http.StatusInternalServerError, res)
+	panic(res)
 	return
 }
 
@@ -202,7 +209,7 @@ func DBCondition(inputDto PageParamsDto, dbSession *xorm.Session, tAlias string,
 					}
 					dbSession.And(wStr, v...)
 				} else {
-					dbSession.And(fmt.Sprintf("%v %v ?", sqlField(tagMap, tAlias, f.Selector), operator), "%"+f.Value+"%")
+					dbSession.And(fmt.Sprintf("%v %v ?", sqlField(tagMap, tAlias, f.Selector), operator), f.Value)
 				}
 			}
 		}

@@ -64,7 +64,7 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err.Error()
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	captchaKey := fmt.Sprintf("Captcha:%v", inputDto.CaptchaKey)
@@ -72,13 +72,13 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if len(captchaValue) == 0 {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = "验证码已过期"
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	if captchaValue != inputDto.CaptchaValue {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = "验证码不正确"
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 
@@ -87,13 +87,13 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if err != nil {
 		responseDto.IsError = true
 		responseDto.Exception = err
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	if tenant.Status != domainconsts.TenantStatusEnable {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = fmt.Sprintf("租户已%v", domainconsts.GetConstFlag(tenant.Status, domainconsts.TenantConstFlags))
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 
@@ -102,20 +102,20 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if err2 != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err2.Error()
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	if has == false {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = "账号不存在"
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	// 验证密码
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(inputDto.Password)); err != nil {
 		responseDto.IsError = true
 		responseDto.Exception = errors.New("密码不正确")
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	responseDto.ID = user.ID
@@ -123,14 +123,14 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if _, err3 := utility.StringToUuid(tenant.TenantId); err3 != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err3.Error()
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	accessToken, err4 := token.GenerateToken(user.ID, user.LoginName, user.UserName, token.SysTypeAdmin, tenant.TenantId)
 	if err4 != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err4.Error()
-		s.ResponseSuccess(c, responseDto)
+		s.ResponseSuccessWithError(c, responseDto)
 		return
 	}
 	responseDto.AccessToken = accessToken

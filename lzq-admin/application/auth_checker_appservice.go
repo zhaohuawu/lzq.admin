@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/model"
-	"lzq-admin/middleware"
+	token "lzq-admin/pkg/auth"
 	"lzq-admin/pkg/cache"
 	"lzq-admin/pkg/orm"
 	"sort"
@@ -34,7 +34,7 @@ var IAuthCheckerAppService = authCheckerAppService{}
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/authenticateChecker/grantedMenus [GET]
 func (app *authCheckerAppService) GetGrantedMenus(c *gin.Context) {
-	userId := middleware.TokenClaims.Id
+	userId := token.GlobalTokenClaims.Id
 	result := make([]model.UserGrantedMenuDto, 0)
 
 	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedMenusCacheKey(userId)
@@ -113,7 +113,7 @@ func grantedMenuTree(parentMenus []model.UserGrantedMenuDto, menus []model.UserG
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/permissionChecker/grantedPermissions [GET]
 func (app *authCheckerAppService) GetCurrentUserGrantedPermissions(c *gin.Context) {
-	if permissions, err := domainservice.AuthCheckerDomainService.GetUserGrantedPermissions(middleware.TokenClaims.Id); err != nil {
+	if permissions, err := domainservice.AuthCheckerDomainService.GetUserGrantedPermissions(token.GlobalTokenClaims.Id); err != nil {
 		app.ResponseError(c, err)
 		return
 	} else {

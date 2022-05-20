@@ -584,6 +584,66 @@ definitions:
     - name
     - password
     type: object
+  model.LogAuditLogActionListDto:
+    properties:
+      actionType:
+        description: 操作类型
+        type: string
+      browserInfo:
+        description: 浏览器信息
+        type: string
+      clientIpAddress:
+        description: 客户端IP
+        type: string
+      comments:
+        description: 注释
+        type: string
+      exceptions:
+        description: 异常详情
+        type: string
+      executionDuration:
+        description: 执行时长
+        type: integer
+      executionTime:
+        description: 执行时间
+        type: string
+      fromSource:
+        description: 来源
+        type: string
+      httpMethod:
+        description: HTTP请求方式
+        type: string
+      httpStatusCode:
+        description: HTTP状态码
+        type: integer
+      id:
+        description: 主键
+        type: string
+      loginName:
+        description: 登录名
+        type: string
+      operation:
+        description: 操作
+        type: string
+      parameters:
+        description: 接口参数
+        type: string
+      serviceModuleCode:
+        description: 服务模块编码
+        type: string
+      tenantName:
+        description: 租户名称
+        type: string
+      url:
+        description: 接口URL
+        type: string
+      userId:
+        description: 用户ID
+        type: string
+      userName:
+        description: 用户名
+        type: string
+    type: object
   model.QiNiuConfigDto:
     properties:
       code:
@@ -1015,6 +1075,88 @@ info:
   title: HSF Project API
   version: "1.0"
 paths:
+  /api/app/auditLogAction/currentUserLogsList:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: query
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: query
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: query
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: query
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: query
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.LogAuditLogActionListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询当前用户的登录日志列表
+      tags:
+      - AuditLogAction
+  /api/app/auditLogAction/list:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: query
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: query
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: query
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: query
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: query
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.LogAuditLogActionListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询接口日志列表
+      tags:
+      - AuditLogAction
   /api/app/auth/captcha:
     get:
       produces:
@@ -1154,23 +1296,23 @@ paths:
       - multipart/form-data
       parameters:
       - description: 查询条件
-        in: formData
+        in: query
         name: filter
         type: string
       - description: 是否返回总条数
-        in: formData
+        in: query
         name: requireTotalCount
         type: boolean
       - description: 第几页，>=1开始
-        in: formData
+        in: query
         name: skip
         type: integer
       - description: 排序字段
-        in: formData
+        in: query
         name: sort
         type: string
       - description: 每页多少条数据
-        in: formData
+        in: query
         name: take
         type: integer
       produces:
@@ -1409,23 +1551,23 @@ paths:
       - multipart/form-data
       parameters:
       - description: 查询条件
-        in: formData
+        in: query
         name: filter
         type: string
       - description: 是否返回总条数
-        in: formData
+        in: query
         name: requireTotalCount
         type: boolean
       - description: 第几页，>=1开始
-        in: formData
+        in: query
         name: skip
         type: integer
       - description: 排序字段
-        in: formData
+        in: query
         name: sort
         type: string
       - description: 每页多少条数据
-        in: formData
+        in: query
         name: take
         type: integer
       produces:
@@ -1450,23 +1592,23 @@ paths:
       - multipart/form-data
       parameters:
       - description: 查询条件
-        in: formData
+        in: query
         name: filter
         type: string
       - description: 是否返回总条数
-        in: formData
+        in: query
         name: requireTotalCount
         type: boolean
       - description: 第几页，>=1开始
-        in: formData
+        in: query
         name: skip
         type: integer
       - description: 排序字段
-        in: formData
+        in: query
         name: sort
         type: string
       - description: 每页多少条数据
-        in: formData
+        in: query
         name: take
         type: integer
       produces:
@@ -1715,23 +1857,23 @@ paths:
       - multipart/form-data
       parameters:
       - description: 查询条件
-        in: formData
+        in: query
         name: filter
         type: string
       - description: 是否返回总条数
-        in: formData
+        in: query
         name: requireTotalCount
         type: boolean
       - description: 第几页，>=1开始
-        in: formData
+        in: query
         name: skip
         type: integer
       - description: 排序字段
-        in: formData
+        in: query
         name: sort
         type: string
       - description: 每页多少条数据
-        in: formData
+        in: query
         name: take
         type: integer
       produces:
@@ -1793,6 +1935,24 @@ paths:
       summary: 查询启用中的角色
       tags:
       - AuthRole
+  /api/app/sysUser/currentUserInfo:
+    get:
+      consumes:
+      - multipart/form-data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemUserInfoDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询当前用户（无缓存）
+      tags:
+      - SystemUser
   /api/app/sysUser/defaultAvatar:
     get:
       produces:
@@ -1918,23 +2078,23 @@ paths:
       - multipart/form-data
       parameters:
       - description: 查询条件
-        in: formData
+        in: query
         name: filter
         type: string
       - description: 是否返回总条数
-        in: formData
+        in: query
         name: requireTotalCount
         type: boolean
       - description: 第几页，>=1开始
-        in: formData
+        in: query
         name: skip
         type: integer
       - description: 排序字段
-        in: formData
+        in: query
         name: sort
         type: string
       - description: 每页多少条数据
-        in: formData
+        in: query
         name: take
         type: integer
       produces:

@@ -8,7 +8,7 @@ import (
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/dto"
 	"lzq-admin/domain/model"
-	"lzq-admin/middleware"
+	token "lzq-admin/pkg/auth"
 	"lzq-admin/pkg/orm"
 	"sort"
 	"strings"
@@ -155,7 +155,7 @@ func (app *authRoleAppService) Delete(c *gin.Context) {
 // @Description
 // @Accept mpfd
 // @Produce  json
-// @Param object formData PageParamsDto true " "
+// @Param object query PageParamsDto true " "
 // @Success 200 {array} model.AuthRoleListDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/role/roleList [GET]
@@ -295,7 +295,7 @@ func (app *authRoleAppService) GetRolePermissionDatas(c *gin.Context) {
 	roleId := c.Param("roleId")
 	var permissions = make([]dto.RolePermissionTree, 0)
 	dbSession := orm.QSession(false, "p").Table(model.TableAuthPermission).Alias("p").
-		Join("LEFT", model.TableAuthRolePermission+" as rp", "p.Id=rp.PermissionId and rp.RoleId=? and rp.IsDeleted=? and rp.TenantId=?", roleId, 0, middleware.TokenClaims.TenantId).
+		Join("LEFT", model.TableAuthRolePermission+" as rp", "p.Id=rp.PermissionId and rp.RoleId=? and rp.IsDeleted=? and rp.TenantId=?", roleId, 0, token.GlobalTokenClaims.TenantId).
 		Select("p.Id,p.MenuId as ParentId,'Permission' as Type,p.Name,p.Rank,IFNULL(rp.IsGranted ,false) as IsGranted,false as IsBranch")
 	if err := dbSession.Find(&permissions); err != nil {
 		app.ResponseError(c, err)

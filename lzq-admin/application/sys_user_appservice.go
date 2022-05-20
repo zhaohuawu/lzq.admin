@@ -9,23 +9,26 @@ package application
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+	jsoniter "github.com/json-iterator/go"
 	"lzq-admin/config"
 	"lzq-admin/domain/domainconsts"
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/dto"
 	"lzq-admin/domain/model"
-	"lzq-admin/middleware"
+	"lzq-admin/domain/model/extrastruct"
+	token "lzq-admin/pkg/auth"
+	"lzq-admin/pkg/hsflogger"
 	"lzq-admin/pkg/orm"
+	"lzq-admin/pkg/utility"
 	"sync"
 )
 
-type SystemUserAppService struct {
+type systemUserAppService struct {
 	BaseAppService
 	wg sync.WaitGroup
 }
 
-var ISystemUserAppService = SystemUserAppService{}
+var ISystemUserAppService = systemUserAppService{}
 
 // Create doc
 // @Summary 创建系统用户接口
@@ -37,7 +40,7 @@ var ISystemUserAppService = SystemUserAppService{}
 // @Success 200 {object} model.SystemUserDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/sysUser [POST]
-func (app *SystemUserAppService) Create(c *gin.Context) {
+func (app *systemUserAppService) Create(c *gin.Context) {
 	var inputDto model.CreateSystemUserDto
 	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		app.ResponseError(c, err)
@@ -63,7 +66,7 @@ func (app *SystemUserAppService) Create(c *gin.Context) {
 // @Success 200 {object} model.SystemUserDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/get [GET]
-func (app *SystemUserAppService) Get(c *gin.Context) {
+func (app *systemUserAppService) Get(c *gin.Context) {
 	id := c.Query("id")
 	loginName := c.Query("loginName")
 
@@ -90,6 +93,36 @@ func (app *SystemUserAppService) Get(c *gin.Context) {
 	}
 }
 
+// GetCurrentUserInfo doc
+// @Summary 查询当前用户（无缓存）
+// @Tags SystemUser
+// @Description
+// @Accept mpfd
+// @Produce  json
+// @Success 200 {object} model.SystemUserInfoDto
+// @Failure 500 {object} ResponseDto
+// @Router /api/app/sysUser/currentUserInfo [GET]
+func (app *systemUserAppService) GetCurrentUserInfo(c *gin.Context) {
+	id := token.GlobalTokenClaims.Id
+	var user model.SystemUser
+	if err := domainservice.SystemUserDomainService.Get(&user, id, ""); err != nil {
+		app.ResponseError(c, err)
+		return
+	} else {
+		result := &model.SystemUserInfoDto{
+			ID:         user.ID,
+			UserName:   user.UserName,
+			Sex:        user.Sex,
+			Status:     user.Status,
+			LoginName:  user.LoginName,
+			HeadImgURL: user.HeadImgURL,
+			Mobile:     user.Mobile,
+			Email:      user.Email,
+		}
+		app.ResponseSuccess(c, result)
+	}
+}
+
 // Delete
 // @Summary 删除用户
 // @Tags SystemUser
@@ -99,7 +132,7 @@ func (app *SystemUserAppService) Get(c *gin.Context) {
 // @Success 200 {object} ResponseDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/user [DELETE]
-func (app *SystemUserAppService) Delete(c *gin.Context) {
+func (app *systemUserAppService) Delete(c *gin.Context) {
 	id := c.Query("id")
 	var user model.SystemUser
 	if _, err := orm.DSession(true).ID(id).Update(&user); err != nil {
@@ -117,18 +150,18 @@ func (app *SystemUserAppService) Delete(c *gin.Context) {
 // @Description
 // @Accept mpfd
 // @Produce  json
-// @Param object formData PageParamsDto true " "
+// @Param object query PageParamsDto true " "
 // @Success 200 {array} model.SystemUserListDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/sysUserList [GET]
-func (app *SystemUserAppService) GetList(c *gin.Context) {
+func (app *systemUserAppService) GetList(c *gin.Context) {
 	var inputDto PageParamsDto
 	if err := c.ShouldBind(&inputDto); err != nil {
 		app.ResponseError(c, err)
 		return
 	}
 	dbSession := orm.QSession(true, "u").Table(model.TableSystemUser).Alias("u").
-		// Join("Left", model.TableAuthUserdataprivilege+" as urp", fmt.Sprintf("u.Id = urp.UserId and urp.IsDeleted=0 and urp.TenantId='%v'", middleware.TokenClaims.TenantId)).
+		// Join("Left", model.TableAuthUserdataprivilege+" as urp", fmt.Sprintf("u.Id = urp.UserId and urp.IsDeleted=0 and urp.TenantId='%v'", token.GlobalTokenClaims.TenantId)).
 		//Select("u.*,urp.RoleId").
 		Omit("Operation", "StatusName", "HeadImgLink", "Password", "RoleIds")
 	if err := DBCondition(inputDto, dbSession, "u", model.SystemUserListDto{}); err != nil {
@@ -175,7 +208,7 @@ func (app *SystemUserAppService) GetList(c *gin.Context) {
 // @Success 200 {object} ResponseDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/editSysUser [POST]
-func (app *SystemUserAppService) Update(c *gin.Context) {
+func (app *systemUserAppService) Update(c *gin.Context) {
 	var inputDto model.UpdateSystemUserDto
 	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		app.ResponseError(c, err)
@@ -196,8 +229,8 @@ func (app *SystemUserAppService) Update(c *gin.Context) {
 // @Success 200 {object} model.SystemUserInfoDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/userInfo [GET]
-func (app *SystemUserAppService) GetUserInfo(c *gin.Context) {
-	userId := middleware.TokenClaims.Id
+func (app *systemUserAppService) GetUserInfo(c *gin.Context) {
+	userId := token.GlobalTokenClaims.Id
 	if userInfo, err := domainservice.SystemUserDomainService.GetUserInfo(userId); err != nil {
 		app.ResponseError(c, err)
 		return
@@ -216,7 +249,7 @@ func (app *SystemUserAppService) GetUserInfo(c *gin.Context) {
 // @Success 200 {object} bool true：修改成功
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/sysUserStatus [PUT]
-func (app *SystemUserAppService) UpdateSystemStatus(c *gin.Context) {
+func (app *systemUserAppService) UpdateSystemStatus(c *gin.Context) {
 	var inputDto dto.BaseDto
 	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		app.ResponseError(c, err)
@@ -258,38 +291,43 @@ func (app *SystemUserAppService) UpdateSystemStatus(c *gin.Context) {
 // @Success 200 object bool true：修改成功
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/editUserPassword [POST]
-func (app *SystemUserAppService) UpdateSystemUserPassword(c *gin.Context) {
+func (app *systemUserAppService) UpdateSystemUserPassword(c *gin.Context) {
 	var inputDto model.UpdateSystemUserPasswordDto
 	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		app.ResponseError(c, err)
 		return
 	}
-	var user model.SystemUser
-	if has, err := orm.QSession(true).ID(inputDto.ID).Get(&user); err != nil {
-		app.ResponseError(c, err)
-		return
-	} else if !has {
-		app.ResponseError(c, errors.New("用户不存在"))
-		return
-	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(inputDto.Password)); err != nil {
-		app.ResponseError(c, errors.New("旧密码不正确"))
-		return
-	}
-
-	// 密码加密不可解析密码串
-	if phash, err := bcrypt.GenerateFromPassword([]byte(inputDto.Password), bcrypt.DefaultCost); err != nil {
+	if err := domainservice.SystemUserDomainService.UpdateSystemUserPassword(inputDto); err != nil {
 		app.ResponseError(c, err)
 		return
 	} else {
-		user.Password = string(phash)
+		app.ResponseSuccess(c, true)
 	}
-	if effect, err := orm.USession(true).Cols("Password").ID(inputDto.ID).Update(&user); err != nil {
+}
+
+// UpdateCurrentUserPassword doc
+// @Summary 修改当前用户密码
+// @Tags SystemUser
+// @Description
+// @Accept json
+// @Produce  json
+// @Param object body model.UpdateSystemUserPasswordBaseDto true " "
+// @Success 200 object bool true：修改成功
+// @Failure 500 {object} ResponseDto
+// @Router /api/app/sysUser/updateCurrentUserPassword [POST]
+func (app *systemUserAppService) UpdateCurrentUserPassword(c *gin.Context) {
+	var inputDto model.UpdateSystemUserPasswordBaseDto
+	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		app.ResponseError(c, err)
 		return
-	} else if effect <= 0 {
-		app.ResponseError(c, errors.New("修改失败"))
+	}
+	var passwordDto = model.UpdateSystemUserPasswordDto{
+		ID:                              token.GlobalTokenClaims.Id,
+		UpdateSystemUserPasswordBaseDto: inputDto,
+	}
+	if err := domainservice.SystemUserDomainService.UpdateSystemUserPassword(passwordDto); err != nil {
+		app.ResponseError(c, err)
 		return
 	} else {
 		app.ResponseSuccess(c, true)
@@ -304,6 +342,18 @@ func (app *SystemUserAppService) UpdateSystemUserPassword(c *gin.Context) {
 // @Success 200 {string} string 默认头像
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/sysUser/defaultAvatar [GET]
-func (app *SystemUserAppService) GetDefaultAvatar(c *gin.Context) {
-	app.ResponseSuccess(c, config.Config.QiNiuConfig.BaseUrl+config.Config.DefaultAvatar)
+func (app *systemUserAppService) GetDefaultAvatar(c *gin.Context) {
+	hsflogger.LogInformation("测试日志")
+	if sysConfig, err := domainservice.SysConfigDomainService.GetSysConfigCacheByCode(model.ExtraQiNiuConfig, "QiNiuStorage"); err != nil {
+		app.ResponseError(c, err)
+		return
+	} else {
+		var qnconfig extrastruct.ExtraQiNiuConfig
+		if err := jsoniter.UnmarshalFromString(sysConfig, &qnconfig); err != nil {
+			app.ResponseError(c, err)
+			return
+		}
+		fileUrl := utility.UrlJoint(qnconfig.BaseUrl, qnconfig.Directory, config.Config.DefaultAvatar)
+		app.ResponseSuccess(c, fileUrl)
+	}
 }

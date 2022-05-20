@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"lzq-admin/config"
 	"lzq-admin/domain/model"
-	"lzq-admin/middleware"
+	token "lzq-admin/pkg/auth"
 	"lzq-admin/pkg/hsflogger"
 	"reflect"
 	"time"
@@ -75,7 +75,7 @@ func getModels() []interface{} {
 		new(model.AuthRolePermission),
 		new(model.AuthUserDataPrivilege),
 		new(model.SystemConfig),
-		new(model.SystemFile),
+		new(model.LogAuditLogAction),
 	}
 }
 
@@ -102,11 +102,11 @@ func QSession(useMultiTenancy bool, tAlias ...string) *xorm.Session {
 	if useMultiTenancy {
 		if len(tableAlias) > 0 {
 			for _, v := range tableAlias {
-				queryDB.Where(v+"TenantId=?", middleware.TokenClaims.TenantId)
+				queryDB.Where(v+"TenantId=?", token.GlobalTokenClaims.TenantId)
 			}
 
 		} else {
-			queryDB.Where("TenantId=?", middleware.TokenClaims.TenantId)
+			queryDB.Where("TenantId=?", token.GlobalTokenClaims.TenantId)
 		}
 	}
 	return queryDB
@@ -163,7 +163,7 @@ func USession(useMultiTenancy bool) *xorm.Session {
 	updateDB := DB.Before(uBefore).Where("IsDeleted=?", 0)
 	useMultiTenancy = getUseMultiTenancy(useMultiTenancy)
 	if useMultiTenancy {
-		updateDB.And("TenantId=?", middleware.TokenClaims.TenantId).Omit("TenantId")
+		updateDB.And("TenantId=?", token.GlobalTokenClaims.TenantId).Omit("TenantId")
 	}
 	return updateDB.Omit("Id")
 }
@@ -182,7 +182,7 @@ func USessionWithTrans(useMultiTenancy bool, dbSession *xorm.Session) *xorm.Sess
 	dbSession.Before(uBefore).Where("IsDeleted=?", 0)
 	useMultiTenancy = getUseMultiTenancy(useMultiTenancy)
 	if useMultiTenancy {
-		dbSession.And("TenantId=?", middleware.TokenClaims.TenantId).Omit("TenantId")
+		dbSession.And("TenantId=?", token.GlobalTokenClaims.TenantId).Omit("TenantId")
 	}
 	return dbSession.Omit("Id")
 }
@@ -204,7 +204,7 @@ func DSession(useMultiTenancy bool) *xorm.Session {
 		deleteDB.Cols("DeletionTime")
 	}
 	if useMultiTenancy {
-		deleteDB.Where("TenantId=?", middleware.TokenClaims.TenantId).Omit("TenantId")
+		deleteDB.Where("TenantId=?", token.GlobalTokenClaims.TenantId).Omit("TenantId")
 	}
 	return deleteDB.Omit("Id")
 }
@@ -226,7 +226,7 @@ func DSessionWithTrans(useMultiTenancy bool, dbSession *xorm.Session) *xorm.Sess
 		deleteDB.Cols("DeletionTime")
 	}
 	if useMultiTenancy {
-		deleteDB.Where("TenantId=?", middleware.TokenClaims.TenantId).Omit("TenantId")
+		deleteDB.Where("TenantId=?", token.GlobalTokenClaims.TenantId).Omit("TenantId")
 	}
 	return deleteDB.Omit("Id")
 }
@@ -310,7 +310,7 @@ func ConditionWithDeletedOrTenantId(useMultiTenancy bool, condition, tAlias stri
 	condition = fmt.Sprintf("%v and %v.IsDeleted=%v", condition, tAlias, 0)
 	useMultiTenancy = getUseMultiTenancy(useMultiTenancy)
 	if useMultiTenancy {
-		condition = fmt.Sprintf("%v and %v.TenantId=%v", condition, tAlias, middleware.TokenClaims.TenantId)
+		condition = fmt.Sprintf("%v and %v.TenantId=%v", condition, tAlias, token.GlobalTokenClaims.TenantId)
 	}
 	return condition
 }

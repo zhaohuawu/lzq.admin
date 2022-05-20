@@ -13,6 +13,18 @@
             <!-- <top-lang></top-lang> -->
           </h4>
           <el-form ref="loginForm" class="login-form" status-icon :rules="loginRules" :model="loginForm" label-width="0">
+            <el-form-item prop="tenantCode">
+              <el-input
+                v-model="loginForm.tenantCode"
+                size="small"
+                auto-complete="off"
+                placeholder="租户编码"
+                @keyup.enter.native="handleLogin"
+              >
+                <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
+              </el-input>
+            </el-form-item>
+
             <el-form-item prop="loginName">
               <el-input
                 v-model="loginForm.loginName"
@@ -104,7 +116,7 @@ export default {
       loginForm: {
         loginName: 'admin',
         password: '123456',
-        tenantCode: 'hsf',
+        tenantCode: 'lzq',
         loginType: 1,
         captchaKey: '',
         captchaValue: ''
@@ -112,7 +124,8 @@ export default {
       loginRules: {
         loginName: [{ required: true, message: '请输入登录名', trigger: 'blur' }],
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-        tenantCode: [{ required: true, message: '请输入租户编码', trigger: 'blur' }]
+        tenantCode: [{ required: true, message: '请输入租户编码', trigger: 'blur' }],
+        captchaValue: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
       },
       bgImg: bgImg,
       captchaUrl: '',

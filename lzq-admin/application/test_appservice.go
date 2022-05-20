@@ -32,7 +32,7 @@ func (s *TestAppService) TestReflectSetValue(c *gin.Context) {
 	//fmt.Println("BeforeInsert-b", obj)
 	//for i := 0; i < t.NumField(); i++ {
 	//	fmt.Println(t.Field(i).Name, v.Field(i).Interface())
-	//	immutable.FieldByName("ID").Set(reflect.ValueOf("middleware.TokenClaims.Id"))
+	//	immutable.FieldByName("ID").Set(reflect.ValueOf("token.GlobalTokenClaims.Id"))
 	//
 	//}
 	//hsflogger.LogInformation("BeforeInsert-a",obj)

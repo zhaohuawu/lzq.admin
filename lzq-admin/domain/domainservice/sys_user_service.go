@@ -77,46 +77,69 @@ func (u *systemUserDomainService) Insert(modelDto model.CreateSystemUserDto) (re
 
 func (u *systemUserDomainService) Update(inputDto model.UpdateSystemUserDto) (model.SystemUser, error) {
 	var user model.SystemUser
-	var has int64
-	var err error
-	if has, err = orm.QSession(true).ID(inputDto.ID).Count(&user); err != nil {
+	if has, err := orm.QSession(true).ID(inputDto.ID).Get(&user); err != nil {
 		return model.SystemUser{}, err
-	}
-	if has <= 0 {
+	} else if !has {
 		return model.SystemUser{}, errors.New("用户不存在")
 	}
 
-	var uEntity model.SystemUser
-	uEntity.UserName = inputDto.UserName
-	uEntity.Email = inputDto.Email
-	uEntity.HeadImgURL = inputDto.HeadImgURL
-	uEntity.Mobile = inputDto.Mobile
-	uEntity.Sex = inputDto.Sex
+	user.UserName = inputDto.UserName
+	user.Email = inputDto.Email
+	user.HeadImgURL = inputDto.HeadImgURL
+	user.Mobile = inputDto.Mobile
+	user.Sex = inputDto.Sex
 
-	dbSession, errT := orm.BeginTrans()
-	if errT != nil {
-		return model.SystemUser{}, err
-	}
-	if len(inputDto.RoleIds) == 0 {
-		if err := AuthUserdataPrivilegeDomainService.Delete(dbSession, inputDto.ID, ""); err != nil {
-			dbSession.Rollback()
-			return model.SystemUser{}, err
-		}
-	} else {
-		if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, inputDto.ID, inputDto.RoleIds); err != nil {
-			dbSession.Rollback()
-			return model.SystemUser{}, err
-		}
-	}
+	//dbSession, errT := orm.BeginTrans()
+	//if errT != nil {
+	//	return model.SystemUser{}, err
+	//}
+	//if len(inputDto.RoleIds) == 0 {
+	//	if err := AuthUserdataPrivilegeDomainService.Delete(dbSession, inputDto.ID, ""); err != nil {
+	//		dbSession.Rollback()
+	//		return model.SystemUser{}, err
+	//	}
+	//} else {
+	//	if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, inputDto.ID, inputDto.RoleIds); err != nil {
+	//		dbSession.Rollback()
+	//		return model.SystemUser{}, err
+	//	}
+	//}
 
-	if updateNum, err1 := orm.USessionWithTrans(true, dbSession).ID(inputDto.ID).Update(&uEntity); err1 != nil {
+	if updateNum, err1 := orm.USession(true).ID(inputDto.ID).Update(&user); err1 != nil {
 		return model.SystemUser{}, err1
 	} else if updateNum < 1 {
 		return model.SystemUser{}, errors.New("修改失败")
 	}
 	// 清除用户详情缓存
 	u.RemoveUserInfoById(inputDto.ID)
-	return uEntity, nil
+	return user, nil
+}
+
+func (u *systemUserDomainService) UpdateSystemUserPassword(inputDto model.UpdateSystemUserPasswordDto) error {
+	var user model.SystemUser
+	if has, err := orm.QSession(true).ID(inputDto.ID).Get(&user); err != nil {
+		return err
+	} else if !has {
+		return errors.New("用户不存在")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(inputDto.Password)); err != nil {
+		return errors.New("旧密码不正确")
+	}
+
+	// 密码加密不可解析密码串
+	if phash, err := bcrypt.GenerateFromPassword([]byte(inputDto.Password), bcrypt.DefaultCost); err != nil {
+		return err
+	} else {
+		user.Password = string(phash)
+	}
+	if effect, err := orm.USession(true).Cols("Password").ID(inputDto.ID).Update(&user); err != nil {
+		return err
+	} else if effect <= 0 {
+		return errors.New("修改失败")
+	} else {
+		return nil
+	}
 }
 
 // Get 根据用户ID或者LoginName查询用户信息
@@ -146,8 +169,8 @@ func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserIn
 	userJson := r.Get(key)
 	var userInfo model.SystemUserInfoDto
 	if userJson != "" {
-		if err := jsoniter.UnmarshalFromString(userJson, &userInfo);err!=nil{
-			return userInfo,nil
+		if err := jsoniter.UnmarshalFromString(userJson, &userInfo); err != nil {
+			return userInfo, nil
 		}
 		return userInfo, nil
 	}

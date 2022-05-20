@@ -137,7 +137,7 @@ export default {
       tableCols: [
         { label: '状态', prop: 'roleStatusText', align: 'center', width: '60', key: 'id' },
         { label: '角色名称', prop: 'name', align: 'center', width: '100' },
-        { label: '已授权用户', prop: 'haveAuthorizeUser', type: isCloseTag === true ? 'TagWithClosable' : 'Tag', showProp: 'loginName', align: 'center' },
+        { label: '已授权用户', prop: 'haveAuthorizeUser', type: isCloseTag === true ? 'TagListWithClosable' : 'TagList', showProp: 'loginName', align: 'center' },
         { label: '描述', prop: 'description', align: 'center', width: '200' },
         { label: '操作', type: 'Button', prop: 'operation', width: '200' }
       ],

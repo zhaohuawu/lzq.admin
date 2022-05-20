@@ -103,20 +103,37 @@
           {{ (item.filters && item.filters[scope.row[item.prop]]) }}
         </span>
         <span v-if="item.type==='Tag'">
+          <el-tag :disable-transitions="false" :type="item.color">
+            {{ scope.row[item.prop] }}
+          </el-tag>
+        </span>
+        <!--TagFilter 过滤器Tag-->
+        <!--  { label: '结果', prop: 'httpStatusCode', type: 'TagFilter', align: 'center', width: '100', sortable: 'custom', filters: { 200: '成功', 500: '失败' }, colorFilters: { 200: 'success', 500: 'danger' }} -->
+        <span v-if="item.type==='TagFilter'">
+          <el-tag v-if="item.colorFilters" :disable-transitions="false" :type="(item.colorFilters && item.colorFilters[scope.row[item.prop]])">
+            {{ (item.filters && item.filters[scope.row[item.prop]]) }}
+          </el-tag>
+          <el-tag v-else :disable-transitions="false" :type="item.color">
+            {{ (item.filters && item.filters[scope.row[item.prop]]) }}
+          </el-tag>
+        </span>
+        <span v-if="item.type==='TagList'">
           <el-tag
             v-for="(tag, i) in scope.row[item.prop]"
             :key="i"
             :disable-transitions="false"
+            :type="item.color"
           >
             {{ tag[item.showProp] }}
           </el-tag>
         </span>
-        <span v-if="item.type==='TagWithClosable'">
+        <span v-if="item.type==='TagListWithClosable'">
           <el-tag
             v-for="(tag,i) in scope.row[item.prop]"
             :key="i"
             closable
             :disable-transitions="false"
+            :type="item.color"
             @close="handleTagClose(item.prop,tag,scope.row)"
           >
             {{ tag[item.showProp] }}

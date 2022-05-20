@@ -140,7 +140,6 @@ export default {
     }
     return {
       isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Infrastructure.SysUserList:Operation.Create') > -1),
-      list: [],
       tableCols: [
         { label: '状态', prop: 'statusName', align: 'center', width: '100', sortable: 'custom' },
         { label: '头像', prop: 'headImgLink', type: 'Image', align: 'center', width: '120', style: 'height: 100px' },
@@ -152,6 +151,7 @@ export default {
         // { label: '创建时间', prop: 'creationTime', type: 'DateTime', align: 'center', width: '150' },
         { label: '操作', type: 'Button', prop: 'operation', width: '120' }
       ],
+      list: [],
       total: 0,
       listLoading: true,
       filtersQuery: {
@@ -220,8 +220,9 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      console.log(this.filtersQuery)
       if (this.filtersQuery.userName !== '' && this.filtersQuery.userName !== null) {
-        this.listQuery.filter = '[["userName","contains","' + this.filtersQuery.name + '"]]'
+        this.listQuery.filter = '[["userName","contains","' + this.filtersQuery.userName + '"]]'
       } else {
         this.listQuery.filter = null
       }

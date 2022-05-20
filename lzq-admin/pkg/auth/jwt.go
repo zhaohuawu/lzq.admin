@@ -22,6 +22,8 @@ type TokenClaims struct {
 
 var jwtSecret = []byte(config.Config.JwtConfig.JwtSecret)
 
+var GlobalTokenClaims = &TokenClaims{}
+
 const (
 	SysTypeAdmin = "admin"
 	SysTypeWeb   = "web"

@@ -7,22 +7,26 @@ package model
  */
 
 import (
-	"lzq-admin/middleware"
+	token "lzq-admin/pkg/auth"
 	"reflect"
 	"time"
 )
 
 const (
-	TableSystemConfig          = "sys_config"
-	TableSystemUser            = "sys_user"
-	TableTenant                = "sys_tenant"
-	TableAuthModule            = "au_module"
-	TableAuthMenu              = "au_menu"
-	TableAuthPermission        = "au_permission"
-	TableAuthRole              = "au_role"
-	TableAuthRolePermission    = "au_rolepermission"
-	TableAuthUserdataprivilege = "au_userdataprivilege"
-	TableSystemFile            = "sys_file"
+	TableSystemConfig             = "sys_config"
+	TableSystemUser               = "sys_user"
+	TableTenant                   = "sys_tenant"
+	TableAuthModule               = "au_module"
+	TableAuthMenu                 = "au_menu"
+	TableAuthPermission           = "au_permission"
+	TableAuthRole                 = "au_role"
+	TableAuthRolePermission       = "au_rolepermission"
+	TableAuthUserdataprivilege    = "au_userdataprivilege"
+	TableSystemFile               = "sys_file"
+	TableLogAuditLog              = "log_auditlog"
+	TableLogEntityChanges         = "log_entitychanges"
+	TableLogEntityPropertyChanges = "log_entitypropertychanges"
+	TableLogAuditLogAction        = "log_auditlogaction"
 )
 
 // BaseModel 基类
@@ -39,7 +43,7 @@ type BaseModel struct {
 
 // TenantBaseModel 租户字段基类
 type TenantBaseModel struct {
-	TenantId string `json:"-" xorm:"char(36) comment('租户ID')"`
+	TenantId string `json:"-" xorm:"char(36) comment('租户ID')"` //租户ID
 }
 
 // HasExtraPropertiesBaseModel 扩展字段基类
@@ -50,10 +54,10 @@ type HasExtraPropertiesBaseModel struct {
 func BeforeInsert(useMultiTenancy bool, obj interface{}) interface{} {
 	immutable := reflect.ValueOf(obj).Elem()
 	if (immutable.FieldByName("CreatorId") != reflect.Value{}) {
-		immutable.FieldByName("CreatorId").SetString(middleware.TokenClaims.Id)
+		immutable.FieldByName("CreatorId").SetString(token.GlobalTokenClaims.Id)
 	}
 	if (useMultiTenancy && immutable.FieldByName("TenantId") != reflect.Value{}) {
-		immutable.FieldByName("TenantId").SetString(middleware.TokenClaims.TenantId)
+		immutable.FieldByName("TenantId").SetString(token.GlobalTokenClaims.TenantId)
 	}
 	return obj
 }
@@ -68,7 +72,7 @@ func BeforeUpdate(obj interface{}) (interface{}, bool, bool) {
 	}
 	if (immutable.FieldByName("LastModifierId") != reflect.Value{}) {
 		isModityId = true
-		immutable.FieldByName("LastModifierId").SetString(middleware.TokenClaims.Id)
+		immutable.FieldByName("LastModifierId").SetString(token.GlobalTokenClaims.Id)
 	}
 	return obj, isModityId, isModityTime
 }
@@ -85,7 +89,7 @@ func BeforeDelete(obj interface{}) (interface{}, bool, bool) {
 		immutable.FieldByName("IsDeleted").SetBool(true)
 	}
 	if (immutable.FieldByName("DeleterId") != reflect.Value{}) {
-		immutable.FieldByName("DeleterId").SetString(middleware.TokenClaims.Id)
+		immutable.FieldByName("DeleterId").SetString(token.GlobalTokenClaims.Id)
 		isDeleterId = true
 	}
 	return obj, isDeleterId, isDeletionTime

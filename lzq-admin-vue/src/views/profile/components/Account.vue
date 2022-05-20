@@ -1,36 +1,88 @@
 <template>
-  <el-form>
-    <el-form-item label="Name">
-      <el-input v-model.trim="user.name" />
+  <el-form ref="dataForm" :rules="rules" :model="userInfo" label-position="center" label-width="80px">
+    <el-form-item label="登录账号" prop="loginName">
+      <el-input v-model="userInfo.loginName" :disabled="true" />
     </el-form-item>
-    <el-form-item label="Email">
-      <el-input v-model.trim="user.email" />
+    <el-form-item label="账号名称" prop="userName">
+      <el-input v-model="userInfo.userName" />
+    </el-form-item>
+    <!-- <el-form-item label="头像" prop="headImgUrl" style="">
+          <el-avatar :size="100" :src="image" />
+          <el-button type="primary" style="position:absolute;bottom:15px;margin-left: 20px;text-align:center;" icon="el-icon-upload" @click="imagecropperShow=true">
+            Upload Avatar
+          </el-button>
+          
+          <div style="float:left">
+            <image-cropper
+              v-show="imagecropperShow"
+              :key="imagecropperKey"
+              :width="300"
+              :height="300"
+              field="file"
+              :url="httpWebApi"
+              lang-type="en"
+              @close="imagecropperShow=false"
+              @crop-upload-success="cropSuccess"
+            />
+          </div>
+        </el-form-item> -->
+    <el-form-item label="手机号码" prop="mobile">
+      <el-input v-model="userInfo.mobile" />
+    </el-form-item>
+    <el-form-item label="邮箱" prop="email">
+      <el-input v-model="userInfo.email" />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submit">Update</el-button>
+      <el-button type="primary" @click="updateUser">保存</el-button>
     </el-form-item>
   </el-form>
+  
 </template>
 
 <script>
+import { updateSysUser } from '@/api/user'
 export default {
+  name: 'Account',
   props: {
-    user: {
+    userInfo: {
       type: Object,
       default: () => {
         return {
-          name: '',
-          email: ''
+          email: '',
+          headImgUrl: '',
+          id: '',
+          mobile: '',
+          sex: '',
+          userName: ''
         }
       }
     }
   },
+  data() {
+    return {
+      rules: {
+        loginName: [{ required: true, message: '登录账号必填', trigger: 'blur' }],
+        userName: [{ required: true, message: '用户名称必填', trigger: 'blur' }]
+        // password: [{ validator: validatePass, required: true, trigger: 'blur' }],
+        // surePassword: [{ validator: validatePass2, required: true, trigger: 'blur' }]
+      }
+    }
+  },
   methods: {
-    submit() {
-      this.$message({
-        message: 'User information has been updated successfully',
-        type: 'success',
-        duration: 5 * 1000
+    updateUser() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          updateSysUser(this.userInfo).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: '修改成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
       })
     }
   }

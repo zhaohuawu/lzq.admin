@@ -3,7 +3,7 @@ package domainservice
 import (
 	"github.com/ahmetb/go-linq/v3"
 	"lzq-admin/domain/model"
-	"lzq-admin/middleware"
+	token "lzq-admin/pkg/auth"
 	"lzq-admin/pkg/orm"
 	"lzq-admin/pkg/utility"
 	"strings"
@@ -51,8 +51,8 @@ func (s *authRolePermissionDomainService) Insert(modelDtoes []model.CreateAuthRo
 			uEntities = append(uEntities, first)
 		} else {
 			m.ID = utility.UuidCreate()
-			m.TenantId = middleware.TokenClaims.TenantId
-			m.CreatorId = middleware.TokenClaims.Id
+			m.TenantId = token.GlobalTokenClaims.TenantId
+			m.CreatorId = token.GlobalTokenClaims.Id
 			iEntities = append(iEntities, m)
 		}
 	}

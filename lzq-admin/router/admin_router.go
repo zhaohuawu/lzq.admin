@@ -23,10 +23,13 @@ func AdminRouter(router *gin.RouterGroup) {
 
 		authRouter := router.Group("/auth").Use()
 		{
-			authRouter.POST("/login", application.IAuthAppService.Login)
 			authRouter.GET("/captcha", application.IAuthAppService.GetCaptcha)
 
 			authRouter.Use(middleware.CheckAuth()).POST("/logOut", application.IAuthAppService.Logout)
+		}
+		loginRouter := router.Group("/auth").Use(middleware.LoginAuditLogAction())
+		{
+			loginRouter.POST("/login", application.IAuthAppService.Login)
 		}
 
 		tenantRouter := router.Group("/tenant").Use(middleware.CheckAuth())
@@ -53,6 +56,8 @@ func AdminRouter(router *gin.RouterGroup) {
 			systemUserRouter.PUT("/sysUserStatus", application.ISystemUserAppService.UpdateSystemStatus)
 			systemUserRouter.POST("/editUserPassword", application.ISystemUserAppService.UpdateSystemUserPassword)
 			systemUserRouter.GET("/defaultAvatar", application.ISystemUserAppService.GetDefaultAvatar)
+			systemUserRouter.GET("/currentUserInfo", application.ISystemUserAppService.GetCurrentUserInfo)
+			systemUserRouter.POST("/updateCurrentUserPassword",application.ISystemUserAppService.UpdateCurrentUserPassword)
 		}
 
 		systemFileRouter := router.Group("/sysfile").Use(middleware.CheckAuth())
@@ -116,5 +121,12 @@ func AdminRouter(router *gin.RouterGroup) {
 		{
 			permissionCheckerRouter.GET("/grantedPermissions", application.IAuthCheckerAppService.GetCurrentUserGrantedPermissions)
 		}
+
+		auditLogActionRouter := router.Group("/auditLogAction").Use(middleware.CheckAuth())
+		{
+			auditLogActionRouter.GET("/list", application.LogAuditLogActionAppService.GetList)
+			auditLogActionRouter.GET("/currentUserLogsList", application.LogAuditLogActionAppService.GetCurrentUserLogsList)
+		}
+
 	}
 }

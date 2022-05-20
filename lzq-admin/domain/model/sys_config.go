@@ -60,27 +60,30 @@ type QiNiuConfigDto struct {
 const ExtraSysConfigKey = "ExtraProperty"
 
 const (
-	ExtraString      = "ExtraString"
-	ExtraInt         = "ExtraInt"
-	ExtraStringArray = "ExtraStringArray"
-	ExtraIntArray    = "ExtraIntArray"
-	ExtraQiNiuConfig = "ExtraQiNiuConfig"
+	ExtraString       = "ExtraString"
+	ExtraInt          = "ExtraInt"
+	ExtraStringArray  = "ExtraStringArray"
+	ExtraIntArray     = "ExtraIntArray"
+	ExtraQiNiuConfig  = "ExtraQiNiuConfig"
+	ExtraGlobalConfig = "ExtraGlobalConfig"
 )
 
 var ConfigTypeConstFlags = map[string]string{
-	ExtraString:      "字符串",
-	ExtraInt:         "整形",
-	ExtraStringArray: "字符串数组",
-	ExtraIntArray:    "整形数组",
-	ExtraQiNiuConfig: "七牛云",
+	ExtraString:       "字符串",
+	ExtraInt:          "整形",
+	ExtraStringArray:  "字符串数组",
+	ExtraIntArray:     "整形数组",
+	ExtraQiNiuConfig:  "七牛云",
+	ExtraGlobalConfig: "系统全局配置",
 }
 
 var ConfigTypeConstStruct = map[string]interface{}{
-	ExtraString:      "",
-	ExtraInt:         0,
-	ExtraStringArray: make([]string, 0),
-	ExtraIntArray:    make([]int, 0),
-	ExtraQiNiuConfig: new(extrastruct.ExtraQiNiuConfig),
+	ExtraString:       "",
+	ExtraInt:          0,
+	ExtraStringArray:  make([]string, 0),
+	ExtraIntArray:     make([]int, 0),
+	ExtraQiNiuConfig:  new(extrastruct.ExtraQiNiuConfig),
+	ExtraGlobalConfig: new(extrastruct.SystemGlobalConfig),
 }
 
 func ReflectSysconfigJsonMap(obj interface{}) map[string]interface{} {

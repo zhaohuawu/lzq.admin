@@ -85,9 +85,24 @@ export function updateSysUserPassword(data) {
   })
 }
 
+export function updateCurrentUserPassword(data) {
+  return request({
+    url: '/api/app/sysUser/updateCurrentUserPassword',
+    method: 'post',
+    data
+  })
+}
+
 export function getDefaultAvatar() {
   return request({
     url: '/api/app/sysUser/defaultAvatar',
+    method: 'get'
+  })
+}
+
+export function getCurrentUserInfo() {
+  return request({
+    url: '/api/app/sysUser/currentUserInfo',
     method: 'get'
   })
 }

@@ -21,10 +21,7 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img v-if="isDefualtAvatar" src="@/assets/images/default-avatar.jpg" class="user-avatar">
-          <div v-else>
-            <img :src="avatar" class="user-avatar">
-          </div>
-       
+          <img v-else :src="avatar" class="user-avatar">
           {{ name }}
           <i class="el-icon-arrow-down" style="margin-left:5px" />
         </div>

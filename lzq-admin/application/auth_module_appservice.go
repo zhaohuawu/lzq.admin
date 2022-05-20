@@ -133,7 +133,7 @@ func (app *AuthModuleAppService) Delete(c *gin.Context) {
 // @Description
 // @Accept mpfd
 // @Produce  json
-// @Param object formData PageParamsDto true " "
+// @Param object query PageParamsDto true " "
 // @Success 200 {array} model.SystemUserListDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/authModule/list [GET]

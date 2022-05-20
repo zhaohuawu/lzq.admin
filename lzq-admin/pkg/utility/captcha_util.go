@@ -35,12 +35,12 @@ type captchaUtil struct{}
 func captchaOperateNum() (string, int, int, int) {
 	ops := []string{"+", "-", "*"}
 	op := ops[RandomNum(0, 3)]
-	firstNum := RandomNum(0, 101)
+	firstNum := RandomNum(0, 20)
 	secondNum := 0
 	resultNum := 0
 	switch op {
 	case "+":
-		secondNum = RandomNum(0, 21)
+		secondNum = RandomNum(0, 20)
 		resultNum = firstNum + secondNum
 		break
 	case "-":

@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"lzq-admin/domain/domainconsts"
 	"lzq-admin/domain/model"
-	"lzq-admin/middleware"
+	token "lzq-admin/pkg/auth"
 	"lzq-admin/pkg/hsflogger"
 	"lzq-admin/pkg/orm"
 	"lzq-admin/pkg/utility"
@@ -128,7 +128,7 @@ func (s *authMenuDomainService) Delete(id string) error {
 	m := model.AuthMenu{
 		BaseModel: model.BaseModel{
 			IsDeleted:    true,
-			DeleterId:    middleware.TokenClaims.Id,
+			DeleterId:    token.GlobalTokenClaims.Id,
 			DeletionTime: time.Now(),
 		},
 	}

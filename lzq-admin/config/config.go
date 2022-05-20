@@ -18,7 +18,6 @@ type AppConfig struct {
 	RedisConfig  `ini:"redis"`
 	JwtConfig    `ini:"jwt"`
 	LogConfig    `ini:"log"`
-	QiNiuConfig  `ini:"qiniu"`
 }
 
 type Database struct {
@@ -33,12 +32,13 @@ type Database struct {
 }
 
 type ServerConfig struct {
-	RunMode         string
-	HttpPort        int
-	ReadTimeout     time.Duration
-	WriteTimeout    time.Duration
-	UseMultiTenancy bool
-	DefaultAvatar   string
+	RunMode           string
+	HttpPort          int
+	ReadTimeout       time.Duration
+	WriteTimeout      time.Duration
+	UseMultiTenancy   bool
+	DefaultAvatar     string
+	ServiceModuleCode string
 }
 
 type RedisConfig struct {
@@ -60,13 +60,6 @@ type LogConfig struct {
 	ElasticSearchUrl  string `ini:"ElasticSearchUrl"`
 	ElasticSearchUser string `ini:"ElasticSearchUser"`
 	ElasticSearchPwd  string `ini:"ElasticSearchPwd"`
-}
-
-type QiNiuConfig struct {
-	AccessKey string `ini:"AccessKey"`
-	SecretKey string `ini:"SecretKey"`
-	Bucket    string `ini:"Bucket"`
-	BaseUrl   string `ini:"BaseUrl"`
 }
 
 var Config = &AppConfig{}

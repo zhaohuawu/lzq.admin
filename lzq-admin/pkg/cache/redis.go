@@ -13,7 +13,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	jsoniter "github.com/json-iterator/go"
 	"lzq-admin/config"
-	"lzq-admin/middleware"
+	token "lzq-admin/pkg/auth"
 	"lzq-admin/pkg/hsflogger"
 	"lzq-admin/pkg/utility"
 	"time"
@@ -53,8 +53,8 @@ func (r *RedisHelper) normalizeKey(key string) string {
 		nKey = fmt.Sprintf("%v:%v", r.prefixKey, nKey)
 	}
 	// 租户ID
-	if r != nil && r.isUseMultiTenancy && config.Config.ServerConfig.UseMultiTenancy && len(middleware.TokenClaims.TenantId) > 0 {
-		nKey = fmt.Sprintf("t:%v:%v", middleware.TokenClaims.TenantId, nKey)
+	if r != nil && r.isUseMultiTenancy && config.Config.ServerConfig.UseMultiTenancy && len(token.GlobalTokenClaims.TenantId) > 0 {
+		nKey = fmt.Sprintf("t:%v:%v", token.GlobalTokenClaims.TenantId, nKey)
 	} else {
 		nKey = fmt.Sprintf("c:%v", nKey)
 	}

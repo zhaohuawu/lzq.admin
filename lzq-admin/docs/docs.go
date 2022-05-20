@@ -28,6 +28,132 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/app/auditLogAction/currentUserLogsList": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuditLogAction"
+                ],
+                "summary": "查询当前用户的登录日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "查询条件",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否返回总条数",
+                        "name": "requireTotalCount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "第几页，\u003e=1开始",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页多少条数据",
+                        "name": "take",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LogAuditLogActionListDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/auditLogAction/list": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AuditLogAction"
+                ],
+                "summary": "查询接口日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "查询条件",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否返回总条数",
+                        "name": "requireTotalCount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "第几页，\u003e=1开始",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页多少条数据",
+                        "name": "take",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LogAuditLogActionListDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app/auth/captcha": {
             "get": {
                 "produces": [
@@ -251,31 +377,31 @@ var doc = `{
                         "type": "string",
                         "description": "查询条件",
                         "name": "filter",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "boolean",
                         "description": "是否返回总条数",
                         "name": "requireTotalCount",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "第几页，\u003e=1开始",
                         "name": "skip",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "排序字段",
                         "name": "sort",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页多少条数据",
                         "name": "take",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -643,31 +769,31 @@ var doc = `{
                         "type": "string",
                         "description": "查询条件",
                         "name": "filter",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "boolean",
                         "description": "是否返回总条数",
                         "name": "requireTotalCount",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "第几页，\u003e=1开始",
                         "name": "skip",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "排序字段",
                         "name": "sort",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页多少条数据",
                         "name": "take",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -706,31 +832,31 @@ var doc = `{
                         "type": "string",
                         "description": "查询条件",
                         "name": "filter",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "boolean",
                         "description": "是否返回总条数",
                         "name": "requireTotalCount",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "第几页，\u003e=1开始",
                         "name": "skip",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "排序字段",
                         "name": "sort",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页多少条数据",
                         "name": "take",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1115,31 +1241,31 @@ var doc = `{
                         "type": "string",
                         "description": "查询条件",
                         "name": "filter",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "boolean",
                         "description": "是否返回总条数",
                         "name": "requireTotalCount",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "第几页，\u003e=1开始",
                         "name": "skip",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "排序字段",
                         "name": "sort",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页多少条数据",
                         "name": "take",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1217,6 +1343,34 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/model.AuthRoleSimpleDto"
                             }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/sysUser/currentUserInfo": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemUser"
+                ],
+                "summary": "查询当前用户（无缓存）",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemUserInfoDto"
                         }
                     },
                     "500": {
@@ -1430,31 +1584,31 @@ var doc = `{
                         "type": "string",
                         "description": "查询条件",
                         "name": "filter",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "boolean",
                         "description": "是否返回总条数",
                         "name": "requireTotalCount",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "第几页，\u003e=1开始",
                         "name": "skip",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "排序字段",
                         "name": "sort",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页多少条数据",
                         "name": "take",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2653,6 +2807,87 @@ var doc = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LogAuditLogActionListDto": {
+            "type": "object",
+            "properties": {
+                "actionType": {
+                    "description": "操作类型",
+                    "type": "string"
+                },
+                "browserInfo": {
+                    "description": "浏览器信息",
+                    "type": "string"
+                },
+                "clientIpAddress": {
+                    "description": "客户端IP",
+                    "type": "string"
+                },
+                "comments": {
+                    "description": "注释",
+                    "type": "string"
+                },
+                "exceptions": {
+                    "description": "异常详情",
+                    "type": "string"
+                },
+                "executionDuration": {
+                    "description": "执行时长",
+                    "type": "integer"
+                },
+                "executionTime": {
+                    "description": "执行时间",
+                    "type": "string"
+                },
+                "fromSource": {
+                    "description": "来源",
+                    "type": "string"
+                },
+                "httpMethod": {
+                    "description": "HTTP请求方式",
+                    "type": "string"
+                },
+                "httpStatusCode": {
+                    "description": "HTTP状态码",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "loginName": {
+                    "description": "登录名",
+                    "type": "string"
+                },
+                "operation": {
+                    "description": "操作",
+                    "type": "string"
+                },
+                "parameters": {
+                    "description": "接口参数",
+                    "type": "string"
+                },
+                "serviceModuleCode": {
+                    "description": "服务模块编码",
+                    "type": "string"
+                },
+                "tenantName": {
+                    "description": "租户名称",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "接口URL",
+                    "type": "string"
+                },
+                "userId": {
+                    "description": "用户ID",
+                    "type": "string"
+                },
+                "userName": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }

@@ -152,7 +152,7 @@ func (app *authPermissionAppService) Delete(c *gin.Context) {
 // @Description
 // @Accept mpfd
 // @Produce  json
-// @Param object formData PageParamsDto true " "
+// @Param object query PageParamsDto true " "
 // @Success 200 {array} model.AuthPermissionListDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/permission/data [GET]

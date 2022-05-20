@@ -84,7 +84,7 @@ func (s *sysConfigDomainService) GetSysConfigCacheByCode(configType, code string
 		return obj, nil
 	}
 	var systemConfig model.SystemConfig
-	isExit, err := orm.QSession(true).Where("ConfigType=? and Code=?", configType, code).Get(&systemConfig)
+	isExit, err := orm.QSession(false).Where("ConfigType=? and Code=?", configType, code).Get(&systemConfig)
 	if err != nil {
 		return "", err
 	}

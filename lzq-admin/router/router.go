@@ -17,10 +17,9 @@ import (
 func Init() *gin.Engine {
 	router := gin.Default()
 	router.Use(middleware.Cors())
-	//router.Use(ginzap.Ginzap(loggers.AdminLogger, time.RFC3339, true), ginzap.RecoveryWithZap(loggers.AdminLogger, true))
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.Use(middleware.LogAuditLogAction())
 
-	router.Use(middleware.LogRequst())
 	adminRouter := router.Group("/api/app")
 
 	/***api路由定义****/

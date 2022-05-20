@@ -119,7 +119,7 @@ func (app *authMenuAppService) Delete(c *gin.Context) {
 // @Description
 // @Accept mpfd
 // @Produce  json
-// @Param object formData PageParamsDto true " "
+// @Param object query PageParamsDto true " "
 // @Success 200 {array} model.AuthMenuListDto
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/menu/menusList [GET]

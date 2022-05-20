@@ -78,8 +78,12 @@ type SystemUserListDto struct {
 }
 
 type UpdateSystemUserPasswordDto struct {
+	ID string `json:"id" binding:"required"`
+	UpdateSystemUserPasswordBaseDto
+}
+
+type UpdateSystemUserPasswordBaseDto struct {
 	Password     string `json:"password" binding:"required"`     //原始密码
 	NewPassword  string `json:"newPassword" binding:"required"`  //新密码
 	SurePassword string `json:"surePassword" binding:"required"` //确认密码
-	ID           string `json:"id" binding:"required"`
 }

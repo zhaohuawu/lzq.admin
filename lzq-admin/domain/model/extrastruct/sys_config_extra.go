@@ -18,3 +18,8 @@ type ExtraQiNiuConfig struct {
 	BaseUrl   string `json:"baseUrl" lab:"域名"`    //域名
 	Directory string `json:"directory" lab:"主目录"` //主目录
 }
+
+type SystemGlobalConfig struct {
+	UseAuditLogAction bool `json:"" lab:"启用接口审计日志"` //启用接口审计日志
+
+}

@@ -1,6 +1,8 @@
 package domainservice
 
-import "lzq-admin/middleware"
+import (
+	token "lzq-admin/pkg/auth"
+)
 
 /**
  * @Author  糊涂的老知青
@@ -15,7 +17,7 @@ type currentUserPermissionChecker struct {
 var CurrentUserPermissionChecker = currentUserPermissionChecker{}
 
 func (c *currentUserPermissionChecker) IsGranted(policy string) bool {
-	userId := middleware.TokenClaims.Id
+	userId := token.GlobalTokenClaims.Id
 	if len(userId) <= 0 {
 		return false
 	}

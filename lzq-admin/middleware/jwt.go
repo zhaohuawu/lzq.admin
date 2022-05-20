@@ -28,6 +28,7 @@ func CheckJwtToken() gin.HandlerFunc {
 					c.Abort()
 					return
 				}
+				token.GlobalTokenClaims = TokenClaims
 			} else {
 				c.JSON(http.StatusOK, gin.H{"msg": "Token开通必须以Bearer+空格开头"})
 				c.Abort()
