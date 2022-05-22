@@ -24,12 +24,8 @@ func AdminRouter(router *gin.RouterGroup) {
 		authRouter := router.Group("/auth").Use()
 		{
 			authRouter.GET("/captcha", application.IAuthAppService.GetCaptcha)
-
+			authRouter.POST("/login", application.IAuthAppService.Login)
 			authRouter.Use(middleware.CheckAuth()).POST("/logOut", application.IAuthAppService.Logout)
-		}
-		loginRouter := router.Group("/auth").Use(middleware.LoginAuditLogAction())
-		{
-			loginRouter.POST("/login", application.IAuthAppService.Login)
 		}
 
 		tenantRouter := router.Group("/tenant").Use(middleware.CheckAuth())

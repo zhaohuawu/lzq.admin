@@ -17,7 +17,11 @@ import 'codemirror/addon/lint/json-lint'
 export default {
   name: 'JsonEditor',
   /* eslint-disable vue/require-prop-types */
-  props: ['value'],
+  // props: ['value'],
+  props: {
+    value: { type: Object, default: null },
+    isReadOnly: { type: Boolean, default: false }
+  },
   data() {
     return {
       jsonEditor: false
@@ -37,9 +41,17 @@ export default {
       mode: 'application/json',
       gutters: ['CodeMirror-lint-markers'],
       theme: 'rubyblue',
-      lint: true
+      lint: true,
+      matchBrackets: true, // 括号匹配显示
+      autoCloseBrackets: true, // 输入和退格时成对
+      // readOnly: this.readonly, // 只读
+      foldGutter: true,
+      autoRefresh: true
     })
-
+    if (this.isReadOnly) {
+      console.log('isReadOnly：', this.isReadOnly)
+      this.jsonEditor.readOnly = this.readOnly
+    }
     this.jsonEditor.setValue(JSON.stringify(this.value, null, 2))
     this.jsonEditor.on('change', cm => {
       this.$emit('changed', cm.getValue())

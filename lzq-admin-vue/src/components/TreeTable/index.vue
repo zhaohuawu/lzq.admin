@@ -7,7 +7,7 @@
     row-key="id"
     fit
     highlight-current-row
-    default-expand-all
+    :default-expand-all="expandAll"
     :border="isBorder"
     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
   >
@@ -137,8 +137,9 @@ export default {
     defaultSelections: { type: [Array, Object], default: () => null },
     // 是否显示表格索引
     isIndex: { type: Boolean, default: false },
-    indexLabel: { type: String, default: '序号' }
-    
+    indexLabel: { type: String, default: '序号' },
+    // 是否展开所有行
+    expandAll: { type: Boolean, default: false }
   },
   data() {
     return {}

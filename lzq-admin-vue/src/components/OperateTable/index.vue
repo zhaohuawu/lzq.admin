@@ -142,6 +142,9 @@
         <span v-if="item.type==='DateTime'">
           {{ parseTime(scope.row[item.prop]) }}
         </span>
+        <span v-if="item.type==='Dialog'" style="color:#1890ff;cursor:pointer;" @click="handleClick(item.btnName, scope.row)">
+          {{ scope.row[item.prop] }}
+        </span>
         <!-- 默认 -->
         <span
           v-if="!item.type" 

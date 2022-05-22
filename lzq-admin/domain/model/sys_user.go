@@ -44,7 +44,7 @@ type UpdateSystemUserDto struct {
 	UserName   string   `json:"userName" binding:"required"` //用户名
 	Email      string   `json:"email"`                       //邮箱
 	HeadImgURL string   `json:"headImgUrl"`                  //头像
-	Sex        string   `json:"sex"`                         //性别
+	Sex        string   `json:"sex"`                         //性别，Secrecy：保密，Male：男，Female：女
 	Mobile     string   `json:"mobile"`                      //手机号码
 	RoleIds    []string `json:"roleIds"`                     //角色ID
 }

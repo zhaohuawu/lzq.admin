@@ -27,6 +27,18 @@ var SystemUserConstFlags = map[string]string{
 }
 
 const (
+	SystemUserSexSecrecy = "Secrecy"
+	SystemUserSexMale    = "Male"
+	SystemUserSexFemale  = "Female"
+)
+
+var SystemUserSexConstFlags = map[string]string{
+	SystemUserSexSecrecy: "保密",
+	SystemUserSexMale:    "男",
+	SystemUserSexFemale:  "女",
+}
+
+const (
 	PermissionGroupView      = "View"
 	PermissionGroupOperation = "Operation"
 	PermissionGroupAdvance   = "Advance"

@@ -52,6 +52,7 @@ func (r *RedisHelper) normalizeKey(key string) string {
 	if r != nil && len(r.prefixKey) > 0 {
 		nKey = fmt.Sprintf("%v:%v", r.prefixKey, nKey)
 	}
+	//fmt.Println("Redis:GlobalTokenClaims",token.GlobalTokenClaims)
 	// 租户ID
 	if r != nil && r.isUseMultiTenancy && config.Config.ServerConfig.UseMultiTenancy && len(token.GlobalTokenClaims.TenantId) > 0 {
 		nKey = fmt.Sprintf("t:%v:%v", token.GlobalTokenClaims.TenantId, nKey)

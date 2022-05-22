@@ -71,7 +71,7 @@ func (s *authUserdataPrivilegeDomainService) Delete(dbSession *xorm.Session, use
 			return err
 		}
 	} else {
-		if _, err := orm.DSessionWithTrans(true, dbSession).Where("UserId = ?", userId, roleId).Update(&m); err != nil {
+		if _, err := orm.DSessionWithTrans(true, dbSession).Where("UserId = ?", userId).Update(&m); err != nil {
 			dbSession.Rollback()
 			return err
 		}

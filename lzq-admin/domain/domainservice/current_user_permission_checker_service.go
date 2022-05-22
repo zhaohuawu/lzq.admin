@@ -17,6 +17,7 @@ type currentUserPermissionChecker struct {
 var CurrentUserPermissionChecker = currentUserPermissionChecker{}
 
 func (c *currentUserPermissionChecker) IsGranted(policy string) bool {
+	//fmt.Println("GlobalTokenClaims：",token.GlobalTokenClaims)
 	userId := token.GlobalTokenClaims.Id
 	if len(userId) <= 0 {
 		return false

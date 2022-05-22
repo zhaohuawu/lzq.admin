@@ -50,7 +50,7 @@
           <el-col :span="2" />
           <el-col :span="11">
             <el-form-item label="排序" prop="rank">
-              <el-input-number v-model="temp.rank" :min="0" :step="0.5" />
+              <el-input-number v-model="temp.rank" :min="0" />
             </el-form-item>
           </el-col>
         </el-row>

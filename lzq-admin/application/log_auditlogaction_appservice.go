@@ -36,7 +36,7 @@ func (app *logAuditLogActionAppService) GetList(c *gin.Context) {
 		return
 	}
 	var result = make([]model.LogAuditLogActionListDto, 0)
-	dbSession := orm.QSession(false).Omit("Operation", "ExtraProperties")
+	dbSession := orm.QSession(false).Omit("Operation")
 	if err := DBCondition(inputDto, dbSession, "", model.LogAuditLogActionListDto{}); err != nil {
 		app.ResponseError(c, err)
 		return
@@ -76,7 +76,7 @@ func (app *logAuditLogActionAppService) GetCurrentUserLogsList(c *gin.Context) {
 	inputDto.Filter = "[[\"userId\",\"=\",\"" + token.GlobalTokenClaims.Id + "\"],[\"actionType\",\"=\",\"Login\"]]"
 
 	var result = make([]model.LogAuditLogActionListDto, 0)
-	dbSession := orm.QSession(false).Omit("Operation", "ExtraProperties")
+	dbSession := orm.QSession(false).Omit("Operation")
 	if err := DBCondition(inputDto, dbSession, "", model.LogAuditLogActionListDto{}); err != nil {
 		app.ResponseError(c, err)
 		return

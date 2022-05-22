@@ -151,7 +151,9 @@ export const componentsMap = {
   Infrastructure_Icon: () => import('@/views/icons/index'),
   Infrastructure_SysUserList: () => import('@/views/sysuser/sysuser-list'),
   // Workflow_ProcessSettings: () => import('@/views/workflow/approvaltype-list'),
-  Infrastructure_SystemConfig: () => import('@/views/systemconfig/index')
+  Infrastructure_SystemConfig: () => import('@/views/systemconfig/index'),
+  AuditLog_AuditLogAction: () => import('@/views/auditlog-action/index'),
+  AuditLog_LoginLogList: () => import('@/views/auditlog-action/loginlog-list')
 }
 
 const createRouter = () => new Router({

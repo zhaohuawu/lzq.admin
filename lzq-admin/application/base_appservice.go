@@ -13,13 +13,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/goinggo/mapstructure"
 	jsoniter "github.com/json-iterator/go"
+	"lzq-admin/config/appsettings"
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/dto"
+	"lzq-admin/domain/model"
 	"lzq-admin/pkg/hsflogger"
 	"lzq-admin/pkg/utility"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
+	"time"
 	"xorm.io/xorm"
 )
 
@@ -61,9 +65,47 @@ func (Base *BaseAppService) ResponseBusinessError(c *gin.Context, err error) {
 	return
 }
 
-func (Base *BaseAppService) ResponseSuccessWithError(c *gin.Context, obj interface{}) {
+func (Base *BaseAppService) ResponseLoginError(tenant appsettings.TenantInfo, user model.SystemUser, c *gin.Context, obj dto.LoginTokenResponseDto) {
 	c.JSON(http.StatusOK, obj)
-	panic(obj)
+
+	startTimespan, _ := strconv.ParseInt(c.Request.Header.Get("RequestTime"), 10, 64)
+	startTime := time.UnixMilli(startTimespan)
+	var logAuditLogAction model.CreateLogAuditLogActionDto
+	logAuditLogAction.HTTPMethod = c.Request.Method
+	logAuditLogAction.URL = c.Request.URL.Path
+	logAuditLogAction.BrowserInfo = c.Request.Header.Get("User-Agent")
+	logAuditLogAction.ExecutionTime = startTime
+	logAuditLogAction.ExecutionDuration = time.Since(startTime).Milliseconds() // 毫秒
+	logAuditLogAction.HTTPStatusCode = c.Writer.Status()
+	logAuditLogAction.ActionType = "Login"
+	logAuditLogAction.FromSource = "lzq-admin"
+	logAuditLogAction.ClientIPAddress = c.ClientIP()
+	if len(c.Request.Header.Get("X-Forward-For")) > 0 {
+		logAuditLogAction.ClientIPAddress = c.Request.Header.Get("X-Forward-For")
+	}
+	if obj.IsError {
+		logAuditLogAction.Exceptions, _ = jsoniter.MarshalToString(obj)
+		logAuditLogAction.HTTPStatusCode = http.StatusInternalServerError
+	}
+	requestParams := make(map[string]interface{})
+	requestParams["fields.Request.URL"] = c.Request.URL
+	requestParams["fields.Request.Host"] = c.Request.Host
+	requestParams["fields.Request.ContentLength"] = c.Request.ContentLength
+	requestParams["fields.Request.Header"] = c.Request.Header
+	logAuditLogAction.ExtraProperties = requestParams
+
+	var result model.LogAuditLogAction
+	result.UserID = user.ID
+	result.UserName = user.UserName
+	result.LoginName = user.LoginName
+	result.TenantId = tenant.TenantId
+	if len(tenant.Name) > 0 {
+		result.TenantName = tenant.Name
+	} else {
+		result.TenantName = tenant.Code
+	}
+	result.LogAuditLogActionBase = logAuditLogAction.LogAuditLogActionBase
+	_ = domainservice.ILogAuditLogActionService.AnonymousInsert(result)
 	return
 }
 

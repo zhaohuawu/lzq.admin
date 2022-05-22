@@ -25,19 +25,19 @@ type LogAuditLogAction struct {
 }
 
 type LogAuditLogActionBase struct {
-	ActionType                  string    `json:"actionType"  xorm:"varchar(32) comment('操作类型')"`      //操作类型
-	FromSource                  string    `json:"fromSource"  xorm:"varchar(32) comment('来源')"`        //来源
-	ClientIPAddress             string    `json:"clientIpAddress" xorm:"varchar(20) comment('客户端IP')"` //客户端IP
-	BrowserInfo                 string    `json:"browserInfo"  xorm:"varchar(500) comment('浏览器信息')"`   //浏览器信息
-	HTTPMethod                  string    `json:"httpMethod"  xorm:"varchar(10) comment('HTTP请求方式')"`  //HTTP请求方式
-	URL                         string    `json:"url"  xorm:"varchar(500) comment('接口URL')"`           //接口URL
-	Parameters                  string    `json:"parameters"  xorm:"varchar(1000) comment('接口参数')"`    //接口参数
-	ExecutionTime               time.Time `json:"executionTime" xorm:"notnull comment('执行时间')"`        //执行时间
-	ExecutionDuration           int64     `json:"executionDuration" xorm:"notnull comment('执行时长')"`    //执行时长
-	Exceptions                  string    `json:"exceptions"  xorm:"text comment('异常详情')"`             //异常详情
-	Comments                    string    `json:"comments" xorm:"comment('注释')"`                       //注释
-	HTTPStatusCode              int       `json:"httpStatusCode" xorm:"comment('HTTP状态码')"`            //HTTP状态码
-	HasExtraPropertiesBaseModel `xorm:"extends"`
+	ActionType        string                 `json:"actionType"  xorm:"varchar(32) comment('操作类型')"`       //操作类型
+	FromSource        string                 `json:"fromSource"  xorm:"varchar(32) comment('来源')"`         //来源
+	ClientIPAddress   string                 `json:"clientIpAddress" xorm:"varchar(20) comment('客户端IP')"`  //客户端IP
+	BrowserInfo       string                 `json:"browserInfo"  xorm:"varchar(500) comment('浏览器信息')"`    //浏览器信息
+	HTTPMethod        string                 `json:"httpMethod"  xorm:"varchar(10) comment('HTTP请求方式')"`   //HTTP请求方式
+	URL               string                 `json:"url"  xorm:"varchar(500) comment('接口URL')"`            //接口URL
+	Parameters        string                 `json:"parameters"  xorm:"varchar(1000) comment('接口参数')"`     //接口参数
+	ExecutionTime     time.Time              `json:"executionTime" xorm:"notnull comment('执行时间')"`         //执行时间
+	ExecutionDuration int64                  `json:"executionDuration" xorm:"notnull comment('执行时长')"`     //执行时长
+	Exceptions        string                 `json:"exceptions"  xorm:"text comment('异常详情')"`              //异常详情
+	Comments          string                 `json:"comments" xorm:"comment('注释')"`                        //注释
+	HTTPStatusCode    int                    `json:"httpStatusCode" xorm:"comment('HTTP状态码')"`             //HTTP状态码
+	ExtraProperties   map[string]interface{} `json:"extraProperties" xorm:"json longtext comment('扩展字段')"` //扩展字段
 }
 
 type CreateLogAuditLogActionDto struct {

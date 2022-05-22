@@ -7,10 +7,10 @@ package application
  */
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"lzq-admin/config/appsettings"
 	"lzq-admin/domain/domainconsts"
 	"lzq-admin/domain/dto"
 	"lzq-admin/domain/model"
@@ -57,28 +57,32 @@ func (s *AuthAppService) GetCaptcha(c *gin.Context) {
 // @Failure 500 {object} ResponseDto
 // @Router /api/app/auth/login [POST]
 func (s *AuthAppService) Login(c *gin.Context) {
-	responseDto := &dto.LoginTokenResponseDto{
+	responseDto := dto.LoginTokenResponseDto{
 		TokenType: "Bearer",
 	}
 	var inputDto dto.LoginDto
+	errTenant := appsettings.TenantInfo{}
+	errUser := model.SystemUser{}
 	if err := c.ShouldBindJSON(&inputDto); err != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err.Error()
-		s.ResponseSuccessWithError(c, responseDto)
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
+	errTenant.Code = inputDto.TenantCode
+	errUser.LoginName = inputDto.LoginName
 	captchaKey := fmt.Sprintf("Captcha:%v", inputDto.CaptchaKey)
 	captchaValue := cache.RedisUtil.NewRedis(false).Get(captchaKey)
 	if len(captchaValue) == 0 {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = "验证码已过期"
-		s.ResponseSuccessWithError(c, responseDto)
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 	if captchaValue != inputDto.CaptchaValue {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = "验证码不正确"
-		s.ResponseSuccessWithError(c, responseDto)
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 
@@ -87,13 +91,15 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if err != nil {
 		responseDto.IsError = true
 		responseDto.Exception = err
-		s.ResponseSuccessWithError(c, responseDto)
+		responseDto.ErrorDescription = err.Error()
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 	if tenant.Status != domainconsts.TenantStatusEnable {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = fmt.Sprintf("租户已%v", domainconsts.GetConstFlag(tenant.Status, domainconsts.TenantConstFlags))
-		s.ResponseSuccessWithError(c, responseDto)
+		errTenant = tenant
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 
@@ -102,20 +108,24 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if err2 != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err2.Error()
-		s.ResponseSuccessWithError(c, responseDto)
+		errTenant = tenant
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 	if has == false {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = "账号不存在"
-		s.ResponseSuccessWithError(c, responseDto)
+		errTenant = tenant
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 	// 验证密码
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(inputDto.Password)); err != nil {
 		responseDto.IsError = true
-		responseDto.Exception = errors.New("密码不正确")
-		s.ResponseSuccessWithError(c, responseDto)
+		responseDto.ErrorDescription = "密码不正确"
+		errTenant = tenant
+		errUser = user
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 	responseDto.ID = user.ID
@@ -123,18 +133,22 @@ func (s *AuthAppService) Login(c *gin.Context) {
 	if _, err3 := utility.StringToUuid(tenant.TenantId); err3 != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err3.Error()
-		s.ResponseSuccessWithError(c, responseDto)
+		errTenant = tenant
+		errUser = user
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 	accessToken, err4 := token.GenerateToken(user.ID, user.LoginName, user.UserName, token.SysTypeAdmin, tenant.TenantId)
 	if err4 != nil {
 		responseDto.IsError = true
 		responseDto.ErrorDescription = err4.Error()
-		s.ResponseSuccessWithError(c, responseDto)
+		errTenant = tenant
+		errUser = user
+		s.ResponseLoginError(errTenant, errUser, c, responseDto)
 		return
 	}
 	responseDto.AccessToken = accessToken
-	s.ResponseSuccess(c, responseDto)
+	s.ResponseLoginError(tenant, user, c, responseDto)
 	//fmt.Sprintf("Bearer %v", accessToken))
 }
 

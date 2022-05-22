@@ -40,3 +40,12 @@ func (s *logAuditLogActionService) Insert(inputDto model.CreateLogAuditLogAction
 	return nil
 }
 
+func (s *logAuditLogActionService) AnonymousInsert(inputDto model.LogAuditLogAction) error {
+	inputDto.ID = utility.UuidCreate()
+	inputDto.ServiceModuleCode = config.Config.ServerConfig.ServiceModuleCode
+	if _, err := orm.ISession().Insert(&inputDto); err != nil {
+		return err
+	}
+	return nil
+}
+

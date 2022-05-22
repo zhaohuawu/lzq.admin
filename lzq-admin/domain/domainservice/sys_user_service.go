@@ -87,29 +87,36 @@ func (u *systemUserDomainService) Update(inputDto model.UpdateSystemUserDto) (mo
 	user.Email = inputDto.Email
 	user.HeadImgURL = inputDto.HeadImgURL
 	user.Mobile = inputDto.Mobile
-	user.Sex = inputDto.Sex
+	if _, ok := domainconsts.SystemUserSexConstFlags[inputDto.Sex]; ok {
+		user.Sex = inputDto.Sex
+	} else {
+		return model.SystemUser{}, errors.New("性别类型：" + inputDto.Sex + "不存在")
+	}
 
-	//dbSession, errT := orm.BeginTrans()
-	//if errT != nil {
-	//	return model.SystemUser{}, err
-	//}
-	//if len(inputDto.RoleIds) == 0 {
-	//	if err := AuthUserdataPrivilegeDomainService.Delete(dbSession, inputDto.ID, ""); err != nil {
-	//		dbSession.Rollback()
-	//		return model.SystemUser{}, err
-	//	}
-	//} else {
-	//	if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, inputDto.ID, inputDto.RoleIds); err != nil {
-	//		dbSession.Rollback()
-	//		return model.SystemUser{}, err
-	//	}
-	//}
+	dbSession, errT := orm.BeginTrans()
+	if errT != nil {
+		return model.SystemUser{}, errT
+	}
+	if len(inputDto.RoleIds) == 0 {
+		if err := AuthUserdataPrivilegeDomainService.Delete(dbSession, inputDto.ID, ""); err != nil {
+			dbSession.Rollback()
+			return model.SystemUser{}, err
+		}
+	} else {
+		if len(inputDto.RoleIds) > 1 || len(inputDto.RoleIds) == 1 && inputDto.RoleIds[0] != "00000000-0000-0000-0000-000000000000" {
+			if _, err := AuthUserdataPrivilegeDomainService.Insert(dbSession, inputDto.ID, inputDto.RoleIds); err != nil {
+				dbSession.Rollback()
+				return model.SystemUser{}, err
+			}
+		}
+	}
 
-	if updateNum, err1 := orm.USession(true).ID(inputDto.ID).Update(&user); err1 != nil {
+	if updateNum, err1 := orm.USessionWithTrans(true, dbSession).ID(inputDto.ID).Update(&user); err1 != nil {
 		return model.SystemUser{}, err1
 	} else if updateNum < 1 {
 		return model.SystemUser{}, errors.New("修改失败")
 	}
+	dbSession.Commit()
 	// 清除用户详情缓存
 	u.RemoveUserInfoById(inputDto.ID)
 	return user, nil
@@ -127,13 +134,17 @@ func (u *systemUserDomainService) UpdateSystemUserPassword(inputDto model.Update
 		return errors.New("旧密码不正确")
 	}
 
+	if inputDto.SurePassword != inputDto.NewPassword {
+		return errors.New("两次输入的密码不相同")
+	}
+
 	// 密码加密不可解析密码串
-	if phash, err := bcrypt.GenerateFromPassword([]byte(inputDto.Password), bcrypt.DefaultCost); err != nil {
+	if phash, err := bcrypt.GenerateFromPassword([]byte(inputDto.NewPassword), bcrypt.DefaultCost); err != nil {
 		return err
 	} else {
 		user.Password = string(phash)
 	}
-	if effect, err := orm.USession(true).Cols("Password").ID(inputDto.ID).Update(&user); err != nil {
+	if effect, err := orm.USession(true).ID(inputDto.ID).Cols("Password").Update(&user); err != nil {
 		return err
 	} else if effect <= 0 {
 		return errors.New("修改失败")

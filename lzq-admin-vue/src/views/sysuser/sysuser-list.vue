@@ -75,6 +75,13 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="temp.email" />
         </el-form-item>
+        <el-form-item label="性别">
+          <el-radio-group v-model="temp.sex">
+            <el-radio label="Secrecy">保密</el-radio>
+            <el-radio label="Male">男</el-radio>
+            <el-radio label="Female">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">

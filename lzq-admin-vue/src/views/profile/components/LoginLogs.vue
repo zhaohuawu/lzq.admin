@@ -35,13 +35,15 @@ export default {
         requireTotalCount: true,
         page: 1,
         skip: 0,
-        take: 10
+        take: 10,
+        sort: []
       },
       list: [],
       total: 0
     }
   },
   created() {
+    this.pageParams.sort = `[{"selector":"executionTime","desc":true}]`
     this.getList()
   },
   methods: {

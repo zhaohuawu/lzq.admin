@@ -8,7 +8,9 @@ import (
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/model"
 	"lzq-admin/domain/model/extrastruct"
+	token "lzq-admin/pkg/auth"
 	"lzq-admin/pkg/hsflogger"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -21,7 +23,10 @@ import (
 
 func LogAuditLogAction() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 先释放上一次接口的token户信息
+		token.GlobalTokenClaims = nil
 		start := time.Now()
+		c.Request.Header.Set("RequestTime", strconv.FormatInt(start.UnixMilli(), 10))
 		if strings.Contains(c.Request.URL.Path, "auth/login") {
 			c.Next()
 		} else {
@@ -38,10 +43,13 @@ func LogAuditLogAction() gin.HandlerFunc {
 						if len(c.Request.URL.RawQuery) > 0 {
 							logAuditLogAction.Parameters = c.Request.URL.RawQuery
 						} else {
-							data, _ := c.GetRawData()
-							if len(data) > 0 {
-								c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // 解决gin只能读取一次body的问题
-								logAuditLogAction.Parameters = string(data)
+							if !strings.Contains(c.Request.URL.Path, "sysUser/updateCurrentUserPassword") &&
+								!strings.Contains(c.Request.URL.Path, "sysUser/editUserPassword") {
+								data, _ := c.GetRawData()
+								if len(data) > 0 {
+									c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // 解决gin只能读取一次body的问题
+									logAuditLogAction.Parameters = string(data)
+								}
 							}
 						}
 						defer func() {

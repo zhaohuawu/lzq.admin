@@ -85,11 +85,18 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log(error.response)
     const err = error.response.data
     if (err.hasOwnProperty('error') || (err.hasOwnProperty('errorDescription') && err.errorDescription !== null && err.errorDescription !== '')) {
       console.log('err' + error) // for debug
       Message({
         message: error.response.data.error.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    } else if (err.hasOwnProperty('code') && err.hasOwnProperty('msg')) {
+      Message({
+        message: err.msg,
         type: 'error',
         duration: 5 * 1000
       })

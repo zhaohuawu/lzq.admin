@@ -165,6 +165,12 @@ func USession(useMultiTenancy bool) *xorm.Session {
 	if useMultiTenancy {
 		updateDB.And("TenantId=?", token.GlobalTokenClaims.TenantId).Omit("TenantId")
 	}
+	if isModityId {
+		updateDB.Cols("LastModifierId")
+	}
+	if isModityTime {
+		updateDB.Cols("LastModificationTime")
+	}
 	return updateDB.Omit("Id")
 }
 
@@ -183,6 +189,12 @@ func USessionWithTrans(useMultiTenancy bool, dbSession *xorm.Session) *xorm.Sess
 	useMultiTenancy = getUseMultiTenancy(useMultiTenancy)
 	if useMultiTenancy {
 		dbSession.And("TenantId=?", token.GlobalTokenClaims.TenantId).Omit("TenantId")
+	}
+	if isModityId {
+		dbSession.Cols("LastModifierId")
+	}
+	if isModityTime {
+		dbSession.Cols("LastModificationTime")
 	}
 	return dbSession.Omit("Id")
 }
