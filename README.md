@@ -37,12 +37,10 @@ Golang语言实现的多租户SaaS系统，项目基于gin、xorm、jwt、swagge
 3. npm run dev
 ```
 ##### 数据库
-```
 1. 建好mysql数据库，创建一个utf8的数据库
 2. 在配置文件中配置好数据库信息
 3. 生产数据库及表格：将配置文件中的database-》is_migration改成true，表示ORM根据当前model结构体和数据库对比，执行更新数据库表格的脚本
 4. 初始化数据库脚本表格，根据文件夹tools-》database-init中的sql文件初始化数据
-```
 
 #### 可能出现的问题及解决办法
 ##### 1. 报node-sass错误
