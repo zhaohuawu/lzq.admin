@@ -83,6 +83,8 @@ func (app *systemUserAppService) Get(c *gin.Context) {
 			HeadImgURL: user.HeadImgURL,
 			Mobile:     user.Mobile,
 			Email:      user.Email,
+			CompanyId:  user.CompanyId,
+			DeptId:     user.DeptId,
 		}
 		result.RoleIds, err = domainservice.AuthCheckerDomainService.GetUserGrantedRoleIds(user.ID)
 		if err != nil {
@@ -118,6 +120,8 @@ func (app *systemUserAppService) GetCurrentUserInfo(c *gin.Context) {
 			HeadImgURL: user.HeadImgURL,
 			Mobile:     user.Mobile,
 			Email:      user.Email,
+			CompanyId:  user.CompanyId,
+			DeptId:     user.DeptId,
 		}
 		app.ResponseSuccess(c, result)
 	}
@@ -161,8 +165,6 @@ func (app *systemUserAppService) GetList(c *gin.Context) {
 		return
 	}
 	dbSession := orm.QSession(true, "u").Table(model.TableSystemUser).Alias("u").
-		// Join("Left", model.TableAuthUserdataprivilege+" as urp", fmt.Sprintf("u.Id = urp.UserId and urp.IsDeleted=0 and urp.TenantId='%v'", token.GlobalTokenClaims.TenantId)).
-		//Select("u.*,urp.RoleId").
 		Omit("Operation", "StatusName", "HeadImgLink", "Password", "RoleIds")
 	if err := DBCondition(inputDto, dbSession, "u", model.SystemUserListDto{}); err != nil {
 		app.ResponseError(c, err)

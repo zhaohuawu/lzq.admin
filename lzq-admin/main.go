@@ -19,17 +19,18 @@ import (
 	"net/http"
 )
 
-// @title HSF Project API
+// @title lzq-admin Project API
 // @version 1.0
 // @description  Golang api of demo
 // @termsOfService http://github.com
 
 // @contact.name API Support
-// @contact.url http://www.pddkf.cn
-// @contact.email ×××@qq.com
+// @contact.url http://www.lzqit.cn
+// @contact.email lzqcode@163.com
 
-// @host 127.0.0.1:30001
-// @BasePath /api
+// @host localhost:30001
+// @Security x-token
+// @param x-token header string true "Authorization"
 // 程序入口
 func main() {
 	hsflogger.Init()

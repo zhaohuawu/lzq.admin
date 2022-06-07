@@ -1,30 +1,66 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="filtersQuery.userName" placeholder="用户名称" style="width: 200px;" clearable class="filter-item" />
-      <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
-        新增
-      </el-button>
-    </div>
-    <OperateTable
-      size="medium"
-      :is-selection="false"
-      :is-index="false"
-      :is-border="false"
-      :is-handle="true"
-      :table-data="list" 
-      :table-cols="tableCols"
-      @operationSelect="operationSelect"
-      @sortChange="sortChange"
-    />
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.take" @pagination="getList" />
-    
+    <el-row :gutter="20">
+      <el-col :span="6" :xs="24">
+        <el-input
+          v-model="filterText"
+          placeholder="请输入公司/部门名称"
+          clearable
+          size="small"
+          prefix-icon="el-icon-search"
+        />
+        <el-tree
+          ref="qtree"
+          :data="companyAndDepts"
+          :props="defaultProps"
+          :expand-on-click-node="false"
+          :filter-node-method="filterNode"
+          default-expand-all
+          highlight-current
+          @node-click="handleNodeClick"
+        />
+      </el-col>
+      <el-col :span="18" :xs="24">
+        <div class="filter-container">
+          <el-input v-model="filtersQuery.userName" placeholder="用户名称" style="width: 200px;" clearable class="filter-item" />
+          <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
+            搜索
+          </el-button>
+          <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
+            新增
+          </el-button>
+        </div>
+      
+        <OperateTable
+          size="medium"
+          :is-selection="false"
+          :is-index="false"
+          :is-border="false"
+          :is-handle="true"
+          :table-data="list" 
+          :table-cols="tableCols"
+          @operationSelect="operationSelect"
+          @sortChange="sortChange"
+        />
+        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.take" @pagination="getList" />
+      </el-col>
+    </el-row>
     <!-- 新增、编辑 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="600px">
       <el-form ref="dataForm" :rules="menuRules" :model="temp" label-position="center" label-width="80px">
+        <el-form-item label="上级公司" prop="parentId">
+          <tree-select
+            ref="utree"
+            v-model="cParentId"
+            :tree-data="companyAndDepts"
+            :props-tree="defaultProps"
+            :node-key="'id'"
+            :clearable="true"
+            :searchable="true"
+            placeholder="选择上级公司/部门"
+            @change="searchSelectChain"
+          />
+        </el-form-item>
         <el-form-item label="登录账号" prop="loginName">
           <el-input v-model="temp.loginName" />
         </el-form-item>
@@ -119,10 +155,12 @@ import OperateTable from '@/components/OperateTable'
 import Pagination from '@/components/Pagination'
 // import ImageCropper from '@/components/ImageCropper'
 import store from '@/store'
+import { getCompanyAndDeptList } from '@/api/organization'
+import TreeSelect from '@/components/TreeSelect'
 
 export default {
   name: 'SysUserList',
-  components: { OperateTable, Pagination },
+  components: { OperateTable, Pagination, TreeSelect },
   data() {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -147,6 +185,13 @@ export default {
     }
     return {
       isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Infrastructure.SysUserList:Operation.Create') > -1),
+      companyAndDepts: [],
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
+      filterText: '',
+      cParentId: '',
       tableCols: [
         { label: '状态', prop: 'statusName', align: 'center', width: '100', sortable: 'custom' },
         { label: '头像', prop: 'headImgLink', type: 'Image', align: 'center', width: '120', style: 'height: 100px' },
@@ -172,6 +217,7 @@ export default {
         filter: null,
         sort: null
       },
+      pageFilter: [],
       roleList: [],
       temp: {
         id: undefined,
@@ -183,7 +229,9 @@ export default {
         headImgUrl: null,
         sex: null,
         mobile: null,
-        email: null
+        email: null,
+        deptId: null,
+        companyId: null
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -203,11 +251,70 @@ export default {
       imagecropperKey: 0
     }
   },
+  watch: {
+    // 根据名称筛选部门树
+    filterText(val) {
+      this.$refs.qtree.filter(val)
+    }
+  },
   created() {
-    this.getList()
-    this.getEnableRoles()
+    var that = this
+    this.getDeptList().then(function() {
+      that.getList()
+      that.getEnableRoles()
+    })
   },
   methods: {
+    async getDeptList() {
+      await getCompanyAndDeptList().then(rsp => {
+        this.companyAndDepts = rsp
+      })
+    },
+    filterNode(value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    handleNodeClick(data, node) {
+      this.pageFilter = []
+      console.log('handleNodeClick2', data, node)
+      const ids = []
+      // 递归
+      const dg = function(type, list) {
+        if (list) {
+          list.forEach(function(item) {
+            if (type === 'Company' && item.type !== 'Company') {
+              console.log(type, item.type)
+            } else {
+              ids.push(item.id)
+              if (item.children) {
+                dg(item.children)
+              }
+            }
+          })
+        }
+      }
+
+      ids.push(data.id)
+      if (data.type === 'Dept') {
+        dg('Dept', data.children)
+        this.pageFilter.push(['deptId', 'in', ids.join(',')])
+      } else {
+        dg('Company', data.children)
+        this.pageFilter.push(['companyId', 'in', ids.join(',')])
+      }
+      this.handleFilter()
+    },
+    searchSelectChain(obj) {
+      this.temp.deptId = null
+      this.temp.companyId = null
+      if (obj.type === 'Company') {
+        this.temp.companyId = obj.id
+      } else {
+        this.cParentId = obj.id
+        this.temp.deptId = obj.id
+        this.temp.companyId = obj.companyId
+      }
+    },
     getList() {
       this.listLoading = true
       this.listQuery.skip = (this.listQuery.page - 1) * this.listQuery.take
@@ -228,10 +335,17 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       console.log(this.filtersQuery)
+      const f = []
       if (this.filtersQuery.userName !== '' && this.filtersQuery.userName !== null) {
-        this.listQuery.filter = '[["userName","contains","' + this.filtersQuery.userName + '"]]'
-      } else {
-        this.listQuery.filter = null
+        f.push(['userName', 'contains', this.filtersQuery.userName])
+      } 
+      if (this.pageFilter.length > 0) {
+        this.pageFilter.forEach((item, index) => {
+          f.push(item)
+        })
+      }
+      if (f.length > 0) {
+        this.listQuery.filter = JSON.stringify(f)
       }
       this.getList()
     },
@@ -255,14 +369,16 @@ export default {
       this.getList()
     },
     handleCreate() {
+      this.temp = Object.assign({}, {}) // copy obj
+      this.$refs.utree.setTreeCurrentKey(null)
       this.dialogStatus = 'create'
       this.getDefaultAvatar()
-      this.getEnableRoles()
+      // this.getEnableRoles()
       this.dialogFormVisible = true
       this.temp = Object.assign({}, null) // copy obj
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -281,18 +397,28 @@ export default {
       })
     },
     handleUpdate(row) {
-      // this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, {}) // copy obj
       const q = { id: row.id }
       get(q).then(response => {
         this.temp = Object.assign({}, response)
+        this.$nextTick(() => {
+          if (this.temp.deptId !== '' && this.temp.deptId !== null) {
+            this.$refs.utree.setTreeCurrentKey(this.temp.deptId)
+          } else if (this.temp.companyId !== '' && this.temp.companyId !== null) {
+            this.$refs.utree.setTreeCurrentKey(this.temp.companyId)
+          } else {
+            this.$refs.utree.setTreeCurrentKey(null)
+          }
+        })
       })
+
       this.image = this.temp.headImgLink
       this.dialogStatus = 'update'
-      this.getEnableRoles()
+      // this.getEnableRoles()
       this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {

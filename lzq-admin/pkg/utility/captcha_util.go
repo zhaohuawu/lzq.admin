@@ -19,7 +19,7 @@ func NewDriver() *captcha.DriverMath {
 		Width:           120,
 		NoiseCount:      0, // 干扰词数量
 		ShowLineOptions: 0,
-		Fonts:           []string{"ApothecaryFont.ttf","DeborahFancyDress.ttf","Flim-Flam.ttf","wqy-microhei.ttc"}, //"ApothecaryFont.ttf","DeborahFancyDress.ttf","Flim-Flam.ttf","wqy-microhei.ttc"
+		Fonts:           []string{"ApothecaryFont.ttf", "DeborahFancyDress.ttf", "Flim-Flam.ttf", "wqy-microhei.ttc"}, //"ApothecaryFont.ttf","DeborahFancyDress.ttf","Flim-Flam.ttf","wqy-microhei.ttc"
 		BgColor: &color.RGBA{ // 背景颜色
 			R: 128,
 			G: 98,
@@ -35,21 +35,24 @@ type captchaUtil struct{}
 func captchaOperateNum() (string, int, int, int) {
 	ops := []string{"+", "-", "*"}
 	op := ops[RandomNum(0, 3)]
-	firstNum := RandomNum(0, 20)
+	firstNum := 0
 	secondNum := 0
 	resultNum := 0
 	switch op {
 	case "+":
+		firstNum = RandomNum(0, 20)
 		secondNum = RandomNum(0, 20)
 		resultNum = firstNum + secondNum
 		break
 	case "-":
-		secondNum = RandomNum(0, firstNum+1)
+		firstNum = RandomNum(1, 20)
+		secondNum = RandomNum(0, firstNum)
 		resultNum = firstNum - secondNum
 		break
 	case "*":
+		firstNum = RandomNum(0, 20)
 		if firstNum < 11 {
-			secondNum = RandomNum(0, firstNum+1)
+			secondNum = RandomNum(0, 10)
 			resultNum = firstNum * secondNum
 		} else {
 			cops := []int{0, 1, 2, 10, 20}

@@ -30,7 +30,6 @@ export default {
     getInfo() {
       getSysConfigInfo(this.sysconfig.configType, this.sysconfig.code).then(response => {
         this.extraValue = response.extraValue
-        console.log(this.extraValue)
       })
     }
   }

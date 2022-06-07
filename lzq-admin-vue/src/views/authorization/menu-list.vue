@@ -42,7 +42,7 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="11">
             <el-form-item label="排序" prop="rank">
-              <el-input-number v-model="temp.rank" :min="0" />
+              <el-input-number v-model="temp.rank" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="2" />

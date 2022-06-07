@@ -53,7 +53,7 @@ func AdminRouter(router *gin.RouterGroup) {
 			systemUserRouter.POST("/editUserPassword", application.ISystemUserAppService.UpdateSystemUserPassword)
 			systemUserRouter.GET("/defaultAvatar", application.ISystemUserAppService.GetDefaultAvatar)
 			systemUserRouter.GET("/currentUserInfo", application.ISystemUserAppService.GetCurrentUserInfo)
-			systemUserRouter.POST("/updateCurrentUserPassword",application.ISystemUserAppService.UpdateCurrentUserPassword)
+			systemUserRouter.POST("/updateCurrentUserPassword", application.ISystemUserAppService.UpdateCurrentUserPassword)
 		}
 
 		systemFileRouter := router.Group("/sysfile").Use(middleware.CheckAuth())
@@ -122,6 +122,20 @@ func AdminRouter(router *gin.RouterGroup) {
 		{
 			auditLogActionRouter.GET("/list", application.LogAuditLogActionAppService.GetList)
 			auditLogActionRouter.GET("/currentUserLogsList", application.LogAuditLogActionAppService.GetCurrentUserLogsList)
+		}
+
+		companyRouter := router.Group("/company").Use(middleware.CheckAuth())
+		{
+			companyRouter.POST("/create", application.SystemCompanyAppService.Create)
+			companyRouter.PUT("/update", application.SystemCompanyAppService.Update)
+			companyRouter.DELETE("/delete", application.SystemCompanyAppService.Delete)
+		}
+		deptRouter := router.Group("/dept").Use(middleware.CheckAuth())
+		{
+			deptRouter.POST("/create", application.SystemDeptAppService.Create)
+			deptRouter.PUT("/update", application.SystemDeptAppService.Update)
+			deptRouter.DELETE("/delete", application.SystemDeptAppService.Delete)
+			deptRouter.GET("/companyAndDeptList", application.SystemDeptAppService.GetCompanyAndDeptList)
 		}
 
 	}

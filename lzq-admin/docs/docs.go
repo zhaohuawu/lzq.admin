@@ -20,8 +20,8 @@ var doc = `{
         "termsOfService": "http://github.com",
         "contact": {
             "name": "API Support",
-            "url": "http://www.pddkf.cn",
-            "email": "×××@qq.com"
+            "url": "http://www.lzqit.cn",
+            "email": "lzqcode@163.com"
         },
         "version": "{{.Version}}"
     },
@@ -553,6 +553,261 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/company/create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemCompany"
+                ],
+                "summary": "新增公司",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateSystemCompanyDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemCompany"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/company/delete": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemCompany"
+                ],
+                "summary": "删除公司",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "公司ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/company/update": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemCompany"
+                ],
+                "summary": "修改公司",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateSystemCompanyDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemCompany"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/dept/companyAndDeptList": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDept"
+                ],
+                "summary": "公司和部门的树形列表",
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SystemCompanyAndDeptListDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/dept/create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDept"
+                ],
+                "summary": "新增部门",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateSystemDeptDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemDept"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/dept/delete": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDept"
+                ],
+                "summary": "删除部门",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/dept/update": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDept"
+                ],
+                "summary": "修改部门",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateSystemDeptDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemDept"
                         }
                     },
                     "500": {
@@ -1669,6 +1924,45 @@ var doc = `{
                 }
             }
         },
+        "/api/app/sysUser/updateCurrentUserPassword": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemUser"
+                ],
+                "summary": "修改当前用户密码",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateSystemUserPasswordBaseDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app/sysUser/user": {
             "delete": {
                 "produces": [
@@ -2701,6 +2995,30 @@ var doc = `{
                 }
             }
         },
+        "model.CreateSystemCompanyDto": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "公司名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "上级公司ID",
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
         "model.CreateSystemConfigDto": {
             "type": "object",
             "required": [
@@ -2727,6 +3045,34 @@ var doc = `{
                 }
             }
         },
+        "model.CreateSystemDeptDto": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "部门名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "上级部门ID",
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
         "model.CreateSystemUserDto": {
             "type": "object",
             "required": [
@@ -2736,6 +3082,14 @@ var doc = `{
                 "userName"
             ],
             "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "deptId": {
+                    "description": "所属部门ID",
+                    "type": "string"
+                },
                 "email": {
                     "description": "邮箱",
                     "type": "string"
@@ -2842,6 +3196,11 @@ var doc = `{
                     "description": "执行时间",
                     "type": "string"
                 },
+                "extraProperties": {
+                    "description": "扩展字段",
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "fromSource": {
                     "description": "来源",
                     "type": "string"
@@ -2912,6 +3271,78 @@ var doc = `{
                 }
             }
         },
+        "model.SystemCompany": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "公司名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "上级公司ID",
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
+        "model.SystemCompanyAndDeptListDto": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "description": "子公司或部门",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.SystemCompanyAndDeptListDto"
+                    }
+                },
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "公司或部门id",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "公司名称",
+                    "type": "string"
+                },
+                "operation": {
+                    "description": "操作",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "上级部门ID",
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "数据类型，Company：公司，Dept：部门",
+                    "type": "string"
+                }
+            }
+        },
         "model.SystemConfig": {
             "type": "object",
             "required": [
@@ -2938,6 +3369,38 @@ var doc = `{
                 },
                 "status": {
                     "description": "状态",
+                    "type": "string"
+                }
+            }
+        },
+        "model.SystemDept": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "部门名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "上级部门ID",
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
                     "type": "string"
                 }
             }
@@ -2995,6 +3458,14 @@ var doc = `{
                 "userName"
             ],
             "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "deptId": {
+                    "description": "所属部门ID",
+                    "type": "string"
+                },
                 "email": {
                     "description": "邮箱",
                     "type": "string"
@@ -3048,6 +3519,14 @@ var doc = `{
         "model.SystemUserInfoDto": {
             "type": "object",
             "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "deptId": {
+                    "description": "所属部门ID",
+                    "type": "string"
+                },
                 "email": {
                     "description": "邮箱",
                     "type": "string"
@@ -3112,6 +3591,14 @@ var doc = `{
                 "userName"
             ],
             "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "deptId": {
+                    "description": "所属部门ID",
+                    "type": "string"
+                },
                 "email": {
                     "description": "邮箱",
                     "type": "string"
@@ -3334,6 +3821,68 @@ var doc = `{
                 }
             }
         },
+        "model.UpdateSystemCompanyDto": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "description": "公司ID",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "公司名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "上级公司ID",
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateSystemDeptDto": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "部门id",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "部门名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "上级部门ID",
+                    "type": "string"
+                },
+                "rank": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
         "model.UpdateSystemUserDto": {
             "type": "object",
             "required": [
@@ -3341,6 +3890,14 @@ var doc = `{
                 "userName"
             ],
             "properties": {
+                "companyId": {
+                    "description": "所属公司ID",
+                    "type": "string"
+                },
+                "deptId": {
+                    "description": "所属部门ID",
+                    "type": "string"
+                },
                 "email": {
                     "description": "邮箱",
                     "type": "string"
@@ -3365,11 +3922,33 @@ var doc = `{
                     }
                 },
                 "sex": {
-                    "description": "性别",
+                    "description": "性别，Secrecy：保密，Male：男，Female：女",
                     "type": "string"
                 },
                 "userName": {
                     "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateSystemUserPasswordBaseDto": {
+            "type": "object",
+            "required": [
+                "newPassword",
+                "password",
+                "surePassword"
+            ],
+            "properties": {
+                "newPassword": {
+                    "description": "新密码",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "原始密码",
+                    "type": "string"
+                },
+                "surePassword": {
+                    "description": "确认密码",
                     "type": "string"
                 }
             }
@@ -3479,10 +4058,10 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        "127.0.0.1:30001",
-	BasePath:    "/api",
+	Host:        "localhost:30001",
+	BasePath:    "",
 	Schemes:     []string{},
-	Title:       "HSF Project API",
+	Title:       "lzq-admin Project API",
 	Description: "Golang api of demo",
 }
 

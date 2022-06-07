@@ -55,7 +55,7 @@ func (s *sysConfigDomainService) Update(inputDto model.UpdateSystemConfigDto) (m
 		return systemConfig, errors.New("该配置类型不已存在：" + inputDto.Code)
 	}
 	systemConfig.ExtraProperties[model.ExtraSysConfigKey] = inputDto.ExtraValue
-	if _, err := orm.USession(true).ID(systemConfig.ID).Update(&systemConfig); err != nil {
+	if _, err := orm.USession(true).AllCols().ID(systemConfig.ID).Update(&systemConfig); err != nil {
 		return model.SystemConfig{}, err
 	}
 	r := cache.RedisUtil.NewRedis(false, "SysConfig")

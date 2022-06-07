@@ -76,6 +76,8 @@ func getModels() []interface{} {
 		new(model.AuthUserDataPrivilege),
 		new(model.SystemConfig),
 		new(model.LogAuditLogAction),
+		new(model.SystemCompany),
+		new(model.SystemDept),
 	}
 }
 

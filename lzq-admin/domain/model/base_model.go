@@ -16,6 +16,8 @@ const (
 	TableSystemConfig             = "sys_config"
 	TableSystemUser               = "sys_user"
 	TableTenant                   = "sys_tenant"
+	TableSystemCompany            = "sys_company"
+	TableSystemDept               = "sys_dept"
 	TableAuthModule               = "au_module"
 	TableAuthMenu                 = "au_menu"
 	TableAuthPermission           = "au_permission"
@@ -53,10 +55,10 @@ type HasExtraPropertiesBaseModel struct {
 
 func BeforeInsert(useMultiTenancy bool, obj interface{}) interface{} {
 	immutable := reflect.ValueOf(obj).Elem()
-	if (immutable.FieldByName("CreatorId") != reflect.Value{}) {
+	if (token.GlobalTokenClaims != nil && len(token.GlobalTokenClaims.Id) > 0 && immutable.FieldByName("CreatorId") != reflect.Value{}) {
 		immutable.FieldByName("CreatorId").SetString(token.GlobalTokenClaims.Id)
 	}
-	if (useMultiTenancy && immutable.FieldByName("TenantId") != reflect.Value{}) {
+	if (useMultiTenancy && token.GlobalTokenClaims != nil && len(token.GlobalTokenClaims.TenantId) > 0 && immutable.FieldByName("TenantId") != reflect.Value{}) {
 		immutable.FieldByName("TenantId").SetString(token.GlobalTokenClaims.TenantId)
 	}
 	return obj

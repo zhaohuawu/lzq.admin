@@ -44,7 +44,8 @@ func LogAuditLogAction() gin.HandlerFunc {
 							logAuditLogAction.Parameters = c.Request.URL.RawQuery
 						} else {
 							if !strings.Contains(c.Request.URL.Path, "sysUser/updateCurrentUserPassword") &&
-								!strings.Contains(c.Request.URL.Path, "sysUser/editUserPassword") {
+								!strings.Contains(c.Request.URL.Path, "sysUser/editUserPassword") &&
+								!strings.Contains(c.Request.URL.Path, "sysUser/sysUser") {
 								data, _ := c.GetRawData()
 								if len(data) > 0 {
 									c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // 解决gin只能读取一次body的问题

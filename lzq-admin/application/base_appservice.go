@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"xorm.io/builder"
 	"xorm.io/xorm"
 )
 
@@ -203,53 +204,65 @@ func DBCondition(inputDto PageParamsDto, dbSession *xorm.Session, tAlias string,
 			}
 			switch operator {
 			case "in", "not in":
+				vArr := strings.Split(f.Value, ",")
 				if len(f.OrSelector) > 0 {
-					var v []interface{}
-					wStr := fmt.Sprintf("%v %v (?)", sqlField(tagMap, tAlias, f.Selector), operator)
-					sv := append(v, f.Value)
-					v = sv
-					if orStr, orV, err := operatorTree(tagMap, tAlias, f.OrSelector, operatorMap); err != nil {
-						return err
-					} else {
-						wStr = wStr + orStr
-						sv := append(v, orV...)
-						v = sv
+					var cond builder.Cond
+					if operator == "in" {
+						cond = builder.In(sqlField(tagMap, tAlias, f.Selector), vArr)
+					} else if operator == "not in" {
+						cond = builder.NotIn(sqlField(tagMap, tAlias, f.Selector), vArr)
 					}
-					dbSession.And(wStr, v...)
+
+					for _, orf := range f.OrSelector {
+						operator := ""
+						var isExist bool
+						if operator, isExist = operatorMap[strings.ToLower(orf.Operator)]; !isExist {
+							return errors.New("不存在该条件操作符")
+						}
+						switch operator {
+						case "in":
+							vArr := strings.Split(orf.Value, ",")
+							cond = cond.Or(builder.In(sqlField(tagMap, tAlias, orf.Selector), vArr))
+						case "not in":
+							vArr := strings.Split(orf.Value, ",")
+							cond = cond.Or(builder.NotIn(sqlField(tagMap, tAlias, orf.Selector), vArr))
+						}
+					}
+					dbSession.Where(cond)
 				} else {
-					dbSession.And(fmt.Sprintf("%v %v (?)", sqlField(tagMap, tAlias, f.Selector), operator), f.Value)
+					if operator == "in" {
+						dbSession.In(sqlField(tagMap, tAlias, f.Selector), vArr)
+					} else if operator == "not in" {
+						dbSession.NotIn(sqlField(tagMap, tAlias, f.Selector), vArr)
+					}
 				}
 			case "like":
 				if len(f.OrSelector) > 0 {
-					var v []interface{}
+					var v = make([]interface{}, 0)
 					wStr := fmt.Sprintf("%v %v ?", sqlField(tagMap, tAlias, f.Selector), operator)
-					sv := append(v, "%"+f.Value+"%")
-					v = sv
+					v = append(v, "%"+f.Value+"%")
 					if orStr, orV, err := operatorTree(tagMap, tAlias, f.OrSelector, operatorMap); err != nil {
 						return err
 					} else {
 						wStr = wStr + orStr
-						sv := append(v, orV...)
-						v = sv
+						v = append(v, orV...)
 					}
-					dbSession.And(wStr, v...)
+					dbSession.Where(wStr, v...)
 				} else {
 					dbSession.And(fmt.Sprintf("%v %v ?", sqlField(tagMap, tAlias, f.Selector), operator), "%"+f.Value+"%")
 				}
 			default:
 				if len(f.OrSelector) > 0 {
-					var v []interface{}
+					var v = make([]interface{}, 0)
 					wStr := fmt.Sprintf("%v %v ?", sqlField(tagMap, tAlias, f.Selector), operator)
-					sv := append(v, f.Value)
-					v = sv
+					v = append(v, f.Value)
 					if orStr, orV, err := operatorTree(tagMap, tAlias, f.OrSelector, operatorMap); err != nil {
 						return err
 					} else {
 						wStr = wStr + orStr
-						sv := append(v, orV...)
-						v = sv
+						v = append(v, orV...)
 					}
-					dbSession.And(wStr, v...)
+					dbSession.Where(wStr, v...)
 				} else {
 					dbSession.And(fmt.Sprintf("%v %v ?", sqlField(tagMap, tAlias, f.Selector), operator), f.Value)
 				}
@@ -309,9 +322,6 @@ func operatorTree(tagMap map[string]reflect.StructTag, tAlias string, filters []
 			return "", nil, errors.New("不存在该条件操作符")
 		}
 		switch operator {
-		case "in", "not in":
-			wStr = wStr + fmt.Sprintf(" or %v %v (?)", sqlField(tagMap, tAlias, f.Selector), operator)
-			v = append(v, f.Value)
 		case "like":
 			wStr = wStr + fmt.Sprintf(" or %v %v ?", sqlField(tagMap, tAlias, f.Selector), operator)
 			v = append(v, "%"+f.Value+"%")

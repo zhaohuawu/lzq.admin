@@ -31,6 +31,8 @@ type SystemUserBase struct {
 	Sex           string    `json:"sex" xorm:"varchar(200) comment('性别')"`                                         //性别
 	Mobile        string    `json:"mobile" xorm:"varchar(200) comment('手机号码')"`                                    //手机号码
 	IsTenantAdmin bool      `json:"isTenantAdmin" xorm:"bool default(0) comment('是否是租户管理员')"`                      //是否是超级管理员
+	CompanyId     string    `json:"companyId" xorm:"char(36) comment('所属公司ID')"`                                   //所属公司ID
+	DeptId        string    `json:"deptId" xorm:"char(36) comment('所属部门ID')"`                                      //所属部门ID
 }
 
 type CreateSystemUserDto struct {
@@ -47,6 +49,8 @@ type UpdateSystemUserDto struct {
 	Sex        string   `json:"sex"`                         //性别，Secrecy：保密，Male：男，Female：女
 	Mobile     string   `json:"mobile"`                      //手机号码
 	RoleIds    []string `json:"roleIds"`                     //角色ID
+	CompanyId  string   `json:"companyId"`                   //所属公司ID
+	DeptId     string   `json:"deptId"`                      //所属部门ID
 }
 
 type SystemUserDto struct {
@@ -67,6 +71,8 @@ type SystemUserInfoDto struct {
 	IsTenantAdmin bool     `json:"isTenantAdmin"` //是否是租户管理员
 	ID            string   `json:"id"`
 	SuperAdmin    bool     `json:"superAdmin"` //是否是超级管理员
+	CompanyId     string   `json:"companyId"`  //所属公司ID
+	DeptId        string   `json:"deptId"`     //所属部门ID
 }
 
 type SystemUserListDto struct {
@@ -74,6 +80,8 @@ type SystemUserListDto struct {
 	StatusName  string   `json:"statusName"`                           //状态
 	HeadImgLink string   `json:"headImgLink"`                          //头像连接
 	RoleIds     []string `json:"roleIds" tAlias:"urp" tField:"RoleId"` //角色ID
+	CompanyId   string   `json:"companyId"`                            //所属公司ID
+	DeptId      string   `json:"deptId"`                               //所属部门ID
 	Operation   string   `json:"operation"`                            //操作
 }
 

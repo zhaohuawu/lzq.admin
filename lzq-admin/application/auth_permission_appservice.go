@@ -115,7 +115,7 @@ func (app *authPermissionAppService) Update(c *gin.Context) {
 	m.MenuId = inputDto.MenuId
 
 	var updateNum int64
-	if updateNum, err = orm.USession(false).ID(inputDto.Id).Update(&m); err != nil {
+	if updateNum, err = orm.USession(false).AllCols().ID(inputDto.Id).Update(&m); err != nil {
 		app.ResponseError(c, err)
 		return
 	}
@@ -189,11 +189,11 @@ func (app *authPermissionAppService) GetList(c *gin.Context) {
 	}
 
 	var menus = make([]model.AuthPermissionListDto, 0)
-	mDBSession := orm.QSession(false).Table(&model.AuthMenu{}).Select("Id, ParentId, Rank, Name as MenuName, Policy,IsBranch, 'Menu' as TypeCode").Asc("Rank")
+	mDBSession := orm.QSession(false).Table(&model.AuthMenu{}).Select("Id, ParentId, `Rank`, Name as MenuName, Policy,IsBranch, 'Menu' as TypeCode").Asc("Rank")
 	if len(menuIds) > 0 {
 		mDBSession.In("Id", menuIds)
 	}
-	err = mDBSession.Where("IsDeleted = ?", 0).Find(&menus)
+	err = mDBSession.Find(&menus)
 	if err != nil {
 		app.ResponseError(c, err)
 		return

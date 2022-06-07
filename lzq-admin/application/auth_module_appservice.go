@@ -98,7 +98,7 @@ func (app *AuthModuleAppService) Update(c *gin.Context) {
 	module.Rank = inputDto.Rank
 
 	var updateNum int64
-	if updateNum, err = orm.USession(false).ID(inputDto.Id).Update(&module); err != nil {
+	if updateNum, err = orm.USession(false).AllCols().ID(inputDto.Id).Update(&module); err != nil {
 		app.ResponseError(c, err)
 		return
 	}

@@ -153,7 +153,8 @@ export const componentsMap = {
   // Workflow_ProcessSettings: () => import('@/views/workflow/approvaltype-list'),
   Infrastructure_SystemConfig: () => import('@/views/systemconfig/index'),
   AuditLog_AuditLogAction: () => import('@/views/auditlog-action/index'),
-  AuditLog_LoginLogList: () => import('@/views/auditlog-action/loginlog-list')
+  AuditLog_LoginLogList: () => import('@/views/auditlog-action/loginlog-list'),
+  Infrastructure_Organization: () => import('@/views/organization/index')
 }
 
 const createRouter = () => new Router({

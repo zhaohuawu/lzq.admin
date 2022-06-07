@@ -1,4 +1,3 @@
-basePath: /api
 definitions:
   application.ResponseDto:
     properties:
@@ -504,6 +503,23 @@ definitions:
     required:
     - name
     type: object
+  model.CreateSystemCompanyDto:
+    properties:
+      name:
+        description: 公司名称
+        type: string
+      parentId:
+        description: 上级公司ID
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      remark:
+        description: 备注
+        type: string
+    required:
+    - name
+    type: object
   model.CreateSystemConfigDto:
     properties:
       code:
@@ -523,8 +539,34 @@ definitions:
     - extraValue
     - name
     type: object
+  model.CreateSystemDeptDto:
+    properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      name:
+        description: 部门名称
+        type: string
+      parentId:
+        description: 上级部门ID
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      remark:
+        description: 备注
+        type: string
+    required:
+    - name
+    type: object
   model.CreateSystemUserDto:
     properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      deptId:
+        description: 所属部门ID
+        type: string
       email:
         description: 邮箱
         type: string
@@ -607,6 +649,10 @@ definitions:
       executionTime:
         description: 执行时间
         type: string
+      extraProperties:
+        additionalProperties: true
+        description: 扩展字段
+        type: object
       fromSource:
         description: 来源
         type: string
@@ -658,6 +704,58 @@ definitions:
     - code
     - configType
     type: object
+  model.SystemCompany:
+    properties:
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 公司名称
+        type: string
+      parentId:
+        description: 上级公司ID
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      remark:
+        description: 备注
+        type: string
+    required:
+    - name
+    type: object
+  model.SystemCompanyAndDeptListDto:
+    properties:
+      children:
+        description: 子公司或部门
+        items:
+          $ref: '#/definitions/model.SystemCompanyAndDeptListDto'
+        type: array
+      companyId:
+        description: 所属公司ID
+        type: string
+      id:
+        description: 公司或部门id
+        type: string
+      name:
+        description: 公司名称
+        type: string
+      operation:
+        description: 操作
+        type: string
+      parentId:
+        description: 上级部门ID
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      type:
+        description: 数据类型，Company：公司，Dept：部门
+        type: string
+    type: object
   model.SystemConfig:
     properties:
       code:
@@ -678,6 +776,29 @@ definitions:
     required:
     - code
     - configType
+    - name
+    type: object
+  model.SystemDept:
+    properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 部门名称
+        type: string
+      parentId:
+        description: 上级部门ID
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      remark:
+        description: 备注
+        type: string
+    required:
     - name
     type: object
   model.SystemFile:
@@ -715,6 +836,12 @@ definitions:
     type: object
   model.SystemUserDto:
     properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      deptId:
+        description: 所属部门ID
+        type: string
       email:
         description: 邮箱
         type: string
@@ -758,6 +885,12 @@ definitions:
     type: object
   model.SystemUserInfoDto:
     properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      deptId:
+        description: 所属部门ID
+        type: string
       email:
         description: 邮箱
         type: string
@@ -801,6 +934,12 @@ definitions:
     type: object
   model.SystemUserListDto:
     properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      deptId:
+        description: 所属部门ID
+        type: string
       email:
         description: 邮箱
         type: string
@@ -969,8 +1108,59 @@ definitions:
     - id
     - name
     type: object
+  model.UpdateSystemCompanyDto:
+    properties:
+      id:
+        description: 公司ID
+        type: string
+      name:
+        description: 公司名称
+        type: string
+      parentId:
+        description: 上级公司ID
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      remark:
+        description: 备注
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  model.UpdateSystemDeptDto:
+    properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      id:
+        description: 部门id
+        type: string
+      name:
+        description: 部门名称
+        type: string
+      parentId:
+        description: 上级部门ID
+        type: string
+      rank:
+        description: 排序
+        type: integer
+      remark:
+        description: 备注
+        type: string
+    required:
+    - id
+    - name
+    type: object
   model.UpdateSystemUserDto:
     properties:
+      companyId:
+        description: 所属公司ID
+        type: string
+      deptId:
+        description: 所属部门ID
+        type: string
       email:
         description: 邮箱
         type: string
@@ -989,7 +1179,7 @@ definitions:
           type: string
         type: array
       sex:
-        description: 性别
+        description: 性别，Secrecy：保密，Male：男，Female：女
         type: string
       userName:
         description: 用户名
@@ -997,6 +1187,22 @@ definitions:
     required:
     - id
     - userName
+    type: object
+  model.UpdateSystemUserPasswordBaseDto:
+    properties:
+      newPassword:
+        description: 新密码
+        type: string
+      password:
+        description: 原始密码
+        type: string
+      surePassword:
+        description: 确认密码
+        type: string
+    required:
+    - newPassword
+    - password
+    - surePassword
     type: object
   model.UpdateSystemUserPasswordDto:
     properties:
@@ -1064,15 +1270,15 @@ definitions:
     - moduleId
     - name
     type: object
-host: 127.0.0.1:30001
+host: localhost:30001
 info:
   contact:
-    email: ×××@qq.com
+    email: lzqcode@163.com
     name: API Support
-    url: http://www.pddkf.cn
+    url: http://www.lzqit.cn
   description: Golang api of demo
   termsOfService: http://github.com
-  title: HSF Project API
+  title: lzq-admin Project API
   version: "1.0"
 paths:
   /api/app/auditLogAction/currentUserLogsList:
@@ -1422,6 +1628,170 @@ paths:
       summary: 删除用户数据授权
       tags:
       - AuthChecker
+  /api/app/company/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSystemCompanyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemCompany'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 新增公司
+      tags:
+      - SystemCompany
+  /api/app/company/delete:
+    delete:
+      parameters:
+      - description: 公司ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除公司
+      tags:
+      - SystemCompany
+  /api/app/company/update:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateSystemCompanyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemCompany'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改公司
+      tags:
+      - SystemCompany
+  /api/app/dept/companyAndDeptList:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            items:
+              $ref: '#/definitions/model.SystemCompanyAndDeptListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 公司和部门的树形列表
+      tags:
+      - SystemDept
+  /api/app/dept/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSystemDeptDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemDept'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 新增部门
+      tags:
+      - SystemDept
+  /api/app/dept/delete:
+    delete:
+      parameters:
+      - description: 部门ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除部门
+      tags:
+      - SystemDept
+  /api/app/dept/update:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateSystemDeptDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SystemDept'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改部门
+      tags:
+      - SystemDept
   /api/app/menu/get:
     get:
       consumes:
@@ -2136,6 +2506,31 @@ paths:
           schema:
             $ref: '#/definitions/application.ResponseDto'
       summary: 启用/停用用户
+      tags:
+      - SystemUser
+  /api/app/sysUser/updateCurrentUserPassword:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateSystemUserPasswordBaseDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改当前用户密码
       tags:
       - SystemUser
   /api/app/sysUser/user:

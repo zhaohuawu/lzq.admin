@@ -41,12 +41,14 @@ func (u *systemUserDomainService) Insert(modelDto model.CreateSystemUserDto) (re
 			HeadImgURL: modelDto.HeadImgURL,
 			Sex:        modelDto.Sex,
 			Mobile:     modelDto.Mobile,
+			CompanyId:  modelDto.CompanyId,
+			DeptId:     modelDto.DeptId,
 		},
 	}
 	entity.ID = utility.UuidCreate()
 	entity.Status = domainconsts.SystemUserStatusEnable
 
-	if entity.Password != modelDto.SurePassword {
+	if modelDto.Password != modelDto.SurePassword {
 		return model.SystemUser{}, errors.New("两次输入的密码不同，请重新输入")
 	}
 	// 密码加密不可解析密码串
@@ -87,6 +89,8 @@ func (u *systemUserDomainService) Update(inputDto model.UpdateSystemUserDto) (mo
 	user.Email = inputDto.Email
 	user.HeadImgURL = inputDto.HeadImgURL
 	user.Mobile = inputDto.Mobile
+	user.CompanyId = inputDto.CompanyId
+	user.DeptId = inputDto.DeptId
 	if _, ok := domainconsts.SystemUserSexConstFlags[inputDto.Sex]; ok {
 		user.Sex = inputDto.Sex
 	} else {
@@ -111,7 +115,7 @@ func (u *systemUserDomainService) Update(inputDto model.UpdateSystemUserDto) (mo
 		}
 	}
 
-	if updateNum, err1 := orm.USessionWithTrans(true, dbSession).ID(inputDto.ID).Update(&user); err1 != nil {
+	if updateNum, err1 := orm.USessionWithTrans(true, dbSession).AllCols().ID(inputDto.ID).Update(&user); err1 != nil {
 		return model.SystemUser{}, err1
 	} else if updateNum < 1 {
 		return model.SystemUser{}, errors.New("修改失败")
@@ -202,6 +206,8 @@ func (u *systemUserDomainService) GetUserInfo(userId string) (model.SystemUserIn
 		Email:         user.Email,
 		IsTenantAdmin: user.IsTenantAdmin,
 		ID:            user.ID,
+		CompanyId:     user.CompanyId,
+		DeptId:        user.DeptId,
 	}
 
 	v, isHave := user.ExtraProperties["SuperAdmin"]
