@@ -1,17 +1,18 @@
 # lzq.admin
 
 #### 介绍
-Golang语言实现的多租户SaaS系统，项目基于gin、xorm、jwt、swagger、vue实现的前后端分离多租户后台管理系统，主要功能有多租户、用户管理、RBAC权限管理、按钮级别的权限校验及redis缓存、七牛云存储、接口请求日志、登录日志等，日志支持Elasticsearch
+Golang语言实现的多租户SaaS系统，项目基于gin、xorm、jwt、swagger、vue实现的前后端分离多租户后台管理系统，主要功能有多租户、公司、部门、用户管理、RBAC权限管理、按钮级别的权限校验及redis缓存、七牛云存储、接口请求日志、登录日志等，日志支持Elasticsearch
 
 #### 功能
 1. 多租户：同套代码，同套部署，根据租户进行数据隔离
-2. 系统用户管理
-3. 菜单管理
-4. 操作权限管理：支持菜单、按钮级别的权限校验
-5. 角色管理：支持账号多角色授权
-6. 日志系统：支持本地日志文件和Elasticsearch
-7. 配置：七牛云存储等各种配置
-8. 接口请求日志、登录日志
+2. 公司、部门
+3. 系统用户管理
+4. 菜单管理
+5. 操作权限管理：支持菜单、按钮级别的权限校验
+6. 角色管理：支持账号多角色授权
+7. 日志系统：支持本地日志文件和Elasticsearch
+8. 配置：七牛云存储等各种配置
+9. 接口请求日志、登录日志
 
 #### 软件架构
 软件架构说明
@@ -53,7 +54,8 @@ npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass
 ![](/tools/md-images/1646896434.png)
 ![](/tools/md-images/1646896535.jpg)
 ![](/tools/md-images/1646896551.jpg)
-![](/tools/md-images/1646896572.jpg)
+![](/tools/md-images/1654616733315.jpg)
+![](/tools/md-images/1654616495767.jpg)
 ![](/tools/md-images/1653234523(1).jpg)
 ![](/tools/md-images/16532343051.jpg)
 ![](/tools/md-images/16532342055.jpg)
