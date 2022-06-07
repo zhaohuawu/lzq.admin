@@ -304,7 +304,7 @@ func (app *authRoleAppService) GetRolePermissionDatas(c *gin.Context) {
 
 	var menus = make([]dto.RolePermissionTree, 0)
 	mDBSession := orm.QSession(false).Table(model.TableAuthMenu).
-		Select("Id,ParentId,'Menu' as Type,Name,Rank,false as IsGranted,IsBranch")
+		Select("Id,ParentId,'Menu' as Type,Name,`Rank`,false as IsGranted,IsBranch")
 	if err := mDBSession.Find(&menus); err != nil {
 		app.ResponseError(c, err)
 		return
