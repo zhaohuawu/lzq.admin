@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="singleImageUpload2 upload-container">
     <el-upload
       :data="dataObj"
@@ -127,4 +127,4 @@ export default {
     }
   }
 }
-</style>
+</style> -->

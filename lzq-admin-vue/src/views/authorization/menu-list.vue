@@ -5,9 +5,13 @@
       <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
         搜索
       </el-button>
-      <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
-        新增
-      </el-button>
+      <LzqButton 
+        text="新增"
+        type="primary"
+        policy="Authorization.MenuList:Operation.Create"
+        btnstyle="margin-left: 10px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+        :btnclick="handleCreate"
+      />
     </div>
 
     <TreeTable
@@ -127,11 +131,11 @@
 import { fetchList, getMenuList, createMenu, updateMenu, deleteMenu } from '@/api/menu'
 import TreeTable from '@/components/TreeTable'
 // import Pagination from '@/components/Pagination'
-import store from '@/store'
+import LzqButton from '@/components/LzqButton'
 
 export default {
   name: 'MenuList',
-  components: { TreeTable },
+  components: { TreeTable, LzqButton },
   filters: {
     isHiddenFilter(isHidden) {
       const map = {
@@ -143,7 +147,6 @@ export default {
   },
   data() {
     return {
-      isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Authorization.MenuList:Operation.Create') > -1),
       list: [],
       tableCols: [
         { label: '菜单名称', prop: 'name', align: 'left', width: '180' },

@@ -4,8 +4,20 @@
       <el-col :span="8" :xs="24">
         <el-card style="margin-bottom:20px;">
           <div slot="header" class="clearfix o-el-header">
-            <el-button v-if="isCanAdd" class="filter-item" style="margin-right: 30px;" type="primary" @click="handleCreate('Company')">新增公司</el-button>
-            <el-button v-if="isCanAdd" class="filter-item" style="margin-right: 30px;" type="primary" @click="handleCreate('Dept')">新增部门</el-button>
+            <LzqButton 
+              text="新增公司"
+              type="primary"
+              policy="Infrastructure.Organization:Operation.AddCompany"
+              btnstyle="margin-left: 30px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+              :btnclick="handleCreateCompany"
+            />
+            <LzqButton 
+              text="新增部门"
+              type="primary"
+              policy="Infrastructure.Organization:Operation.AddDept"
+              btnstyle="margin-left: 30px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+              :btnclick="handleCreateDept"
+            />
           </div>
           <el-input
             v-model="filterText"
@@ -31,10 +43,38 @@
           <div slot="header" class="clearfix o-el-header">
             <span class="o-span">{{ title }}</span>
             <div class="btn-eb">
-              <el-button v-if="isCanUpdate && !isUpdating" class="filter-item" style="margin-right: 20px;" type="primary" @click="isUpdating=true">修改</el-button>
-              <el-button v-if="isCanDelete && !isUpdating" class="filter-item" style="margin-right: 10px;" type="primary" @click="handleDelete">删除</el-button>
-              <el-button v-if="isCanUpdate && isUpdating" class="filter-item" style="margin-right: 20px;" type="primary" @click="isUpdating=false">取消</el-button>
-              <el-button v-if="isCanUpdate && isUpdating" class="filter-item" style="margin-right: 20px;" type="primary" @click="handleUpdate">保存</el-button>
+              <LzqButton 
+                text="修改"
+                type="primary"
+                :isshow="!isUpdating"
+                policy="Infrastructure.Organization:Operation.Modify"
+                btnstyle="margin-right: 20px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+                :btnclick="()=>{isUpdating=true}"
+              />
+              <LzqButton 
+                text="删除"
+                type="primary"
+                policy="Infrastructure.Organization:Operation.Delete"
+                btnstyle="margin-right: 20px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+                :isshow="!isUpdating"
+                :btnclick="handleDelete"
+              />
+              <LzqButton 
+                text="取消"
+                type="primary"
+                :isshow="isUpdating"
+                policy="Infrastructure.Organization:Operation.Modify"
+                btnstyle="margin-right: 20px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+                :btnclick="()=>{isUpdating=false}"
+              />
+              <LzqButton 
+                text="保存"
+                type="primary"
+                :isshow="isUpdating"
+                policy="Infrastructure.Organization:Operation.Modify"
+                btnstyle="margin-right: 20px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+                :btnclick="handleUpdate"
+              />
             </div>
           </div>
           <el-form ref="udataForm" :model="udept" label-position="center" label-width="80px">
@@ -121,16 +161,14 @@
 <script>
 import { getCompanyAndDeptList, createCompany, createDept, updateCompany, updateDept, deleteCompany, deleteDept } from '@/api/organization'
 import TreeSelect from '@/components/TreeSelect'
+import LzqButton from '@/components/LzqButton'
 
 export default {
   name: 'Organization',
-  components: { TreeSelect },
+  components: { TreeSelect, LzqButton },
   data() {
     return {
       title: '公司信息',
-      isCanAdd: true,
-      isCanUpdate: true,
-      isCanDelete: true,
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -201,6 +239,12 @@ export default {
         this.title = '公司信息'
         this.$refs.utree.setTreeCurrentKey(this.udept.parentId)
       }
+    },
+    handleCreateCompany() {
+      this.handleCreate('Company')
+    },
+    handleCreateDept() {
+      this.handleCreate('Dept')
     },
     handleCreate(type) {
       this.dept = Object.assign({}, null) // copy obj

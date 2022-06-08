@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="upload-container">
     <el-upload
       :data="dataObj"
@@ -131,4 +131,4 @@ export default {
         }
     }
 
-</style>
+</style> -->

@@ -1,4 +1,4 @@
-import { constantRoutes, componentsMap } from '@/router'
+import { constantRoutes } from '@/router'
 // import { fetchList } from '@/api/menu'
 import Layout from '@/layout'
 
@@ -42,13 +42,23 @@ export function filterAsyncMenus(menus) {
       }
       tmp.children = filterAsyncMenus(tmpmodel.children)
     } else { 
-      var mapKey = tmpmodel.policy.replace('.', '_')
-      tmp.component = componentsMap[mapKey]
+      // var mapKey = tmpmodel.policy.replace('.', '_')
+      // tmp.component = componentsMap[mapKey]
+      const url = subObliqueLine(tmpmodel.url)
+      // console.log(url)
+      tmp.component = (resolve) => require([`@/${url}.vue`], resolve)
     }
     res.push(tmp)
   })
 
   return res
+}
+
+export const subObliqueLine = (str) => {
+  if (str === undefined) {
+    return str
+  }
+  return str.replace(/(^\/*)/g, '')
 }
 
 /**

@@ -26,9 +26,13 @@
           <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
             搜索
           </el-button>
-          <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
-            新增
-          </el-button>
+          <LzqButton 
+            text="新增"
+            type="primary"
+            policy="Infrastructure.SysUserList:Operation.Create"
+            btnstyle="margin-left: 10px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+            :btnclick="handleCreate"
+          />
         </div>
       
         <OperateTable
@@ -154,13 +158,13 @@ import { getEnableRoles } from '@/api/role'
 import OperateTable from '@/components/OperateTable'
 import Pagination from '@/components/Pagination'
 // import ImageCropper from '@/components/ImageCropper'
-import store from '@/store'
 import { getCompanyAndDeptList } from '@/api/organization'
 import TreeSelect from '@/components/TreeSelect'
+import LzqButton from '@/components/LzqButton'
 
 export default {
   name: 'SysUserList',
-  components: { OperateTable, Pagination, TreeSelect },
+  components: { OperateTable, Pagination, TreeSelect, LzqButton },
   data() {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -184,7 +188,6 @@ export default {
       }
     }
     return {
-      isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Infrastructure.SysUserList:Operation.Create') > -1),
       companyAndDepts: [],
       defaultProps: {
         children: 'children',
@@ -334,7 +337,6 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      console.log(this.filtersQuery)
       const f = []
       if (this.filtersQuery.userName !== '' && this.filtersQuery.userName !== null) {
         f.push(['userName', 'contains', this.filtersQuery.userName])
@@ -369,8 +371,11 @@ export default {
       this.getList()
     },
     handleCreate() {
+      console.log('handleCreate')
       this.temp = Object.assign({}, {}) // copy obj
-      this.$refs.utree.setTreeCurrentKey(null)
+      this.$nextTick(() => {
+        this.$refs.utree.setTreeCurrentKey(null)
+      })
       this.dialogStatus = 'create'
       this.getDefaultAvatar()
       // this.getEnableRoles()

@@ -52,7 +52,7 @@ func (u *systemUserDomainService) Insert(modelDto model.CreateSystemUserDto) (re
 		return model.SystemUser{}, errors.New("两次输入的密码不同，请重新输入")
 	}
 	// 密码加密不可解析密码串
-	phash, err1 := bcrypt.GenerateFromPassword([]byte(entity.Password), bcrypt.DefaultCost)
+	phash, err1 := bcrypt.GenerateFromPassword([]byte(modelDto.Password), bcrypt.DefaultCost)
 	if err1 != nil {
 		return entity, err1
 	}

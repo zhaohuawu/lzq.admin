@@ -5,9 +5,13 @@
       <el-button v-waves class="filter-item" type="primary" @click="handleFilter">
         搜索
       </el-button>
-      <el-button v-if="isCanAdd" class="filter-item" style="margin-left: 10px;" type="primary" @click="handleCreate">
-        新增
-      </el-button>
+      <LzqButton 
+        text="新增"
+        type="primary"
+        policy="Authorization.PermissionList:Operation.Create"
+        btnstyle="margin-left: 10px;display: inline-block;vertical-align: middle;margin-bottom: 10px;"
+        :btnclick="handleCreate"
+      />
     </div>
 
     <TreeTable
@@ -101,14 +105,13 @@ import { fetchList, getPermissionGroupList, createPermission, updatePermission, 
 import { getMenuList } from '@/api/menu'
 import TreeTable from '@/components/TreeTable'
 // import Pagination from '@/components/Pagination'
-import store from '@/store'
+import LzqButton from '@/components/LzqButton'
 
 export default {
   name: 'PermissionList',
-  components: { TreeTable },
+  components: { TreeTable, LzqButton },
   data() {
     return {
-      isCanAdd: (store.getters.superAdmin || store.getters.permissions.indexOf('Authorization.PermissionList:Operation.Create') > -1),
       list: [],
       tableCols: [
         { label: '菜单名称', prop: 'menuName', align: 'left', width: '180' },
