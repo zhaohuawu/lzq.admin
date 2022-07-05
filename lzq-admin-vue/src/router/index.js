@@ -8,7 +8,7 @@ import Layout from '@/layout'
 
 /* Router Modules */
 // import componentsRouter from './modules/components'
-import authorizeRouter from './modules/authorize'
+// import authorizeRouter from './modules/authorize'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -59,7 +59,7 @@ export const constantRoutes = [
   },
   {
     path: '/designer',
-    component: () => import('@/views/workflow/designer'),
+    component: () => import('@/views/workflow/index'),
     hidden: true
   },
   // {
@@ -98,7 +98,7 @@ export const constantRoutes = [
 export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,
-  authorizeRouter,
+  // authorizeRouter,
   {
     path: '/error',
     component: Layout,
