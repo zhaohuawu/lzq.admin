@@ -559,6 +559,43 @@ definitions:
     required:
     - name
     type: object
+  model.CreateSystemDictDto:
+    properties:
+      dictCode:
+        description: 字典编码
+        type: string
+      dictValue:
+        description: 字典Value
+        type: string
+      remark:
+        description: 备注
+        type: string
+    required:
+    - dictCode
+    - dictValue
+    type: object
+  model.CreateSystemDictionaryDto:
+    properties:
+      dictCode:
+        description: 字典编码
+        type: string
+      dictKey:
+        description: 字典Key -1：字典，!=-1:字典数据
+        type: string
+      dictValue:
+        description: 字典Value
+        type: string
+      remark:
+        description: 备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+    required:
+    - dictCode
+    - dictKey
+    - dictValue
+    type: object
   model.CreateSystemUserDto:
     properties:
       companyId:
@@ -800,6 +837,34 @@ definitions:
         type: string
     required:
     - name
+    type: object
+  model.SystemDictionary:
+    properties:
+      dictCode:
+        description: 字典编码
+        type: string
+      dictKey:
+        description: 字典Key -1：字典，!=-1:字典数据
+        type: string
+      dictValue:
+        description: 字典Value
+        type: string
+      id:
+        description: 主键
+        type: string
+      remark:
+        description: 备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: 状态
+        type: string
+    required:
+    - dictCode
+    - dictKey
+    - dictValue
     type: object
   model.SystemFile:
     properties:
@@ -1152,6 +1217,32 @@ definitions:
     required:
     - id
     - name
+    type: object
+  model.UpdateSystemDictionaryDto:
+    properties:
+      dictCode:
+        description: 字典编码
+        type: string
+      dictKey:
+        description: 字典Key -1：字典，!=-1:字典数据
+        type: string
+      dictValue:
+        description: 字典Value
+        type: string
+      id:
+        description: 部门id
+        type: string
+      remark:
+        description: 备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+    required:
+    - dictCode
+    - dictKey
+    - dictValue
+    - id
     type: object
   model.UpdateSystemUserDto:
     properties:
@@ -2722,6 +2813,146 @@ paths:
       summary: 单个上传文件
       tags:
       - SysFile
+  /api/app/systemDictionary/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSystemDictionaryDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.SystemDictionary'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建字典子集
+      tags:
+      - SystemDictionary
+  /api/app/systemDictionary/createDict:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSystemDictDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.SystemDictionary'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 创建字典父级
+      tags:
+      - SystemDictionary
+  /api/app/systemDictionary/delete:
+    delete:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: ' '
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            type: boolean
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 删除字典
+      tags:
+      - SystemDictionary
+  /api/app/systemDictionary/list:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 查询条件
+        in: query
+        name: filter
+        type: string
+      - description: 是否返回总条数
+        in: query
+        name: requireTotalCount
+        type: boolean
+      - description: 第几页，>=1开始
+        in: query
+        name: skip
+        type: integer
+      - description: 排序字段
+        in: query
+        name: sort
+        type: string
+      - description: 每页多少条数据
+        in: query
+        name: take
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SystemUserListDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 查询字典列表
+      tags:
+      - SystemDictionary
+  /api/app/systemDictionary/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateSystemDictionaryDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ' '
+          schema:
+            $ref: '#/definitions/model.SystemDictionary'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/application.ResponseDto'
+      summary: 修改字典
+      tags:
+      - SystemDictionary
   /api/app/tenant/create:
     post:
       consumes:

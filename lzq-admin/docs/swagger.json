@@ -2240,6 +2240,223 @@
                 }
             }
         },
+        "/api/app/systemDictionary/create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDictionary"
+                ],
+                "summary": "创建字典子集",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateSystemDictionaryDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemDictionary"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/systemDictionary/createDict": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDictionary"
+                ],
+                "summary": "创建字典父级",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateSystemDictDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemDictionary"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/systemDictionary/delete": {
+            "delete": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDictionary"
+                ],
+                "summary": "删除字典",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": " ",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/systemDictionary/list": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDictionary"
+                ],
+                "summary": "查询字典列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "查询条件",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否返回总条数",
+                        "name": "requireTotalCount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "第几页，\u003e=1开始",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页多少条数据",
+                        "name": "take",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SystemUserListDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/systemDictionary/update": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SystemDictionary"
+                ],
+                "summary": "修改字典",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateSystemDictionaryDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " ",
+                        "schema": {
+                            "$ref": "#/definitions/model.SystemDictionary"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/application.ResponseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app/tenant/create": {
             "post": {
                 "consumes": [
@@ -3058,6 +3275,57 @@
                 }
             }
         },
+        "model.CreateSystemDictDto": {
+            "type": "object",
+            "required": [
+                "dictCode",
+                "dictValue"
+            ],
+            "properties": {
+                "dictCode": {
+                    "description": "字典编码",
+                    "type": "string"
+                },
+                "dictValue": {
+                    "description": "字典Value",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
+        "model.CreateSystemDictionaryDto": {
+            "type": "object",
+            "required": [
+                "dictCode",
+                "dictKey",
+                "dictValue"
+            ],
+            "properties": {
+                "dictCode": {
+                    "description": "字典编码",
+                    "type": "string"
+                },
+                "dictKey": {
+                    "description": "字典Key -1：字典，!=-1:字典数据",
+                    "type": "string"
+                },
+                "dictValue": {
+                    "description": "字典Value",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                }
+            }
+        },
         "model.CreateSystemUserDto": {
             "type": "object",
             "required": [
@@ -3386,6 +3654,44 @@
                 },
                 "remark": {
                     "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
+        "model.SystemDictionary": {
+            "type": "object",
+            "required": [
+                "dictCode",
+                "dictKey",
+                "dictValue"
+            ],
+            "properties": {
+                "dictCode": {
+                    "description": "字典编码",
+                    "type": "string"
+                },
+                "dictKey": {
+                    "description": "字典Key -1：字典，!=-1:字典数据",
+                    "type": "string"
+                },
+                "dictValue": {
+                    "description": "字典Value",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
                     "type": "string"
                 }
             }
@@ -3865,6 +4171,41 @@
                 "remark": {
                     "description": "备注",
                     "type": "string"
+                }
+            }
+        },
+        "model.UpdateSystemDictionaryDto": {
+            "type": "object",
+            "required": [
+                "dictCode",
+                "dictKey",
+                "dictValue",
+                "id"
+            ],
+            "properties": {
+                "dictCode": {
+                    "description": "字典编码",
+                    "type": "string"
+                },
+                "dictKey": {
+                    "description": "字典Key -1：字典，!=-1:字典数据",
+                    "type": "string"
+                },
+                "dictValue": {
+                    "description": "字典Value",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "部门id",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
                 }
             }
         },

@@ -137,6 +137,16 @@ func AdminRouter(router *gin.RouterGroup) {
 			deptRouter.DELETE("/delete", application.SystemDeptAppService.Delete)
 			deptRouter.GET("/companyAndDeptList", application.SystemDeptAppService.GetCompanyAndDeptList)
 		}
+		dictRouter := router.Group("/systemDictionary").Use(middleware.CheckAuth())
+		{
+			dictRouter.POST("/createDict", application.SystemDictionaryAppService.CreateDict)
+			dictRouter.POST("/create", application.SystemDictionaryAppService.Create)
+			dictRouter.PUT("/update", application.SystemDictionaryAppService.Update)
+			dictRouter.DELETE("/delete", application.SystemDictionaryAppService.Delete)
+			dictRouter.GET("/list", application.SystemDictionaryAppService.GetList)
+			dictRouter.PUT("/updateStatus", application.SystemDictionaryAppService.UpdateStatus)
+			dictRouter.POST("/refresh", application.SystemDictionaryAppService.RefreshSystemDictCache)
+		}
 
 	}
 }

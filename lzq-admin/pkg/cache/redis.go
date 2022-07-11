@@ -119,15 +119,20 @@ func (r *RedisHelper) MultiDelete(keys []string) {
 	redisClient.Del(ctx, keyNs...)
 }
 
-func (r *RedisHelper) HSet(key, field string, value interface{}) {
-	if err := redisClient.HSet(ctx, r.normalizeKey(key), field, value).Err(); err != nil {
+func (r *RedisHelper) HSet(key, field string, value interface{}, duration time.Duration) {
+	hkey := r.normalizeKey(key)
+	if err := redisClient.HSet(ctx, hkey, field, value).Err(); err != nil {
 		panic(err)
+	}
+	var ttl = redisClient.TTL(ctx, hkey).Val().Seconds()
+	if ttl < 0 {
+		redisClient.Expire(ctx, hkey, GetDefaultExpiresAt(duration))
 	}
 }
 func (r *RedisHelper) HGet(key, field string) interface{} {
 	val, err := redisClient.HGet(ctx, r.normalizeKey(key), field).Result()
 	if err != nil {
-		return ""
+		return nil
 	}
 	return val
 }

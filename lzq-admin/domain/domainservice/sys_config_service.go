@@ -128,7 +128,7 @@ func (s *sysConfigDomainService) SetSysConfigJsonMapCache(configType string) int
 	isAllConfigType := configType == "AllConfigType"
 	if !isAllConfigType {
 		objJson = c.HGet("ExtraStruct:KeyJson", configType)
-		if objJson != "" {
+		if objJson != nil {
 			return objJson
 		}
 	}
@@ -138,7 +138,7 @@ func (s *sysConfigDomainService) SetSysConfigJsonMapCache(configType string) int
 		for k, v := range jsonMap {
 			vm := v.(map[string]interface{})
 			for kk, vv := range vm {
-				c.HSet(fmt.Sprintf("ExtraStruct:%v", kk), k, vv)
+				c.HSet(fmt.Sprintf("ExtraStruct:%v", kk), k, vv,0)
 			}
 		}
 		objJson = jsonMap

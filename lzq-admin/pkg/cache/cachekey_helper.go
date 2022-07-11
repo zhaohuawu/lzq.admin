@@ -31,3 +31,8 @@ func (c *cacheKeyHelper) GetUserGrantedPolicyCacheKey(userId string) string {
 func (c *cacheKeyHelper) GetUserGrantedPermissionsCacheKey(userId string) string {
 	return fmt.Sprintf("%v:%v:UserGrantedPermissions:%v", LzqCacheHelper.GetCacheVersion(LzqCacheTypeFunctionPrivilege), LzqCacheHelper.GetCacheVersion(LzqCacheTypeDataPrivilege), userId)
 }
+
+func (c *cacheKeyHelper) GetLzqCacheTypeSystemDict(dictCode string) string {
+	return fmt.Sprintf("%v:SystemDict:%v", LzqCacheHelper.GetCacheVersion(LzqCacheTypeSystemDict), dictCode)
+}
+

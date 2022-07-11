@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/gin-gonic/gin"
+	"lzq-admin/domain/domainconsts"
 	"lzq-admin/domain/domainservice"
 	"lzq-admin/domain/model"
 )
@@ -34,7 +35,7 @@ func (app *sysFileAppService) Upload(c *gin.Context) {
 		app.ResponseError(c, err)
 		return
 	}
-	rep, err := domainservice.SysFileDomainService.Insert(file, *header)
+	rep, err := domainservice.SysFileDomainService.Insert(domainconsts.SysFileStatusInuse, file, *header)
 	if err != nil {
 		app.ResponseError(c, err)
 		return
@@ -63,7 +64,7 @@ func (app *sysFileAppService) BatchUpload(c *gin.Context) {
 	reps := make([]model.SystemFile, 0)
 	for _, header := range files {
 		f, err := header.Open()
-		rep, err := domainservice.SysFileDomainService.Insert(f, *header)
+		rep, err := domainservice.SysFileDomainService.Insert(domainconsts.SysFileStatusInuse, f, *header)
 		if err != nil {
 			app.ResponseError(c, err)
 			return

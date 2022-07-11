@@ -137,7 +137,7 @@ type PageParamsDto struct {
 	RequireTotalCount bool   `form:"requireTotalCount"` //是否返回总条数
 	Skip              int    `form:"skip"`              //第几页，>=1开始
 	Take              int    `form:"take"`              //每页多少条数据
-	Sort              string `form:"sort"`              //排序字段
+	Sort              string `form:"sort"`              //排序字段 比如：[["name","contains"," 菜单管理"],["code","contains"," 菜单管理","or"]]
 	Filter            string `form:"filter"`            //查询条件
 }
 type Filter struct {

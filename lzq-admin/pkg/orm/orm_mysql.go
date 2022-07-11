@@ -78,6 +78,7 @@ func getModels() []interface{} {
 		new(model.LogAuditLogAction),
 		new(model.SystemCompany),
 		new(model.SystemDept),
+		new(model.SystemDictionary),
 	}
 }
 

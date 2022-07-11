@@ -60,7 +60,6 @@
     <!-- 功能授权 -->
     <el-drawer ref="drawer" :title="roleName" :visible.sync="dialogRolePermissionVisible" direction="rtl">
       <div class="n-drawer-content">
-      
         <el-tree
           ref="tree"
           :data="rolePermissionList"
@@ -417,6 +416,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 0px 10px;
 
   .n-drawer-body{
     flex: 1;

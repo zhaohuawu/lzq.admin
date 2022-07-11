@@ -95,7 +95,7 @@ func (d *authCheckerDomainService) IsUserGranted(userId, policy string) bool {
 
 	cacheKey := cache.LzqCacheKeyHelper.GetUserGrantedPolicyCacheKey(userId)
 	cacheJson := cache.RedisUtil.NewRedis(true).HGet(cacheKey, actualPolicy)
-	if cacheJson != "" {
+	if cacheJson != nil {
 		return cacheJson == "1"
 	}
 	if roleIds, err := d.GetUserGrantedRoleIds(userId); err != nil {
@@ -107,12 +107,12 @@ func (d *authCheckerDomainService) IsUserGranted(userId, policy string) bool {
 				return strings.ToLower(w.Policy) == strings.ToLower(actualPolicy)
 			})
 			if isGranted {
-				cache.RedisUtil.NewRedis(true).HSet(cacheKey, actualPolicy, true)
+				cache.RedisUtil.NewRedis(true).HSet(cacheKey, actualPolicy, true, 0)
 				return true
 			}
 		}
 	}
-	cache.RedisUtil.NewRedis(true).HSet(cacheKey, actualPolicy, false)
+	cache.RedisUtil.NewRedis(true).HSet(cacheKey, actualPolicy, false, 0)
 	return false
 }
 

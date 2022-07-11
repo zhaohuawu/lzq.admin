@@ -36,13 +36,13 @@ func (s *TestAppService) TestReflectSetValue(c *gin.Context) {
 	//
 	//}
 	//hsflogger.LogInformation("BeforeInsert-a",obj)
-	var redisUtil = cache.RedisUtil.NewRedis(false,"TestAppService")
+	var redisUtil = cache.RedisUtil.NewRedis(false, "TestAppService")
 
-	redisUtil.HSet("k123", "k3", "1236")
+	redisUtil.HSet("k123", "k3", "1236", 0)
 
-	redisUtil.HSet("k1", "k2", "123")
-	redisUtil.HSet("k1", "k3", "1235")
-	redisUtil.HSet("k1", "k3", "1236")
+	redisUtil.HSet("k1", "k2", "123", 0)
+	redisUtil.HSet("k1", "k3", "1235", 0)
+	redisUtil.HSet("k1", "k3", "1236", 0)
 	s.ResponseSuccess(c, obj)
 }
 

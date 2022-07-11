@@ -143,20 +143,6 @@ export const asyncRoutes = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-export const componentsMap = {
-  Dashboard_HomePage: () => import('@/views/dashboard/index'),
-  Authorization_MenuList: () => import('@/views/authorization/menu-list'),
-  Authorization_PermissionList: () => import('@/views/authorization/permission-list'),
-  Authorization_RoleList: () => import('@/views/authorization/role-list'),
-  Infrastructure_Icon: () => import('@/views/icons/index'),
-  Infrastructure_SysUserList: () => import('@/views/sysuser/sysuser-list'),
-  Workflow_ProcessSettings: () => import('@/views/workflow/index'),
-  Infrastructure_SystemConfig: () => import('@/views/systemconfig/index'),
-  AuditLog_AuditLogAction: () => import('@/views/auditlog-action/index'),
-  AuditLog_LoginLogList: () => import('@/views/auditlog-action/loginlog-list'),
-  Infrastructure_Organization: () => import('@/views/organization/index')
-}
-
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),

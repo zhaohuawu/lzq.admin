@@ -29,7 +29,7 @@ type sysFileDomainService struct {
 
 var SysFileDomainService = sysFileDomainService{}
 
-func (s *sysFileDomainService) Insert(file multipart.File, header multipart.FileHeader) (model.SystemFile, error) {
+func (s *sysFileDomainService) Insert(status string, file multipart.File, header multipart.FileHeader) (model.SystemFile, error) {
 	var entity model.SystemFile
 	entity.ID = utility.UuidCreate()
 	entity.OriginalName = header.Filename
@@ -37,7 +37,11 @@ func (s *sysFileDomainService) Insert(file multipart.File, header multipart.File
 	entity.ContentType = header.Header["Content-Type"][0]
 	entity.Extension = strings.ToLower(path.Ext(header.Filename)) // 去文件后缀
 	entity.NewName = entity.ID + entity.Extension
-	entity.Status = domainconsts.SysFileStatusUnused
+	if len(status) > 0 {
+		entity.Status = domainconsts.SysFileStatusInuse
+	} else {
+		entity.Status = domainconsts.SysFileStatusUnused
+	}
 	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, file); err != nil {
 		return entity, err

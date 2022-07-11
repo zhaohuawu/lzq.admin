@@ -11,6 +11,7 @@ const (
 	LzqCacheTypeFunctionPrivilege = "CacheTypeFunctionPrivilege"
 	LzqCacheTypeRolePrivilege     = "CacheTypeRolePrivilege"
 	LzqCacheTypeDataPrivilege     = "CacheTypeDataPrivilege"
+	LzqCacheTypeSystemDict        = "CacheTypeSystemDict"
 )
 
 var LzqCacheTypeConstFlags = map[string]string{
@@ -18,4 +19,5 @@ var LzqCacheTypeConstFlags = map[string]string{
 	LzqCacheTypeFunctionPrivilege: "功能权限缓存类型",
 	LzqCacheTypeRolePrivilege:     "角色权限缓存类型",
 	LzqCacheTypeDataPrivilege:     "数据权限缓存类型",
+	LzqCacheTypeSystemDict:        "系统字典缓存类型",
 }

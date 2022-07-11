@@ -18,6 +18,7 @@ const (
 	TableTenant                   = "sys_tenant"
 	TableSystemCompany            = "sys_company"
 	TableSystemDept               = "sys_dept"
+	TableSystemDictionary         = "sys_dictionary"
 	TableAuthModule               = "au_module"
 	TableAuthMenu                 = "au_menu"
 	TableAuthPermission           = "au_permission"
