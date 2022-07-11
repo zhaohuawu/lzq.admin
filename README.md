@@ -14,6 +14,9 @@ Golang语言实现的多租户SaaS系统，项目基于gin、xorm、jwt、swagge
 8. 配置：七牛云存储等各种配置
 9. 接口请求日志、登录日志
 
+#### 交流群
+1. QQ群：823184304
+
 #### 软件架构
 软件架构说明
 
@@ -60,6 +63,8 @@ npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass
 ![](/tools/md-images/16532343051.jpg)
 ![](/tools/md-images/16532342055.jpg)
 ![](/tools/md-images/16532343631.jpg)
+![](/tools/md-images/16532343631.jpg)
+
 
 
 
