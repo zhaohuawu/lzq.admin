@@ -55,16 +55,16 @@ npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass
 ```
 
 #### 界面展示
-![](/tools/md-images/1646896434.png)
-![](/tools/md-images/1646896535.jpg)
-![](/tools/md-images/1646896551.jpg)
-![](/tools/md-images/1654616733315.jpg)
-![](/tools/md-images/1654616495767.jpg)
-![](/tools/md-images/1653234523(1).jpg)
-![](/tools/md-images/16532343051.jpg)
-![](/tools/md-images/16532342055.jpg)
-![](/tools/md-images/16532343631.jpg)
-![](/tools/md-images/16532343631.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/1646896434.png)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/1646896535.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/1646896551.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/1654616733315.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/1654616495767.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/1653234523(1).jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343051.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532342055.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343631.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343631.jpg)
 
 
 
