@@ -64,7 +64,9 @@ npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass
 ![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343051.jpg)
 ![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532342055.jpg)
 ![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343631.jpg)
-![tt](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343631.jpg)
+![](https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343631.jpg)
+<img src="https://gitee.com/htd_laozhiqing/lzq.admin/blob/master/tools/md-images/16532343631.jpg" alt="">
+<img src="~/tools/md-images/16532343631.jpg" alt="">
 
 
 
